@@ -5,12 +5,12 @@ repositories {
     mavenCentral()
 }
 
+dependencies {
+    compile 'com.google.guava:guava:19.0'
+    compile 'org.springframework:spring-context:4.2.5.RELEASE'
 
-dependencies {                                                 
-    compile 'com.google.guava:guava:19.0'                      
-                                                               
-    compile 'org.springframework:spring-context:4.2.5.RELEASE' 
-                                                               
-    testCompile 'junit:junit:4.12'                             
-    testCompile 'org.easymock:easymock:3.4'                    
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.easymock:easymock:3.4' 
+    testCompile 'org.powermock:powermock-module-junit4:1.6.4'
+    testCompile 'org.powermock:powermock-api-easymock:1.6.4'
 }
