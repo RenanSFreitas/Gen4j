@@ -10,11 +10,12 @@ import com.gen4j.genotype.Genotype;
 import com.gen4j.population.Chromosome;
 import com.gen4j.population.Population;
 
-public class PopulationImpl<G extends Genotype> implements Population<G> {
-
+public class GenericPopulation<G extends Genotype> implements Population<G>
+{
     private final Set<Chromosome<G>> chromosomes;
 
-    public PopulationImpl(final int size) {
+    public GenericPopulation(final int size)
+    {
         checkArgument(size > 0);
         chromosomes = new HashSet<>(size);
     }

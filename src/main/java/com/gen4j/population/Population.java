@@ -9,5 +9,4 @@ public interface Population<G extends Genotype> extends Iterable<Chromosome<G>> 
     boolean remove(Chromosome<G> chromosome);
 
     int size();
-
 }
