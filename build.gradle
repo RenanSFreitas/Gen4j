@@ -1,8 +1,13 @@
 apply plugin: 'eclipse'
 apply plugin: 'java'
+apply plugin: 'maven'
+
+group='com.mentalbacon'
+version='0.0.1'
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
