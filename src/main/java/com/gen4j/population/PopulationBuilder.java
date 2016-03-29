@@ -14,50 +14,49 @@ import com.gen4j.population.impl.ChromosomeImpl;
 
 public final class PopulationBuilder<P, G extends Genotype>
 {
-
     private int size;
     private int chromosomeLength;
     private RandomGenotypeGenerator<G> genotypeGenerator;
     private FitnessFunction<G> fitnessFunction;
 
-    private PopulationInstantiator<P, G> populationInstantiator;
+    private final PopulationInstantiator<P, G> populationInstantiator;
     private Optional<P> populationInstantiatorParameter = Optional.empty();
 
-    private PopulationBuilder(PopulationInstantiator<P, G> populationInstantiator)
+    private PopulationBuilder(final PopulationInstantiator<P, G> populationInstantiator)
     {
         this.populationInstantiator = requireNonNull(populationInstantiator);
     }
 
-    public static <P, G extends Genotype> PopulationBuilder<P, G> of(PopulationInstantiator<P, G> populationInstantiator)
+    public static <P, G extends Genotype> PopulationBuilder<P, G> of(final PopulationInstantiator<P, G> populationInstantiator)
     {
         return new PopulationBuilder<>(populationInstantiator);
     }
 
-    public PopulationBuilder<P, G> constructorParameter(P parameter)
+    public PopulationBuilder<P, G> constructorParameter(final P parameter)
     {
         populationInstantiatorParameter = Optional.of(parameter);
         return this;
     }
 
-    public PopulationBuilder<P, G> fitnessFunction(FitnessFunction<G> fitnessFunction)
+    public PopulationBuilder<P, G> fitnessFunction(final FitnessFunction<G> fitnessFunction)
     {
         this.fitnessFunction = fitnessFunction;
         return this;
     }
 
-    public PopulationBuilder<P, G> size(int size)
+    public PopulationBuilder<P, G> size(final int size)
     {
         this.size = size;
         return this;
     }
 
-    public PopulationBuilder<P, G> genotypeLength(int length)
+    public PopulationBuilder<P, G> genotypeLength(final int length)
     {
         this.chromosomeLength = length;
         return this;
     }
 
-    public PopulationBuilder<P, G> genotypeGenerator(RandomGenotypeGenerator<G> genotypeGenerator)
+    public PopulationBuilder<P, G> genotypeGenerator(final RandomGenotypeGenerator<G> genotypeGenerator)
     {
         this.genotypeGenerator = genotypeGenerator;
         return this;
@@ -66,12 +65,14 @@ public final class PopulationBuilder<P, G extends Genotype>
     public Population<G> build()
     {
         checkState();
-        Population<G> population = newPopulationInstance();
+        final Population<G> population = newPopulationInstance();
         for (int i = 0; i < size; i++)
         {
-            boolean added = population.add(new ChromosomeImpl<>(newGenotype(), fitnessFunction));
+            final boolean added = population.add(new ChromosomeImpl<>(newGenotype(), fitnessFunction));
             
-            if (!added) i--;
+            if (!added) {
+                i--;
+            }
         }
         return population;
     }
@@ -88,7 +89,7 @@ public final class PopulationBuilder<P, G extends Genotype>
 
     private void checkState()
     {
-        List<String> errors = new ArrayList<>();
+        final List<String> errors = new ArrayList<>();
         checkState(errors);
         if (!errors.isEmpty())
         {
@@ -96,7 +97,7 @@ public final class PopulationBuilder<P, G extends Genotype>
         }
     }
 
-    private void checkState(List<String> errorMessages)
+    private void checkState(final List<String> errorMessages)
     {
         check(size > 0, "Population size should be greater than zero.", errorMessages);
         check(chromosomeLength > 0, "Chromosome length should be greater than zero.", errorMessages);
@@ -105,7 +106,7 @@ public final class PopulationBuilder<P, G extends Genotype>
         check(populationInstantiator != null, "Population instantiator must be set.", errorMessages);
     }
 
-    private void check(boolean expression, String errorMessage, List<String> errorMessages)
+    private void check(final boolean expression, final String errorMessage, final List<String> errorMessages)
     {
         if (!expression)
         {
