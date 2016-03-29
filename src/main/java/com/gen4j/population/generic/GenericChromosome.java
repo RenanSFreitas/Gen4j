@@ -1,4 +1,4 @@
-package com.gen4j.population.impl;
+package com.gen4j.population.generic;
 
 import static java.util.Objects.requireNonNull;
 
@@ -9,13 +9,13 @@ import com.gen4j.genotype.Genotype;
 import com.gen4j.population.Chromosome;
 import com.google.common.base.MoreObjects;
 
-public final class ChromosomeImpl<G extends Genotype> implements Chromosome<G> {
+public final class GenericChromosome<G extends Genotype> implements Chromosome<G> {
 
     private final G genotype;
     private final FitnessFunction<G> fitnessFunction;
     private double fitness = Double.MIN_VALUE;
 
-    public ChromosomeImpl(final G genotype, final FitnessFunction<G> fitnessFunction) {
+    public GenericChromosome(final G genotype, final FitnessFunction<G> fitnessFunction) {
         this.fitnessFunction = requireNonNull(fitnessFunction);
         this.genotype = requireNonNull(genotype);
     }
@@ -39,10 +39,10 @@ public final class ChromosomeImpl<G extends Genotype> implements Chromosome<G> {
         if( this == obj ) {
             return true;
         }
-        if (!(obj instanceof ChromosomeImpl)) {
+        if (!(obj instanceof GenericChromosome)) {
             return false;
         }
-        final ChromosomeImpl<Genotype> that = (ChromosomeImpl<Genotype>) obj;
+        final GenericChromosome<Genotype> that = (GenericChromosome<Genotype>) obj;
         return this.genotype().equals(that.genotype()) && this.fitnessFunction.equals(that.fitnessFunction);
     }
 

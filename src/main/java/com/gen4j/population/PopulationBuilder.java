@@ -10,7 +10,7 @@ import java.util.Optional;
 import com.gen4j.fitness.FitnessFunction;
 import com.gen4j.genotype.Genotype;
 import com.gen4j.population.generator.RandomGenotypeGenerator;
-import com.gen4j.population.impl.ChromosomeImpl;
+import com.gen4j.population.generic.GenericChromosome;
 
 public final class PopulationBuilder<P, G extends Genotype>
 {
@@ -68,7 +68,7 @@ public final class PopulationBuilder<P, G extends Genotype>
         final Population<G> population = newPopulationInstance();
         for (int i = 0; i < size; i++)
         {
-            final boolean added = population.add(new ChromosomeImpl<>(newGenotype(), fitnessFunction));
+            final boolean added = population.add(new GenericChromosome<>(newGenotype(), fitnessFunction));
             
             if (!added) {
                 i--;

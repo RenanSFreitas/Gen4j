@@ -1,4 +1,4 @@
-package com.gen4j.population.impl;
+package com.gen4j.population.generic;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
