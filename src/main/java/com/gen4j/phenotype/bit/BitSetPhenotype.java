@@ -1,4 +1,4 @@
-package com.gen4j.factory;
+package com.gen4j.phenotype.bit;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Strings.isNullOrEmpty;

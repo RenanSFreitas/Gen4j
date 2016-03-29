@@ -1,4 +1,4 @@
-package com.gen4j.factory;
+package com.gen4j.genotype.bit;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Set;
 
 import com.gen4j.genotype.GenotypeEncoder;
-import com.gen4j.genotype.bit.BitSetGenotype;
 import com.gen4j.phenotype.Phenotype;
+import com.gen4j.phenotype.bit.BitSetPhenotype;
 import com.google.common.collect.ImmutableList;
 import com.google.common.math.IntMath;
 
