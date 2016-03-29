@@ -20,9 +20,9 @@ import com.google.common.math.IntMath;
 @RunWith(PowerMockRunner.class)
 public class BitSetGenotypeTest {
 
-    private static final int BITS_CARDINALITY = 8;
+    private static final int BITS_LENGTH = 8;
 
-    private static final String BIT_STRING = "01010";
+    private static final String BIT_SIZE = "01010";
 
     @Mock
     private BitSet bits;
@@ -46,34 +46,44 @@ public class BitSetGenotypeTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructor() {
-        expect(bits.cardinality()).andReturn(IntMath.log2(BIT_STRING.length(), RoundingMode.CEILING) - 1).times(1);
+        expect(bits.size()).andReturn(IntMath.log2(BIT_SIZE.length(), RoundingMode.CEILING) - 1).times(1);
         replay(bits);
         createSubject();
     }
 
+    @Test
+    public void testCopyConstructor() {
+        final BitSet bits = new BitSet(4);
+        bits.set(0);
+        bits.set(2);
+        subject = new BitSetGenotype(bits, bits.size());
+
+        assertEquals(new BitSetGenotype(subject), subject);
+    }
 
     @Test
     public void testToString() {
 
         prepareBitsExpectations();
 
-        final int genotypeLength = BIT_STRING.length();
+        final int genotypeLength = BIT_SIZE.length();
+        expect(bits.length()).andReturn(genotypeLength);
         for (int i = genotypeLength; i > 0; i--) {
-            expect(bits.get(eq(genotypeLength - i))).andReturn(BIT_STRING.charAt(i - 1) == '1');
+            expect(bits.get(eq(genotypeLength - i))).andReturn(BIT_SIZE.charAt(i - 1) == '1');
         }
 
         replay(bits);
         createSubject();
 
-        assertEquals(BIT_STRING, subject.toString());
+        assertEquals(BIT_SIZE, subject.toString());
     }
 
-    private void createSubject() {
-        subject = new BitSetGenotype(bits, BIT_STRING.length());
+    public void createSubject() {
+        subject = new BitSetGenotype(bits, BIT_SIZE.length());
     }
 
     private void prepareBitsExpectations() {
-        expect(bits.cardinality()).andReturn(BITS_CARDINALITY).times(1);
+        expect(bits.size()).andReturn(BITS_LENGTH).times(1);
     }
 
 }

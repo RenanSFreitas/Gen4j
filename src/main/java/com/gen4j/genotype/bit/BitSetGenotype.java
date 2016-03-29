@@ -7,6 +7,7 @@ import java.math.RoundingMode;
 import java.util.BitSet;
 
 import com.gen4j.genotype.Genotype;
+import com.gen4j.utils.BitSets;
 import com.google.common.math.IntMath;
 
 public final class BitSetGenotype implements Genotype {
@@ -17,9 +18,16 @@ public final class BitSetGenotype implements Genotype {
     public BitSetGenotype(final BitSet bits, final int length) {
         this.bits = requireNonNull(bits);
 
-        checkArgument(length > 0 && IntMath.log2(length, RoundingMode.CEILING) <= bits.cardinality());
+        checkArgument(length > 0 && IntMath.log2(length, RoundingMode.CEILING) <= bits.size());
         this.length = length;
     }
+
+    public BitSetGenotype(final BitSetGenotype genotype) {
+        length = requireNonNull(genotype).length();
+        bits = new BitSet(length());
+        bits.or(genotype.value());
+    }
+
     @Override
     public BitSet value() {
         return bits;
@@ -50,11 +58,7 @@ public final class BitSetGenotype implements Genotype {
 
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        for (int i = length - 1; i > -1; i--) {
-            builder.append(bits.get(i) ? '1' : '0');
-        }
-        return builder.toString();
+        return BitSets.toString(value(), length());
     }
 
 }

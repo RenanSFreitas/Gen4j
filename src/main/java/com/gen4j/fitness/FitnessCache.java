@@ -1,13 +1,13 @@
 package com.gen4j.fitness;
 
 import com.gen4j.genotype.Genotype;
-import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 public final class FitnessCache<G extends Genotype> implements FitnessFunction<G> {
 
-    private Cache<G, Double> cache;
+    private LoadingCache<G, Double> cache;
 
     public FitnessCache(final FitnessFunction<G> function) {
 
@@ -22,7 +22,7 @@ public final class FitnessCache<G extends Genotype> implements FitnessFunction<G
 
     @Override
     public double evaluate(final G genotype) {
-        return cache.getIfPresent(genotype).doubleValue();
+        return cache.getUnchecked(genotype).doubleValue();
     }
 
 }

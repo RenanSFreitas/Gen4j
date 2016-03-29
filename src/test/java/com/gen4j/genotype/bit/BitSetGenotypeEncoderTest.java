@@ -1,4 +1,4 @@
-package com.gen4j.factory;
+package com.gen4j.genotype.bit;
 
 import static com.gen4j.utils.Strings.reverse;
 import static com.google.common.collect.Sets.newLinkedHashSet;
@@ -6,7 +6,6 @@ import static java.util.Arrays.asList;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.powermock.api.easymock.PowerMock.replay;
 import static org.powermock.api.easymock.PowerMock.reset;
 
@@ -20,8 +19,9 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.gen4j.genotype.bit.BitSetGenotype;
+import com.gen4j.genotype.bit.BitSetGenotypeEncoder;
 import com.gen4j.phenotype.Phenotype;
-import com.google.common.math.DoubleMath;;
+import com.gen4j.phenotype.bit.BitSetPhenotype;;
 
 /**
  * Based on Michalewicz example.
@@ -84,9 +84,9 @@ public class BitSetGenotypeEncoderTest {
 
         final double precisionTolerance = Math.pow(10, -(PRECISION));
 
-        assertTrue(DoubleMath.fuzzyEquals(actual.variable(X1), expected.variable(X1), precisionTolerance));
-        assertTrue(DoubleMath.fuzzyEquals(actual.variable(X2), expected.variable(X2), precisionTolerance));
-        assertTrue(DoubleMath.fuzzyEquals(actual.variable(X3), expected.variable(X3), precisionTolerance));
+        assertEquals(actual.variable(X1), expected.variable(X1), precisionTolerance);
+        assertEquals(actual.variable(X2), expected.variable(X2), precisionTolerance);
+        assertEquals(actual.variable(X3), expected.variable(X3), precisionTolerance);
     }
 
     private void createSubject() {
