@@ -2,9 +2,9 @@ package com.gen4j.genotype;
 
 import com.gen4j.phenotype.Phenotype;
 
-public interface GenotypeEncoder<G extends Genotype, K> {
+public interface GenotypeEncoder<G extends Genotype, V> {
 
-    Phenotype<K> decode(G genotype);
+    Phenotype<V> decode(G genotype);
 
-    G encode(Phenotype<K> phenotype);
+    G encode(Phenotype<V> phenotype);
 }
