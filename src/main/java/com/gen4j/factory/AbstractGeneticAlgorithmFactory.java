@@ -4,7 +4,8 @@ import com.gen4j.fitness.FitnessCache;
 import com.gen4j.fitness.FitnessFunction;
 import com.gen4j.genotype.Genotype;
 
-public abstract class AbstractGeneticAlgorithmFactory<G extends Genotype, K> implements GeneticAlgorithmFactory<G, K> {
+public abstract class AbstractGeneticAlgorithmFactory<G extends Genotype, V, P>
+        implements GeneticAlgorithmFactory<G, V, P> {
 
     private FitnessCache<G> fitnessCache;
 
@@ -17,5 +18,4 @@ public abstract class AbstractGeneticAlgorithmFactory<G extends Genotype, K> imp
         }
         return fitnessCache;
     }
-
 }
