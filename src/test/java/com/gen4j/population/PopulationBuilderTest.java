@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 import org.powermock.api.easymock.annotation.Mock;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.fitness.FitnessFunction;
 import com.gen4j.genotype.Genotype;
 import com.gen4j.population.generator.RandomGenotypeGenerator;
@@ -37,27 +38,29 @@ public class PopulationBuilderTest
 
     @Mock
     private RandomGenotypeGenerator<Genotype> genotypeGenerator;
-    
+
+    @Mock
+    private GeneticAlgorithmFactory<Genotype, String, Void> geneticAlgorithmFactory;
+
     @Mock
     private Genotype genotype;
 
-    private PopulationBuilder<Void, Genotype> subject;
+    private PopulationBuilder<Genotype, String, Void> subject;
 
     @Test
     public void testPopulationCreation()
     {
-        reset(populationInstantiator, population, genotypeGenerator, genotype);
-        
+        reset(populationInstantiator, population, genotypeGenerator, genotype, geneticAlgorithmFactory);
+
         prepareCreationExpectations();
 
-        replay(populationInstantiator, population, genotypeGenerator, genotype);
+        replay(populationInstantiator, population, genotypeGenerator, genotype, geneticAlgorithmFactory);
 
-        subject = PopulationBuilder.of(populationInstantiator);
-        
+        subject = PopulationBuilder.of(geneticAlgorithmFactory);
+
         subject
             .size(VALID_POPULATION_SIZE)
             .genotypeLength(VALID_GENOTYPE_LENGTH)
-            .fitnessFunction(fitnessFunction)
             .genotypeGenerator(genotypeGenerator)
             .build();
 
@@ -65,6 +68,10 @@ public class PopulationBuilderTest
 
     @SuppressWarnings("unchecked")
     private void prepareCreationExpectations() {
+        expect(geneticAlgorithmFactory.fitnessFunction()).andReturn(fitnessFunction).times(VALID_POPULATION_SIZE);
+        expect(geneticAlgorithmFactory.genotypeGenerator()).andReturn(genotypeGenerator).times(VALID_POPULATION_SIZE);
+        expect(geneticAlgorithmFactory.populationInstantiator()).andReturn(populationInstantiator).times(VALID_POPULATION_SIZE);
+
         expect(populationInstantiator.instantiate(anyObject(Optional.class))).andReturn(population);
         expect(genotypeGenerator.generate(eq(VALID_GENOTYPE_LENGTH))).andReturn(genotype).times(VALID_POPULATION_SIZE);
         expect(population.add(anyObject(Chromosome.class))).andReturn(true);
@@ -73,33 +80,22 @@ public class PopulationBuilderTest
     @Test(expected = IllegalStateException.class)
     public void testInvalidSize()
     {
-        PopulationBuilder.of(populationInstantiator).size(INVALID_SIZE).build();
+        PopulationBuilder.of(geneticAlgorithmFactory).size(INVALID_SIZE).build();
     }
 
     @Test(expected = IllegalStateException.class)
     public void testInvalidLength()
     {
-        PopulationBuilder.of(populationInstantiator).size(INVALID_LENGTH).build();
+        PopulationBuilder.of(geneticAlgorithmFactory).size(INVALID_LENGTH).build();
 
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testInvalidFitnessFunction()
+    public void testInvalidGeneticAlgorithmFactory()
     {
-        PopulationBuilder.of(populationInstantiator)
+        PopulationBuilder.of(geneticAlgorithmFactory)
             .size(VALID_POPULATION_SIZE)
             .genotypeLength(VALID_GENOTYPE_LENGTH)
-            .genotypeGenerator(genotypeGenerator)
-            .build();
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void testInvalidGenotypeGenerator()
-    {
-        PopulationBuilder.of(populationInstantiator)
-            .size(VALID_POPULATION_SIZE)
-            .genotypeLength(VALID_GENOTYPE_LENGTH)
-            .fitnessFunction(fitnessFunction)
             .build();
     }
 }

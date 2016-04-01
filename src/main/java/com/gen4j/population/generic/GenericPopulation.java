@@ -2,13 +2,11 @@ package com.gen4j.population.generic;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TreeMap;
 
 import com.gen4j.genotype.Genotype;
 import com.gen4j.population.Chromosome;
@@ -29,8 +27,6 @@ public class GenericPopulation<G extends Genotype> implements Population<G>
     public static <G extends Genotype> PopulationInstantiator<Integer, G> intantiator() {
         return new GenericPopulationInstatiator<>();
     }
-
-    private final Comparator<Chromosome<G>> comparator = (c1, c2) -> Double.compare(c2.fitness(), c1.fitness());
 
     private final Set<Chromosome<G>> chromosomes;
 
@@ -56,17 +52,17 @@ public class GenericPopulation<G extends Genotype> implements Population<G>
     }
 
     @Override
+    public boolean isEmpty() {
+        return chromosomes.isEmpty();
+    }
+
+    @Override
     public Iterator<Chromosome<G>> iterator() {
         return chromosomes.iterator();
     }
 
     @Override
-    public Map<Chromosome<G>, Double> calculateFitness() {
-
-        final Map<Chromosome<G>, Double> calculatedFitness = new TreeMap<>(comparator);
-        for (final Chromosome<G> chromosome : this) {
-            calculatedFitness.put(chromosome, chromosome.fitness());
-        }
-        return calculatedFitness;
+    public Set<Chromosome<G>> set() {
+        return Collections.unmodifiableSet(chromosomes);
     }
 }

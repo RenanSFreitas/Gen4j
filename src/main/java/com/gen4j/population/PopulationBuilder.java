@@ -7,56 +7,49 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import com.gen4j.fitness.FitnessFunction;
+import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.genotype.Genotype;
 import com.gen4j.population.generator.RandomGenotypeGenerator;
 import com.gen4j.population.generic.GenericChromosome;
 
-public final class PopulationBuilder<P, G extends Genotype>
+public final class PopulationBuilder<G extends Genotype, V, P>
 {
     private int size;
     private int chromosomeLength;
     private RandomGenotypeGenerator<G> genotypeGenerator;
-    private FitnessFunction<G> fitnessFunction;
 
-    private final PopulationInstantiator<P, G> populationInstantiator;
+    private final GeneticAlgorithmFactory<G, V, P> factory;
     private Optional<P> populationInstantiatorParameter = Optional.empty();
 
-    private PopulationBuilder(final PopulationInstantiator<P, G> populationInstantiator)
+    private PopulationBuilder(final GeneticAlgorithmFactory<G, V, P> factory)
     {
-        this.populationInstantiator = requireNonNull(populationInstantiator);
+        this.factory = requireNonNull(factory);
     }
 
-    public static <P, G extends Genotype> PopulationBuilder<P, G> of(final PopulationInstantiator<P, G> populationInstantiator)
-    {
-        return new PopulationBuilder<>(populationInstantiator);
+    public static <G extends Genotype, V, P> PopulationBuilder<G, V, P> of(
+            final GeneticAlgorithmFactory<G, V, P> factory) {
+        return new PopulationBuilder<>(factory);
     }
 
-    public PopulationBuilder<P, G> constructorParameter(final P parameter)
+    public PopulationBuilder<G, V, P> constructorParameter(final P parameter)
     {
         populationInstantiatorParameter = Optional.of(parameter);
         return this;
     }
 
-    public PopulationBuilder<P, G> fitnessFunction(final FitnessFunction<G> fitnessFunction)
-    {
-        this.fitnessFunction = fitnessFunction;
-        return this;
-    }
-
-    public PopulationBuilder<P, G> size(final int size)
+    public PopulationBuilder<G, V, P> size(final int size)
     {
         this.size = size;
         return this;
     }
 
-    public PopulationBuilder<P, G> genotypeLength(final int length)
+    public PopulationBuilder<G, V, P> genotypeLength(final int length)
     {
         this.chromosomeLength = length;
         return this;
     }
 
-    public PopulationBuilder<P, G> genotypeGenerator(final RandomGenotypeGenerator<G> genotypeGenerator)
+    public PopulationBuilder<G, V, P> genotypeGenerator(final RandomGenotypeGenerator<G> genotypeGenerator)
     {
         this.genotypeGenerator = genotypeGenerator;
         return this;
@@ -68,8 +61,8 @@ public final class PopulationBuilder<P, G extends Genotype>
         final Population<G> population = newPopulationInstance();
         for (int i = 0; i < size; i++)
         {
-            final boolean added = population.add(new GenericChromosome<>(newGenotype(), fitnessFunction));
-            
+            final boolean added = population.add(new GenericChromosome<>(newGenotype(), factory.fitnessFunction()));
+
             if (!added) {
                 i--;
             }
@@ -84,7 +77,7 @@ public final class PopulationBuilder<P, G extends Genotype>
 
     private Population<G> newPopulationInstance()
     {
-        return populationInstantiator.instantiate(populationInstantiatorParameter);
+        return factory.populationInstantiator().instantiate(populationInstantiatorParameter);
     }
 
     private void checkState()
@@ -102,8 +95,7 @@ public final class PopulationBuilder<P, G extends Genotype>
         check(size > 0, "Population size should be greater than zero.", errorMessages);
         check(chromosomeLength > 0, "Chromosome length should be greater than zero.", errorMessages);
         check(genotypeGenerator != null, "Genotype generator must be set.", errorMessages);
-        check(fitnessFunction != null, "Fitness function must be set.", errorMessages);
-        check(populationInstantiator != null, "Population instantiator must be set.", errorMessages);
+        check(factory != null, "Genetic Algorithm factory must be set.", errorMessages);
     }
 
     private void check(final boolean expression, final String errorMessage, final List<String> errorMessages)

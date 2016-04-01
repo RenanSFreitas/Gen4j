@@ -1,6 +1,6 @@
 package com.gen4j.population;
 
-import java.util.Map;
+import java.util.Set;
 
 import com.gen4j.genotype.Genotype;
 
@@ -12,5 +12,7 @@ public interface Population<G extends Genotype> extends Iterable<Chromosome<G>> 
 
     int size();
 
-    Map<Chromosome<G>, Double> calculateFitness();
+    boolean isEmpty();
+
+    Set<Chromosome<G>> set();
 }
