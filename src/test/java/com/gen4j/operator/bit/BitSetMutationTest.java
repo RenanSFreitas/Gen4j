@@ -1,5 +1,7 @@
 package com.gen4j.operator.bit;
 
+import static com.google.common.collect.Iterables.getOnlyElement;
+import static java.util.Collections.singleton;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
@@ -19,7 +21,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.gen4j.genotype.bit.BitSetGenotype;
-import com.gen4j.operator.bit.BitSetMutation;
 import com.gen4j.utils.BitSets;
 
 @RunWith(PowerMockRunner.class)
@@ -63,7 +64,7 @@ public class BitSetMutationTest {
 
         replay(random, genotype);
 
-        final BitSetGenotype mutant = subject.mutate(genotype);
+        final BitSetGenotype mutant = getOnlyElement(subject.apply(singleton(genotype)));
 
         assertEquals(MUTANT_BIT_VALUE, mutant.value().get(MUTANT_BIT));
     }

@@ -7,7 +7,9 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.reset;
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
 import java.util.BitSet;
+import java.util.Iterator;
 import java.util.Random;
 
 import org.easymock.TestSubject;
@@ -20,9 +22,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.gen4j.genotype.bit.BitSetGenotype;
-import com.gen4j.operator.bit.BitSetCrossOver;
 import com.gen4j.utils.BitSets;
-import com.gen4j.utils.Pair;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ BitSetCrossOver.class, BitSetGenotype.class })
@@ -78,9 +78,9 @@ public class BitSetCrossOverTest {
 
         replay(random, firstParent, secondParent, firstParentBits, secondParentBits);
 
-        final Pair<BitSetGenotype, BitSetGenotype> actual = subject.apply(firstParent, secondParent);
+        final Iterator<BitSetGenotype> actual = subject.apply(Arrays.asList(firstParent, secondParent)).iterator();
 
-        assertEquals(firstOffspring, BitSets.toString(actual.first().value(), GENOTYPE_LENGTH));
-        assertEquals(secondOffspring, BitSets.toString(actual.second().value(), GENOTYPE_LENGTH));
+        assertEquals(firstOffspring, BitSets.toString(actual.next().value(), GENOTYPE_LENGTH));
+        assertEquals(secondOffspring, BitSets.toString(actual.next().value(), GENOTYPE_LENGTH));
     }
 }

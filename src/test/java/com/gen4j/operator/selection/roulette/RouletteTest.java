@@ -1,23 +1,17 @@
 package com.gen4j.operator.selection.roulette;
 
+import static com.google.common.collect.Iterators.forArray;
 import static java.util.Arrays.asList;
-import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 import static org.powermock.api.easymock.PowerMock.expectNew;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.resetAll;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.function.DoubleFunction;
-import java.util.stream.Collector;
-import java.util.stream.DoubleStream;
-import java.util.stream.Stream;
 
 import org.easymock.IAnswer;
 import org.junit.Before;
@@ -30,6 +24,8 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.gen4j.genotype.Genotype;
 import com.gen4j.population.Chromosome;
+import com.gen4j.population.Population;
+import com.gen4j.population.generic.GenericPopulation;
 import com.gen4j.utils.Pair;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -58,14 +54,8 @@ public class RouletteTest {
     @Mock
     private Chromosome<Genotype> chromosome3;
 
-    @Mock("doubles")
+    @Mock("nextDouble")
     private Random random;
-
-    @Mock("mapToObj")
-    private DoubleStream randomDoubles;
-
-    @Mock("collect")
-    private Stream<Chromosome<Genotype>> chromosomeStream;
 
     private Set<Chromosome<Genotype>> chromosomes;
 
@@ -100,39 +90,41 @@ public class RouletteTest {
         resetAll();
         createChromosomeExpectations();
         final List<Pair<Chromosome<Genotype>, Double>> rouletteList = createRouletteList();
-        expectNew(Roulette.class, rouletteList, MAX_RELATIVE_FITNESS).andThrow(new Exception());
+        expectNew(Roulette.class, rouletteList).andThrow(new Exception());
         expectedException.expect(Exception.class);
         replayAll();
 
-        subject = Roulette.of(chromosomes);
+        subject = Roulette.of(population());
+    }
+
+    private Population<Genotype> population() {
+        final Population<Genotype> population = new GenericPopulation<>(chromosomes.size());
+        chromosomes.forEach(c -> population.add(c));
+        return population;
     }
 
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testSortChromosomes() throws Exception {
         resetAll();
 
         createChromosomeExpectations();
-        expect(random.doubles(eq(3l), eq(0d), eq(MAX_RELATIVE_FITNESS))).andReturn(randomDoubles);
-        expect(randomDoubles.mapToObj(anyObject(DoubleFunction.class))).andReturn(chromosomeStream);
-        expect(chromosomeStream.collect(anyObject(Collector.class)))
-                .andAnswer(new IAnswer<List<Chromosome<Genotype>>>() {
-                    @Override
-                    public List<Chromosome<Genotype>> answer() throws Throwable {
-                        final List<Chromosome<Genotype>> result = new ArrayList<>(3);
+        final Iterator<Double> answers = forArray(
+                RELATIVE_FITNESS_2 + RELATIVE_FITNESS_1 + - 0.01,
+                RELATIVE_FITNESS_2 - 0.01,
+                RELATIVE_FITNESS_3 + RELATIVE_FITNESS_2 + RELATIVE_FITNESS_1 - 0.01
+                );
+        expect(random.nextDouble()).andAnswer(new IAnswer<Double>() {
 
-                        final Method sortChromosome = MemberModifier.method(Roulette.class, "sortChromosome",
-                                double.class);
-                        result.add((Chromosome<Genotype>) sortChromosome.invoke(subject, RELATIVE_FITNESS_1 - 0.01));
-                        result.add((Chromosome<Genotype>) sortChromosome.invoke(subject, RELATIVE_FITNESS_2 - 0.01));
-                        result.add((Chromosome<Genotype>) sortChromosome.invoke(subject, RELATIVE_FITNESS_3 - 0.01));
-                        return result;
+                    @Override
+                    public Double answer() throws Throwable {
+                        return answers.next();
                     }
-                });
+        }).times(3);
+
         replayAll();
 
-        subject = Roulette.of(chromosomes);
+        subject = Roulette.of(population());
 
         MemberModifier.field(Roulette.class, "random").set(subject, random);
 

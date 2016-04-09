@@ -1,18 +1,24 @@
 package com.gen4j.population.generic;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.lang.Double.compare;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
+import java.util.NavigableMap;
 import java.util.Optional;
-import java.util.Set;
+import java.util.TreeMap;
 
 import com.gen4j.genotype.Genotype;
 import com.gen4j.population.Chromosome;
 import com.gen4j.population.Population;
 import com.gen4j.population.PopulationInstantiator;
 
+//TODO junit
 public class GenericPopulation<G extends Genotype> implements Population<G>
 {
     private static class GenericPopulationInstatiator<G extends Genotype>
@@ -28,17 +34,24 @@ public class GenericPopulation<G extends Genotype> implements Population<G>
         return new GenericPopulationInstatiator<>();
     }
 
-    private final Set<Chromosome<G>> chromosomes;
+    private final List<Chromosome<G>> chromosomes;
+    private final Comparator<? super Chromosome<G>> fitnessComparator = (c1, c2) -> compare(c1.fitness(), c2.fitness());
+    private NavigableMap<Chromosome<G>, Double> populationFitness;
 
     public GenericPopulation(final int size)
     {
-        checkArgument(size > 0);
-        chromosomes = new HashSet<>(size);
+        checkArgument(size > -1);
+        chromosomes = new ArrayList<>(size);
     }
 
     @Override
     public boolean add(final Chromosome<G> chromosome) {
         return chromosomes.add(chromosome);
+    }
+
+    @Override
+    public boolean addAll(final Collection<Chromosome<G>> chromosomes) {
+        return chromosomes.addAll(chromosomes);
     }
 
     @Override
@@ -62,7 +75,16 @@ public class GenericPopulation<G extends Genotype> implements Population<G>
     }
 
     @Override
-    public Set<Chromosome<G>> set() {
-        return Collections.unmodifiableSet(chromosomes);
+    public NavigableMap<Chromosome<G>, Double> fitness() {
+        if (populationFitness == null) {
+            populationFitness = new TreeMap<>(fitnessComparator);
+            chromosomes.forEach(c -> populationFitness.put(c, c.fitness()));
+        }
+        return Collections.unmodifiableNavigableMap(populationFitness);
+    }
+
+    @Override
+    public void clearFitness() {
+        populationFitness = null;
     }
 }

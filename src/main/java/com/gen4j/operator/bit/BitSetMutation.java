@@ -1,27 +1,34 @@
 package com.gen4j.operator.bit;
 
-import static java.util.Objects.requireNonNull;
+import static com.google.common.collect.Iterables.getOnlyElement;
 
 import java.util.BitSet;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Random;
 
 import com.gen4j.genotype.bit.BitSetGenotype;
-import com.gen4j.operator.Mutation;
+import com.gen4j.operator.GeneticOperator;
 import com.google.common.base.Preconditions;
 
-public final class BitSetMutation implements Mutation<BitSetGenotype> {
+public final class BitSetMutation implements GeneticOperator<BitSetGenotype> {
 
     private final Random random = new Random(System.nanoTime());
 
-    private double probability = DEFAULT_PROBABILITY;
+    private double probability = 0.01;
 
     @Override
-    public BitSetGenotype mutate(final BitSetGenotype genotype) {
+    public int chromosomeCount() {
+        return 1;
+    }
 
-        final BitSetGenotype mutant = new BitSetGenotype(requireNonNull(genotype));
+    @Override
+    public Collection<BitSetGenotype> apply(final Collection<BitSetGenotype> genotypes) {
+
+        final BitSetGenotype mutant = new BitSetGenotype(getOnlyElement(genotypes));
         final BitSet bits = mutant.value();
         bits.flip(random.nextInt(mutant.length()));
-        return mutant;
+        return Collections.singletonList(mutant);
     }
 
     @Override
