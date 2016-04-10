@@ -60,4 +60,9 @@ public final class ImmutablePopulation<G extends Genotype> implements Population
     public Iterator<Chromosome<G>> iterator() {
         return Iterators.unmodifiableIterator(delegate.iterator());
     }
+
+    @Override
+    public Chromosome<G> fittest() {
+        return delegate.fittest();
+    }
 }

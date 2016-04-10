@@ -20,4 +20,6 @@ public interface Population<G extends Genotype> extends Iterable<Chromosome<G>> 
     NavigableMap<Chromosome<G>, Double> fitness();
 
     void clearFitness();
+
+    Chromosome<G> fittest();
 }

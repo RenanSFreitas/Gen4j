@@ -87,4 +87,9 @@ public class GenericPopulation<G extends Genotype> implements Population<G>
     public void clearFitness() {
         populationFitness = null;
     }
+
+    @Override
+    public Chromosome<G> fittest() {
+        return fitness().lastKey();
+    }
 }

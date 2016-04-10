@@ -12,7 +12,7 @@ public final class BestFitnessSelector<G extends Genotype> implements Selector<G
 
     @Override
     public List<Chromosome<G>> select(final Population<G> population, final int count) {
-        return singletonList(population.fitness().lastKey());
+        return singletonList(population.fittest());
     }
 
 }
