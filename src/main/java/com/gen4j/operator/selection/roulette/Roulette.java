@@ -1,6 +1,7 @@
 package com.gen4j.operator.selection.roulette;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -10,8 +11,6 @@ import com.gen4j.genotype.Genotype;
 import com.gen4j.population.Chromosome;
 import com.gen4j.population.Population;
 import com.gen4j.utils.Pair;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
 
 final class Roulette<G extends Genotype> {
 
@@ -24,6 +23,8 @@ final class Roulette<G extends Genotype> {
         final NavigableMap<Chromosome<G>, Double> populationFitness = population.fitness();
 
         final double minimum = populationFitness.firstKey().fitness();
+
+        // Displacement to ensure relative fitness belongs to [0;1]
         final double displacement = minimum < 0d ? -minimum : 0d;
 
         final double totalFitness = populationFitness.values()
@@ -63,10 +64,10 @@ final class Roulette<G extends Genotype> {
     }
 
     List<Chromosome<G>> sortChromosomes(final int count) {
-        final Builder<Chromosome<G>> chromosomes = ImmutableList.<Chromosome<G>>builder();
+        final List<Chromosome<G>> chromosomes = new ArrayList<>(count);
         for( int i = 0; i < count; i++ ) {
             chromosomes.add(sortChromosome(random.nextDouble()));
         }
-        return chromosomes.build();
+        return Collections.unmodifiableList(chromosomes);
     }
 }

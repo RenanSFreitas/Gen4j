@@ -5,6 +5,7 @@ import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.getCurrentArguments;
 import static org.easymock.EasyMock.leq;
+import static org.powermock.api.easymock.PowerMock.expectLastCall;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.resetAll;
 
@@ -73,7 +74,7 @@ public class GeneticAlgorithmTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void test() {
+    public void testCommonScenario() {
 
         resetAll();
 
@@ -90,8 +91,9 @@ public class GeneticAlgorithmTest {
         expect(initialPopulation.size()).andReturn(POPULATION_SIZE).anyTimes();
         expect(operator.probability()).andReturn(0.7).anyTimes();
         expect(operator.chromosomeCount()).andReturn(2).anyTimes();
-        expect(selector.select(anyObject(Population.class), EasyMock.eq(2)))
-                .andReturn(of(chromosome1, chromosome2)).anyTimes();
+        selector.population(anyObject(Population.class));
+        expectLastCall().anyTimes();
+        expect(selector.select(EasyMock.eq(2))).andReturn(of(chromosome1, chromosome2)).anyTimes();
         expect(chromosome1.genotype()).andReturn(genotype1).anyTimes();
         expect(chromosome2.genotype()).andReturn(genotype2).anyTimes();
         expect(operator.apply(anyObject(Collection.class))).andReturn(of(genotype1, genotype2));

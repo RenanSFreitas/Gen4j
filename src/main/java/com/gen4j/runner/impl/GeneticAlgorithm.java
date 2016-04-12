@@ -54,6 +54,8 @@ public class GeneticAlgorithm<G extends Genotype, V, P> implements com.gen4j.run
     private Population<G> applyGeneticOperators(final Population<G> population,
             final GeneticAlgorithmFactory<G, V, P> factory) {
 
+        prepareSelectors(population);
+
         final Collection<Chromosome<G>> generated = new ArrayList<>();
 
         while(generated.size() < population.size() )
@@ -67,9 +69,13 @@ public class GeneticAlgorithm<G extends Genotype, V, P> implements com.gen4j.run
                 .size(population.size())
                 .build();
 
-        newPopulation.addAll(generated);
-
         return newPopulation;
+    }
+
+    private void prepareSelectors(final Population<G> population) {
+        for (final Pair<GeneticOperator<G>, Selector<G>> pair : operators) {
+            pair.second().population(population);
+        }
     }
 
     private void addGeneratedChromosomes(final Population<G> population, final Collection<Chromosome<G>> generated,
@@ -81,7 +87,7 @@ public class GeneticAlgorithm<G extends Genotype, V, P> implements com.gen4j.run
             if (shouldExecute(operator)) {
                 // Select and collect generic material
                 final Collection<G> selected = transform(
-                        selector.select(population, operator.chromosomeCount()),
+                        selector.select(operator.chromosomeCount()),
                         c -> c.genotype());
 
                 generated.addAll(transform(operator.apply(selected), g -> new GenericChromosome<>(g, fitnessFunction)));

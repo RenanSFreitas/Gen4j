@@ -8,5 +8,9 @@ import com.gen4j.population.Population;
 
 public interface Selector<G extends Genotype> {
 
-    Collection<Chromosome<G>> select(Population<G> population, int count);
+    void population(Population<G> population);
+
+    Population<G> population();
+
+    Collection<Chromosome<G>> select(int count);
 }

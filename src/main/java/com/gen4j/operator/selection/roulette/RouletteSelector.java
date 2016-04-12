@@ -1,21 +1,24 @@
 package com.gen4j.operator.selection.roulette;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.List;
 
 import com.gen4j.genotype.Genotype;
-import com.gen4j.operator.selection.Selector;
+import com.gen4j.operator.selection.AbstractSelector;
 import com.gen4j.population.Chromosome;
 import com.gen4j.population.Population;
 
-public final class RouletteSelector<G extends Genotype> implements Selector<G> {
+public final class RouletteSelector<G extends Genotype> extends AbstractSelector<G> {
+
+    private Roulette<G> roulette;
 
     @Override
-    public List<Chromosome<G>> select(final Population<G> population, final int count) {
-        checkNotNull(population);
-        checkArgument(!population.isEmpty());
-        return Roulette.of(population).sortChromosomes(count);
+    public void population(final Population<G> population) {
+        super.population(population);
+        roulette = Roulette.of(population());
+    }
+
+    @Override
+    public List<Chromosome<G>> select(final int count) {
+        return roulette.sortChromosomes(count);
     }
 }

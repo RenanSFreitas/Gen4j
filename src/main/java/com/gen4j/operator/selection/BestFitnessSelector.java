@@ -6,13 +6,12 @@ import java.util.List;
 
 import com.gen4j.genotype.Genotype;
 import com.gen4j.population.Chromosome;
-import com.gen4j.population.Population;
 
-public final class BestFitnessSelector<G extends Genotype> implements Selector<G> {
+public final class BestFitnessSelector<G extends Genotype> extends AbstractSelector<G> {
 
     @Override
-    public List<Chromosome<G>> select(final Population<G> population, final int count) {
-        return singletonList(population.fittest());
+    public List<Chromosome<G>> select(final int count) {
+        return singletonList(population().fittest());
     }
 
 }
