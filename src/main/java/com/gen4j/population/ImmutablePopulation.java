@@ -14,6 +14,11 @@ public final class ImmutablePopulation<G extends Genotype> implements Population
     private final Population<G> delegate;
 
     public static <G extends Genotype> Population<G> of(final Population<G> population) {
+
+        if (population instanceof ImmutablePopulation) {
+            return population;
+        }
+
         return new ImmutablePopulation<>(population);
     }
 
