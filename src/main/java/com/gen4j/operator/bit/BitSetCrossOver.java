@@ -1,6 +1,8 @@
 package com.gen4j.operator.bit;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
 
 import java.util.BitSet;
 import java.util.Collection;
@@ -10,7 +12,6 @@ import java.util.Random;
 import com.gen4j.genotype.bit.BitSetGenotype;
 import com.gen4j.operator.GeneticOperator;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 
 public final class BitSetCrossOver implements GeneticOperator<BitSetGenotype> {
 
@@ -36,10 +37,12 @@ public final class BitSetCrossOver implements GeneticOperator<BitSetGenotype> {
         final int length = g1.length();
         checkArgument(length == g2.length(), "Genotypes must have the same size");
 
+        // TODO maybe it will be good to generated a batch of random ints
+        // and generated them again when the batch is out of new ints
         final int crossOverPoint = random.nextInt(length);
         final BitSetGenotype offspring1 = new BitSetGenotype(cross(crossOverPoint, g1, g2), length);
         final BitSetGenotype offspring2 = new BitSetGenotype(cross(crossOverPoint, g2, g1), length);
-        return ImmutableList.of(offspring1, offspring2);
+        return unmodifiableList(asList(offspring1, offspring2));
     }
 
     private BitSet cross(final int crossOverPoint, final BitSetGenotype g1, final BitSetGenotype g2) {
