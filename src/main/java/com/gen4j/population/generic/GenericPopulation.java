@@ -51,7 +51,7 @@ public class GenericPopulation<G extends Genotype> implements Population<G>
 
     @Override
     public boolean addAll(final Collection<Chromosome<G>> chromosomes) {
-        return chromosomes.addAll(chromosomes);
+        return this.chromosomes.addAll(chromosomes);
     }
 
     @Override
