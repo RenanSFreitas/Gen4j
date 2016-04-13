@@ -1,4 +1,4 @@
-package com.gen4j.genotype.bit;
+package com.gen4j.chromosome.bit;
 
 import static com.gen4j.utils.Strings.reverse;
 import static com.google.common.collect.Sets.newLinkedHashSet;
@@ -18,8 +18,8 @@ import org.powermock.api.easymock.annotation.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import com.gen4j.genotype.bit.BitSetGenotype;
-import com.gen4j.genotype.bit.BitSetGenotypeEncoder;
+import com.gen4j.chromosome.bit.BitChromosome;
+import com.gen4j.chromosome.bit.BitChromosomeEncoder;
 import com.gen4j.phenotype.Phenotype;
 import com.gen4j.phenotype.bit.BitSetPhenotype;;
 
@@ -30,8 +30,8 @@ import com.gen4j.phenotype.bit.BitSetPhenotype;;
  * programs</b>. Springer Science & Business Media, 2013, p.19-21.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(BitSetGenotype.class)
-public class BitSetGenotypeEncoderTest {
+@PrepareForTest(BitChromosome.class)
+public class BitChromosomeEncoderTest {
 
     private static final double X3_VALUE = 1.627888;
 
@@ -46,7 +46,7 @@ public class BitSetGenotypeEncoderTest {
     private static final String X1 = "x1";
 
     @Mock
-    private BitSetGenotype genotype;
+    private BitChromosome chromosome;
 
     @Mock
     private BitSetPhenotype phenotype;
@@ -59,7 +59,7 @@ public class BitSetGenotypeEncoderTest {
     private static final int UPPER_BOUND = 2;
     private static final int PRECISION = 6;
 
-    private BitSetGenotypeEncoder subject;
+    private BitChromosomeEncoder subject;
     private final Set<String> variablesIdentifiers = newLinkedHashSet(asList(X1, X2, X3));
 
     private final String variablesBitString = new StringBuilder()
@@ -70,15 +70,15 @@ public class BitSetGenotypeEncoderTest {
     @Test
     public void testDecoding() {
 
-        reset(genotype, bits);
+        reset(chromosome, bits);
 
         prepareDecodingExpectations();
 
-        replay(genotype, bits);
+        replay(chromosome, bits);
 
         createSubject();
 
-        final Phenotype<String> actual = subject.decode(genotype);
+        final Phenotype<String> actual = subject.decode(chromosome);
 
         final Phenotype<String> expected = expectedPhenotype();
 
@@ -90,7 +90,7 @@ public class BitSetGenotypeEncoderTest {
     }
 
     private void createSubject() {
-        subject = new BitSetGenotypeEncoder(variablesIdentifiers, LOWER_BOUND, UPPER_BOUND, PRECISION);
+        subject = new BitChromosomeEncoder(variablesIdentifiers, LOWER_BOUND, UPPER_BOUND, PRECISION);
     }
 
     private Phenotype<String> expectedPhenotype() {
@@ -103,8 +103,8 @@ public class BitSetGenotypeEncoderTest {
     }
 
     private void prepareDecodingExpectations() {
-        expect(genotype.value()).andReturn(bits);
-        expect(genotype.toString()).anyTimes();
+        expect(chromosome.value()).andReturn(bits);
+        expect(chromosome.toString()).anyTimes();
 
         for (int i = 0; i < N_BITS * variablesIdentifiers.size(); i++) {
             expect(bits.get(eq(i))).andReturn(variablesBitString.charAt(i) == '1');
@@ -121,7 +121,7 @@ public class BitSetGenotypeEncoderTest {
 
         createSubject();
 
-        final BitSetGenotype actual = subject.encode(phenotype);
+        final BitChromosome actual = subject.encode(phenotype);
 
         final int length = N_BITS * variablesIdentifiers.size();
         final BitSet bits = new BitSet(length);
@@ -130,7 +130,7 @@ public class BitSetGenotypeEncoderTest {
                 bits.set(i);
             }
         }
-        final BitSetGenotype expected = new BitSetGenotype(bits, length);
+        final BitChromosome expected = new BitChromosome(bits, length);
         assertEquals(expected, actual);
     }
 

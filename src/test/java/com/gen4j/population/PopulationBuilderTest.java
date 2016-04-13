@@ -17,10 +17,10 @@ import org.junit.runner.RunWith;
 import org.powermock.api.easymock.annotation.Mock;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import com.gen4j.chromosome.Chromosome;
 import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.fitness.FitnessFunction;
-import com.gen4j.genotype.Genotype;
-import com.gen4j.population.generator.RandomGenotypeGenerator;
+import com.gen4j.population.generator.ChromosomeGenerator;
 
 @RunWith(PowerMockRunner.class)
 public class PopulationBuilderTest
@@ -32,24 +32,24 @@ public class PopulationBuilderTest
     private static final int VALID_GENOTYPE_LENGTH = 1;
 
     @Mock
-    private PopulationInstantiator<Void, Genotype> populationInstantiator;
+    private PopulationInstantiator<Void, Chromosome> populationInstantiator;
 
     @Mock
-    private Population<Genotype> population;
+    private Population<Chromosome> population;
 
     @Mock
-    private FitnessFunction<Genotype> fitnessFunction;
+    private FitnessFunction<Chromosome> fitnessFunction;
 
     @Mock
-    private RandomGenotypeGenerator<Genotype> genotypeGenerator;
+    private ChromosomeGenerator<Chromosome> chromosomeGenerator;
 
     @Mock
-    private GeneticAlgorithmFactory<Genotype, String, Void> geneticAlgorithmFactory;
+    private GeneticAlgorithmFactory<Chromosome, String, Void> geneticAlgorithmFactory;
 
     @Mock
-    private Genotype genotype;
+    private Chromosome chromosome;
 
-    private PopulationBuilder<Genotype, String, Void> subject;
+    private PopulationBuilder<Chromosome, String, Void> subject;
 
     @Rule
     private final ExpectedException thrown = ExpectedException.none();
@@ -70,13 +70,13 @@ public class PopulationBuilderTest
 
         subject
             .size(VALID_POPULATION_SIZE)
-            .genotypeLength(VALID_GENOTYPE_LENGTH)
+            .chromosomeLength(VALID_GENOTYPE_LENGTH)
             .build();
 
     }
 
     private void prepareCommonExpectations() {
-        expect(geneticAlgorithmFactory.genotypeGenerator()).andReturn(Optional.of(genotypeGenerator)).anyTimes();
+        expect(geneticAlgorithmFactory.chromosomeGenerator()).andReturn(Optional.of(chromosomeGenerator)).anyTimes();
     }
 
     @SuppressWarnings("unchecked")
@@ -86,10 +86,10 @@ public class PopulationBuilderTest
         expect(geneticAlgorithmFactory.populationInstantiator()).andReturn(populationInstantiator).times(VALID_POPULATION_SIZE);
 
         expect(populationInstantiator.instantiate(anyObject(Optional.class))).andReturn(population);
-        expect(genotypeGenerator.generate(eq(VALID_GENOTYPE_LENGTH))).andReturn(genotype).times(VALID_POPULATION_SIZE);
+        expect(chromosomeGenerator.generate(eq(VALID_GENOTYPE_LENGTH))).andReturn(chromosome).times(VALID_POPULATION_SIZE);
         expect(population.addAll(anyObject(Collection.class))).andReturn(true);
         expect(population.size()).andReturn(0);
-        expect(population.add(anyObject(Chromosome.class))).andReturn(true);
+        expect(population.add(anyObject(Individual.class))).andReturn(true);
     }
 
     @Test
@@ -102,7 +102,7 @@ public class PopulationBuilderTest
         thrown.expectMessage("Population size should be greater than zero.");
 
         PopulationBuilder.of(geneticAlgorithmFactory)
-            .genotypeLength(VALID_GENOTYPE_LENGTH)
+            .chromosomeLength(VALID_GENOTYPE_LENGTH)
             .size(INVALID_SIZE)
             .build();
     }
@@ -117,7 +117,7 @@ public class PopulationBuilderTest
         thrown.expectMessage("Chromosome length should be greater than zero.");
 
         PopulationBuilder.of(geneticAlgorithmFactory)
-                .genotypeLength(INVALID_GENOTYPE_LENGTH)
+                .chromosomeLength(INVALID_GENOTYPE_LENGTH)
                 .size(VALID_POPULATION_SIZE)
                 .build();
 
@@ -126,7 +126,7 @@ public class PopulationBuilderTest
     @Test
     public void testInvalidInitialChromosomes()
     {
-        expect(geneticAlgorithmFactory.genotypeGenerator()).andReturn(Optional.empty());
+        expect(geneticAlgorithmFactory.chromosomeGenerator()).andReturn(Optional.empty());
         replayAll();
 
         thrown.expect(IllegalStateException.class);
@@ -135,7 +135,7 @@ public class PopulationBuilderTest
 
         PopulationBuilder.of(geneticAlgorithmFactory)
             .size(VALID_POPULATION_SIZE)
-            .genotypeLength(VALID_GENOTYPE_LENGTH)
+            .chromosomeLength(VALID_GENOTYPE_LENGTH)
             .build();
     }
 }

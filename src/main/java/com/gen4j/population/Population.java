@@ -3,23 +3,23 @@ package com.gen4j.population;
 import java.util.Collection;
 import java.util.NavigableMap;
 
-import com.gen4j.genotype.Genotype;
+import com.gen4j.chromosome.Chromosome;
 
-public interface Population<G extends Genotype> extends Iterable<Chromosome<G>> {
+public interface Population<G extends Chromosome> extends Iterable<Individual<G>> {
 
-    boolean add(Chromosome<G> chromosome);
+    boolean add(Individual<G> chromosome);
 
-    boolean addAll(Collection<Chromosome<G>> chromosomes);
+    boolean addAll(Collection<Individual<G>> chromosomes);
 
-    boolean remove(Chromosome<G> chromosome);
+    boolean remove(Individual<G> chromosome);
 
     int size();
 
     boolean isEmpty();
 
-    NavigableMap<Chromosome<G>, Double> fitness();
+    NavigableMap<Individual<G>, Double> fitness();
 
     void clearFitness();
 
-    Chromosome<G> fittest();
+    Individual<G> fittest();
 }

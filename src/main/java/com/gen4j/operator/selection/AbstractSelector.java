@@ -6,14 +6,14 @@ package com.gen4j.operator.selection;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.gen4j.genotype.Genotype;
+import com.gen4j.chromosome.Chromosome;
 import com.gen4j.population.ImmutablePopulation;
 import com.gen4j.population.Population;
 
 /**
  *
  */
-public abstract class AbstractSelector<G extends Genotype> implements Selector<G> {
+public abstract class AbstractSelector<G extends Chromosome> implements Selector<G> {
 
     private Population<G> population;
 

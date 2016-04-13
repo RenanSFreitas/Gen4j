@@ -1,4 +1,4 @@
-package com.gen4j.genotype.bit;
+package com.gen4j.chromosome.bit;
 
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
@@ -15,10 +15,11 @@ import org.junit.runner.RunWith;
 import org.powermock.api.easymock.annotation.Mock;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import com.gen4j.chromosome.bit.BitChromosome;
 import com.google.common.math.IntMath;
 
 @RunWith(PowerMockRunner.class)
-public class BitSetGenotypeTest {
+public class BitChromosomeTest {
 
     private static final int BITS_LENGTH = 8;
 
@@ -27,7 +28,7 @@ public class BitSetGenotypeTest {
     @Mock
     private BitSet bits;
 
-    private BitSetGenotype subject;
+    private BitChromosome subject;
 
     @Before
     public void setup() {
@@ -56,9 +57,9 @@ public class BitSetGenotypeTest {
         final BitSet bits = new BitSet(4);
         bits.set(0);
         bits.set(2);
-        subject = new BitSetGenotype(bits, bits.size());
+        subject = new BitChromosome(bits, bits.size());
 
-        assertEquals(new BitSetGenotype(subject), subject);
+        assertEquals(new BitChromosome(subject), subject);
     }
 
     @Test
@@ -66,10 +67,10 @@ public class BitSetGenotypeTest {
 
         prepareBitsExpectations();
 
-        final int genotypeLength = BIT_SIZE.length();
-        expect(bits.length()).andReturn(genotypeLength);
-        for (int i = genotypeLength; i > 0; i--) {
-            expect(bits.get(eq(genotypeLength - i))).andReturn(BIT_SIZE.charAt(i - 1) == '1');
+        final int chromosomeLength = BIT_SIZE.length();
+        expect(bits.length()).andReturn(chromosomeLength);
+        for (int i = chromosomeLength; i > 0; i--) {
+            expect(bits.get(eq(chromosomeLength - i))).andReturn(BIT_SIZE.charAt(i - 1) == '1');
         }
 
         replay(bits);
@@ -79,7 +80,7 @@ public class BitSetGenotypeTest {
     }
 
     public void createSubject() {
-        subject = new BitSetGenotype(bits, BIT_SIZE.length());
+        subject = new BitChromosome(bits, BIT_SIZE.length());
     }
 
     private void prepareBitsExpectations() {

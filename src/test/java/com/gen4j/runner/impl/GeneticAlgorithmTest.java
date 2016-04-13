@@ -18,14 +18,14 @@ import org.junit.runner.RunWith;
 import org.powermock.api.easymock.annotation.Mock;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import com.gen4j.chromosome.Chromosome;
+import com.gen4j.chromosome.ChromosomeEncoder;
 import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.fitness.FitnessFunction;
-import com.gen4j.genotype.Genotype;
-import com.gen4j.genotype.GenotypeEncoder;
 import com.gen4j.operator.GeneticOperator;
 import com.gen4j.operator.selection.Selector;
-import com.gen4j.population.Chromosome;
 import com.gen4j.population.Criteria;
+import com.gen4j.population.Individual;
 import com.gen4j.population.Population;
 import com.gen4j.population.PopulationInstantiator;
 
@@ -37,40 +37,40 @@ public class GeneticAlgorithmTest {
     private static final int GENERATIONS_COUNT = 10;
 
     @Mock
-    private Criteria<Genotype> stopCriteria;
+    private Criteria<Chromosome> stopCriteria;
 
     @Mock
-    private FitnessFunction<Genotype> fitnessFunction;
+    private FitnessFunction<Chromosome> fitnessFunction;
 
     @Mock
-    private GenotypeEncoder<Genotype, String> encoder;
+    private ChromosomeEncoder<Chromosome, String> encoder;
 
     @Mock
-    private PopulationInstantiator<Void, Genotype> populationInstantiator;
+    private PopulationInstantiator<Void, Chromosome> populationInstantiator;
 
     @Mock
-    private Population<Genotype> initialPopulation;
+    private Population<Chromosome> initialPopulation;
 
     @Mock
-    private Selector<Genotype> selector;
+    private Selector<Chromosome> selector;
 
     @Mock
-    private GeneticOperator<Genotype> operator;
+    private GeneticOperator<Chromosome> operator;
 
     @Mock
-    private GeneticAlgorithmFactory<Genotype, String, Void> factory;
+    private GeneticAlgorithmFactory<Chromosome, String, Void> factory;
 
     @Mock
-    private Chromosome<Genotype> chromosome1;
+    private Individual<Chromosome> individual1;
     @Mock
-    private Chromosome<Genotype> chromosome2;
+    private Individual<Chromosome> individual2;
 
     @Mock
-    private Genotype genotype1;
+    private Chromosome chromosome1;
     @Mock
-    private Genotype genotype2;
+    private Chromosome chromosome2;
 
-    private GeneticAlgorithm<Genotype, String, Void> subject;
+    private GeneticAlgorithm<Chromosome, String, Void> subject;
 
     @SuppressWarnings("unchecked")
     @Test
@@ -83,7 +83,7 @@ public class GeneticAlgorithmTest {
         expect(factory.populationInstantiator()).andReturn(populationInstantiator);
         final int expectedStopCriteriaCalls = GENERATIONS_COUNT + 1;
         expect(factory.stopCriteria()).andReturn(stopCriteria).times(expectedStopCriteriaCalls);
-        expect(factory.genotypeGenerator()).andReturn(Optional.empty());
+        expect(factory.chromosomeGenerator()).andReturn(Optional.empty());
         expect(stopCriteria.apply(
                 anyObject(Population.class), leq(expectedStopCriteriaCalls)))
         .andAnswer(() -> ((Integer)getCurrentArguments()[1]).intValue() <= expectedStopCriteriaCalls);
@@ -93,12 +93,12 @@ public class GeneticAlgorithmTest {
         expect(operator.chromosomeCount()).andReturn(2).anyTimes();
         selector.population(anyObject(Population.class));
         expectLastCall().anyTimes();
-        expect(selector.select(EasyMock.eq(2))).andReturn(of(chromosome1, chromosome2)).anyTimes();
-        expect(chromosome1.genotype()).andReturn(genotype1).anyTimes();
-        expect(chromosome2.genotype()).andReturn(genotype2).anyTimes();
-        expect(operator.apply(anyObject(Collection.class))).andReturn(of(genotype1, genotype2));
-        expect(genotype1.length()).andReturn(GENOTYPE_LENGHT).anyTimes();
-        expect(genotype2.length()).andReturn(GENOTYPE_LENGHT).anyTimes();
+        expect(selector.select(EasyMock.eq(2))).andReturn(of(individual1, individual2)).anyTimes();
+        expect(individual1.chromosome()).andReturn(chromosome1).anyTimes();
+        expect(individual2.chromosome()).andReturn(chromosome2).anyTimes();
+        expect(operator.apply(anyObject(Collection.class))).andReturn(of(chromosome1, chromosome2));
+        expect(chromosome1.length()).andReturn(GENOTYPE_LENGHT).anyTimes();
+        expect(chromosome2.length()).andReturn(GENOTYPE_LENGHT).anyTimes();
 
         replayAll();
 

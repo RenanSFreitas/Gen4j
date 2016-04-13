@@ -9,11 +9,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Random;
 
-import com.gen4j.genotype.bit.BitSetGenotype;
+import com.gen4j.chromosome.bit.BitChromosome;
 import com.gen4j.operator.GeneticOperator;
 import com.google.common.base.Preconditions;
 
-public final class BitSetCrossOver implements GeneticOperator<BitSetGenotype> {
+public final class BitSetCrossOver implements GeneticOperator<BitChromosome> {
 
     private final Random random = new Random(System.nanoTime());
 
@@ -25,14 +25,14 @@ public final class BitSetCrossOver implements GeneticOperator<BitSetGenotype> {
     }
 
     @Override
-    public Collection<BitSetGenotype> apply(final Collection<BitSetGenotype> genotypes) {
+    public Collection<BitChromosome> apply(final Collection<BitChromosome> chromosomes) {
 
-        Preconditions.checkArgument(genotypes.size() == 2);
-        final Iterator<BitSetGenotype> iterator = genotypes.iterator();
+        Preconditions.checkArgument(chromosomes.size() == 2);
+        final Iterator<BitChromosome> iterator = chromosomes.iterator();
         return apply(iterator.next(), iterator.next());
     }
 
-    private Collection<BitSetGenotype> apply(final BitSetGenotype g1, final BitSetGenotype g2) {
+    private Collection<BitChromosome> apply(final BitChromosome g1, final BitChromosome g2) {
 
         final int length = g1.length();
         checkArgument(length == g2.length(), "Genotypes must have the same size");
@@ -40,12 +40,12 @@ public final class BitSetCrossOver implements GeneticOperator<BitSetGenotype> {
         // TODO maybe it will be good to generated a batch of random ints
         // and generated them again when the batch is out of new ints
         final int crossOverPoint = random.nextInt(length);
-        final BitSetGenotype offspring1 = new BitSetGenotype(cross(crossOverPoint, g1, g2), length);
-        final BitSetGenotype offspring2 = new BitSetGenotype(cross(crossOverPoint, g2, g1), length);
+        final BitChromosome offspring1 = new BitChromosome(cross(crossOverPoint, g1, g2), length);
+        final BitChromosome offspring2 = new BitChromosome(cross(crossOverPoint, g2, g1), length);
         return unmodifiableList(asList(offspring1, offspring2));
     }
 
-    private BitSet cross(final int crossOverPoint, final BitSetGenotype g1, final BitSetGenotype g2) {
+    private BitSet cross(final int crossOverPoint, final BitChromosome g1, final BitChromosome g2) {
         final int length = g1.length();
         final BitSet bitSet = new BitSet(length);
         for (int i = 0; i < crossOverPoint; i++) {

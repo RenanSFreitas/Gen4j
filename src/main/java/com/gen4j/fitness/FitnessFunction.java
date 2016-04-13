@@ -1,9 +1,9 @@
 package com.gen4j.fitness;
 
-import com.gen4j.genotype.Genotype;
+import com.gen4j.chromosome.Chromosome;
 
 //TODO add an unbounded type parameter to serve as an optional argument
-public interface FitnessFunction<G extends Genotype> {
+public interface FitnessFunction<G extends Chromosome> {
 
-    double evaluate(G genotype);
+    double evaluate(G chromosome);
 }

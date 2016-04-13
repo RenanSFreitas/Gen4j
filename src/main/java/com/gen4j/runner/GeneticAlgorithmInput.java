@@ -1,10 +1,10 @@
 package com.gen4j.runner;
 
+import com.gen4j.chromosome.Chromosome;
 import com.gen4j.fitness.FitnessFunction;
-import com.gen4j.genotype.Genotype;
 import com.gen4j.population.Criteria;
 
-public interface GeneticAlgorithmInput<G extends Genotype> {
+public interface GeneticAlgorithmInput<G extends Chromosome> {
 
     Criteria<G> stopCriteria();
 

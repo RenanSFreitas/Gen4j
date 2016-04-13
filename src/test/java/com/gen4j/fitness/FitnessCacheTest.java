@@ -12,18 +12,18 @@ import org.junit.runner.RunWith;
 import org.powermock.api.easymock.annotation.Mock;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import com.gen4j.genotype.Genotype;
+import com.gen4j.chromosome.Chromosome;
 
 @RunWith(PowerMockRunner.class)
 public class FitnessCacheTest {
 
-    private FitnessCache<Genotype> subject;
+    private FitnessCache<Chromosome> subject;
 
     @Mock
-    private FitnessFunction<Genotype> fitnessFunction;
+    private FitnessFunction<Chromosome> fitnessFunction;
 
     @Mock
-    private Genotype genotype;
+    private Chromosome chromosome;
 
     @Before
     public void setUp() {
@@ -37,12 +37,12 @@ public class FitnessCacheTest {
         final int missCount = 1;
 
         reset(fitnessFunction);
-        expect(fitnessFunction.evaluate(eq(genotype))).andReturn(fitnessValue).times(missCount);
+        expect(fitnessFunction.evaluate(eq(chromosome))).andReturn(fitnessValue).times(missCount);
         replay(fitnessFunction);
 
-        assertEquals(fitnessValue, subject.evaluate(genotype), 0);
-        assertEquals(fitnessValue, subject.evaluate(genotype), 0);
-        assertEquals(fitnessValue, subject.evaluate(genotype), 0);
+        assertEquals(fitnessValue, subject.evaluate(chromosome), 0);
+        assertEquals(fitnessValue, subject.evaluate(chromosome), 0);
+        assertEquals(fitnessValue, subject.evaluate(chromosome), 0);
     }
 
 }

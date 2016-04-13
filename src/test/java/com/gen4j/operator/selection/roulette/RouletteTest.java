@@ -22,8 +22,8 @@ import org.powermock.api.easymock.annotation.Mock;
 import org.powermock.api.support.membermodification.MemberModifier;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import com.gen4j.genotype.Genotype;
-import com.gen4j.population.Chromosome;
+import com.gen4j.chromosome.Chromosome;
+import com.gen4j.population.Individual;
 import com.gen4j.population.Population;
 import com.gen4j.population.generic.GenericPopulation;
 import com.gen4j.utils.Pair;
@@ -48,18 +48,18 @@ public class RouletteTest {
     private ExpectedException expectedException;
 
     @Mock
-    private Chromosome<Genotype> chromosome1;
+    private Individual<Chromosome> chromosome1;
     @Mock
-    private Chromosome<Genotype> chromosome2;
+    private Individual<Chromosome> chromosome2;
     @Mock
-    private Chromosome<Genotype> chromosome3;
+    private Individual<Chromosome> chromosome3;
 
     @Mock("nextDouble")
     private Random random;
 
-    private Set<Chromosome<Genotype>> chromosomes;
+    private Set<Individual<Chromosome>> chromosomes;
 
-    private Roulette<Genotype> subject;
+    private Roulette<Chromosome> subject;
 
     @Before
     public void setup() {
@@ -73,7 +73,7 @@ public class RouletteTest {
         expect(chromosome3.fitness()).andReturn(FITNESS_3).anyTimes();
     }
 
-    private List<Pair<Chromosome<Genotype>, Double>> createRouletteList() {
+    private List<Pair<Individual<Chromosome>, Double>> createRouletteList() {
         return asList(
                 Pair.of(chromosome3, RELATIVE_FITNESS_3),
                 Pair.of(chromosome1, RELATIVE_FITNESS_1),
@@ -81,7 +81,7 @@ public class RouletteTest {
     }
 
     @SuppressWarnings("unchecked")
-    private List<Chromosome<Genotype>> expectedSortedChrosomes() {
+    private List<Individual<Chromosome>> expectedSortedChrosomes() {
         return Lists.newArrayList(chromosome1, chromosome2, chromosome3);
     }
 
@@ -89,7 +89,7 @@ public class RouletteTest {
     public void testCreation() throws Exception {
         resetAll();
         createChromosomeExpectations();
-        final List<Pair<Chromosome<Genotype>, Double>> rouletteList = createRouletteList();
+        final List<Pair<Individual<Chromosome>, Double>> rouletteList = createRouletteList();
         expectNew(Roulette.class, rouletteList).andThrow(new Exception());
         expectedException.expect(Exception.class);
         replayAll();
@@ -97,8 +97,8 @@ public class RouletteTest {
         subject = Roulette.of(population());
     }
 
-    private Population<Genotype> population() {
-        final Population<Genotype> population = new GenericPopulation<>(chromosomes.size());
+    private Population<Chromosome> population() {
+        final Population<Chromosome> population = new GenericPopulation<>(chromosomes.size());
         chromosomes.forEach(c -> population.add(c));
         return population;
     }

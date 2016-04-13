@@ -6,14 +6,14 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.NavigableMap;
 
-import com.gen4j.genotype.Genotype;
+import com.gen4j.chromosome.Chromosome;
 import com.google.common.collect.Iterators;
 
-public final class ImmutablePopulation<G extends Genotype> implements Population<G> {
+public final class ImmutablePopulation<G extends Chromosome> implements Population<G> {
 
     private final Population<G> delegate;
 
-    public static <G extends Genotype> Population<G> of(final Population<G> population) {
+    public static <G extends Chromosome> Population<G> of(final Population<G> population) {
 
         if (population instanceof ImmutablePopulation) {
             return population;
@@ -27,17 +27,17 @@ public final class ImmutablePopulation<G extends Genotype> implements Population
     }
 
     @Override
-    public boolean add(final Chromosome<G> chromosome) {
+    public boolean add(final Individual<G> chromosome) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean addAll(final Collection<Chromosome<G>> chromosomes) {
+    public boolean addAll(final Collection<Individual<G>> chromosomes) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean remove(final Chromosome<G> chromosome) {
+    public boolean remove(final Individual<G> chromosome) {
         throw new UnsupportedOperationException();
     }
 
@@ -52,7 +52,7 @@ public final class ImmutablePopulation<G extends Genotype> implements Population
     }
 
     @Override
-    public NavigableMap<Chromosome<G>, Double> fitness() {
+    public NavigableMap<Individual<G>, Double> fitness() {
         return delegate.fitness();
     }
 
@@ -62,12 +62,12 @@ public final class ImmutablePopulation<G extends Genotype> implements Population
     }
 
     @Override
-    public Iterator<Chromosome<G>> iterator() {
+    public Iterator<Individual<G>> iterator() {
         return Iterators.unmodifiableIterator(delegate.iterator());
     }
 
     @Override
-    public Chromosome<G> fittest() {
+    public Individual<G> fittest() {
         return delegate.fittest();
     }
 }

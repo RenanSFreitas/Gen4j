@@ -4,13 +4,13 @@ import static java.util.Collections.singletonList;
 
 import java.util.List;
 
-import com.gen4j.genotype.Genotype;
-import com.gen4j.population.Chromosome;
+import com.gen4j.chromosome.Chromosome;
+import com.gen4j.population.Individual;
 
-public final class BestFitnessSelector<G extends Genotype> extends AbstractSelector<G> {
+public final class BestFitnessSelector<G extends Chromosome> extends AbstractSelector<G> {
 
     @Override
-    public List<Chromosome<G>> select(final int count) {
+    public List<Individual<G>> select(final int count) {
         return singletonList(population().fittest());
     }
 

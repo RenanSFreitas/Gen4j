@@ -7,11 +7,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Random;
 
-import com.gen4j.genotype.bit.BitSetGenotype;
+import com.gen4j.chromosome.bit.BitChromosome;
 import com.gen4j.operator.GeneticOperator;
 import com.google.common.base.Preconditions;
 
-public final class BitSetMutation implements GeneticOperator<BitSetGenotype> {
+public final class BitSetMutation implements GeneticOperator<BitChromosome> {
 
     private final Random random = new Random(System.nanoTime());
 
@@ -23,9 +23,9 @@ public final class BitSetMutation implements GeneticOperator<BitSetGenotype> {
     }
 
     @Override
-    public Collection<BitSetGenotype> apply(final Collection<BitSetGenotype> genotypes) {
+    public Collection<BitChromosome> apply(final Collection<BitChromosome> chromosomes) {
 
-        final BitSetGenotype mutant = new BitSetGenotype(getOnlyElement(genotypes));
+        final BitChromosome mutant = new BitChromosome(getOnlyElement(chromosomes));
         final BitSet bits = mutant.value();
         bits.flip(random.nextInt(mutant.length()));
         return Collections.singletonList(mutant);

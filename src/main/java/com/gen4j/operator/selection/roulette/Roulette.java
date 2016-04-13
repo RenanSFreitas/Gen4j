@@ -7,20 +7,20 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Random;
 
-import com.gen4j.genotype.Genotype;
-import com.gen4j.population.Chromosome;
+import com.gen4j.chromosome.Chromosome;
+import com.gen4j.population.Individual;
 import com.gen4j.population.Population;
 import com.gen4j.utils.Pair;
 
-final class Roulette<G extends Genotype> {
+final class Roulette<G extends Chromosome> {
 
     private final Random random = new Random(System.nanoTime());
 
-    private final List<Pair<Chromosome<G>, Double>> roulette;
+    private final List<Pair<Individual<G>, Double>> roulette;
 
-    static <G extends Genotype> Roulette<G> of(final Population<G> population) {
+    static <G extends Chromosome> Roulette<G> of(final Population<G> population) {
 
-        final NavigableMap<Chromosome<G>, Double> populationFitness = population.fitness();
+        final NavigableMap<Individual<G>, Double> populationFitness = population.fitness();
 
         final double minimum = populationFitness.firstKey().fitness();
 
@@ -33,10 +33,10 @@ final class Roulette<G extends Genotype> {
                 .sum();
 
 
-        final List<Pair<Chromosome<G>, Double>> roulette = new ArrayList<>(population.size());
+        final List<Pair<Individual<G>, Double>> roulette = new ArrayList<>(population.size());
 
         double accumulatedFitness = 0d;
-        for (final Map.Entry<Chromosome<G>, Double> fitness : populationFitness.descendingMap().entrySet()) {
+        for (final Map.Entry<Individual<G>, Double> fitness : populationFitness.descendingMap().entrySet()) {
             // sums currrent relative fitness (displaced)
             accumulatedFitness += (fitness.getValue() + displacement) / totalFitness;
             roulette.add(Pair.of(fitness.getKey(), accumulatedFitness));
@@ -45,14 +45,14 @@ final class Roulette<G extends Genotype> {
         return new Roulette<>(roulette);
     }
 
-    private Roulette(final List<Pair<Chromosome<G>, Double>> roulette) {
+    private Roulette(final List<Pair<Individual<G>, Double>> roulette) {
         this.roulette = roulette;
     }
 
-    private Chromosome<G> sortChromosome(final double relativeFitness) {
+    private Individual<G> sortChromosome(final double relativeFitness) {
 
-        Pair<Chromosome<G>, Double> previous = null;
-        for (final Pair<Chromosome<G>, Double> current : roulette) {
+        Pair<Individual<G>, Double> previous = null;
+        for (final Pair<Individual<G>, Double> current : roulette) {
             // compare chromosome relative fitness with the given one
             if (current.second() > relativeFitness) {
                 return current.first();
@@ -63,8 +63,8 @@ final class Roulette<G extends Genotype> {
         return previous.first();
     }
 
-    List<Chromosome<G>> sortChromosomes(final int count) {
-        final List<Chromosome<G>> chromosomes = new ArrayList<>(count);
+    List<Individual<G>> sortChromosomes(final int count) {
+        final List<Individual<G>> chromosomes = new ArrayList<>(count);
         for( int i = 0; i < count; i++ ) {
             chromosomes.add(sortChromosome(random.nextDouble()));
         }

@@ -20,11 +20,11 @@ import org.powermock.api.support.membermodification.MemberModifier;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import com.gen4j.genotype.bit.BitSetGenotype;
+import com.gen4j.chromosome.bit.BitChromosome;
 import com.gen4j.utils.BitSets;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BitSetMutation.class, BitSetGenotype.class })
+@PrepareForTest({ BitSetMutation.class, BitChromosome.class })
 public class BitSetMutationTest {
 
 
@@ -36,10 +36,10 @@ public class BitSetMutationTest {
     private Random random;
 
     @Mock
-    private BitSetGenotype genotype;
+    private BitChromosome chromosome;
 
     private static final String GENOTYPE_BITS = "00101011";
-    private BitSet genotypeBits;
+    private BitSet chromosomeBits;
 
     @TestSubject
     private BitSetMutation subject;
@@ -49,22 +49,22 @@ public class BitSetMutationTest {
         subject = new BitSetMutation();
         MemberModifier.field(BitSetMutation.class, "random").set(subject, random);
 
-        genotypeBits = BitSets.fromString(GENOTYPE_BITS);
+        chromosomeBits = BitSets.fromString(GENOTYPE_BITS);
     }
 
     @Test
     public void testMutation() {
-        reset(random, genotype);
+        reset(random, chromosome);
 
-        expect(genotype.length()).andReturn(GENOTYPE_LENGTH);
+        expect(chromosome.length()).andReturn(GENOTYPE_LENGTH);
 
-        expect(genotype.value()).andReturn(genotypeBits).times(2);
+        expect(chromosome.value()).andReturn(chromosomeBits).times(2);
 
         expect(random.nextInt(eq(GENOTYPE_LENGTH))).andReturn(MUTANT_BIT);
 
-        replay(random, genotype);
+        replay(random, chromosome);
 
-        final BitSetGenotype mutant = getOnlyElement(subject.apply(singleton(genotype)));
+        final BitChromosome mutant = getOnlyElement(subject.apply(singleton(chromosome)));
 
         assertEquals(MUTANT_BIT_VALUE, mutant.value().get(MUTANT_BIT));
     }

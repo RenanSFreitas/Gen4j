@@ -21,11 +21,11 @@ import org.powermock.api.support.membermodification.MemberModifier;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import com.gen4j.genotype.bit.BitSetGenotype;
+import com.gen4j.chromosome.bit.BitChromosome;
 import com.gen4j.utils.BitSets;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BitSetCrossOver.class, BitSetGenotype.class })
+@PrepareForTest({ BitSetCrossOver.class, BitChromosome.class })
 public class BitSetCrossOverTest {
 
     private final int GENOTYPE_LENGTH = 8;
@@ -35,9 +35,9 @@ public class BitSetCrossOverTest {
     private Random random;
 
     @Mock
-    private BitSetGenotype firstParent;
+    private BitChromosome firstParent;
     @Mock
-    private BitSetGenotype secondParent;
+    private BitChromosome secondParent;
 
     @Mock
     private BitSet firstParentBits;
@@ -78,7 +78,7 @@ public class BitSetCrossOverTest {
 
         replay(random, firstParent, secondParent, firstParentBits, secondParentBits);
 
-        final Iterator<BitSetGenotype> actual = subject.apply(Arrays.asList(firstParent, secondParent)).iterator();
+        final Iterator<BitChromosome> actual = subject.apply(Arrays.asList(firstParent, secondParent)).iterator();
 
         assertEquals(firstOffspring, BitSets.toString(actual.next().value(), GENOTYPE_LENGTH));
         assertEquals(secondOffspring, BitSets.toString(actual.next().value(), GENOTYPE_LENGTH));

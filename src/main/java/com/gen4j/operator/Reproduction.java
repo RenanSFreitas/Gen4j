@@ -4,10 +4,10 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.Collection;
 
-import com.gen4j.genotype.Genotype;
+import com.gen4j.chromosome.Chromosome;
 import com.google.common.base.Preconditions;
 
-public final class Reproduction<G extends Genotype> implements GeneticOperator<G> {
+public final class Reproduction<G extends Chromosome> implements GeneticOperator<G> {
 
     private static final int CHROMOSOME_COUNT = 1;
     private double probability = 1d;
@@ -24,9 +24,9 @@ public final class Reproduction<G extends Genotype> implements GeneticOperator<G
     }
 
     @Override
-    public Collection<G> apply(final Collection<G> genotypes) {
-        checkArgument(genotypes.size() == CHROMOSOME_COUNT);
-        return genotypes;
+    public Collection<G> apply(final Collection<G> chromosomes) {
+        checkArgument(chromosomes.size() == CHROMOSOME_COUNT);
+        return chromosomes;
     }
 
     @Override

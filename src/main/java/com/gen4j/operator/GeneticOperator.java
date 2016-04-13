@@ -8,7 +8,7 @@ public interface GeneticOperator<G> {
 
     void probability(double probability);
 
-    Collection<G> apply(Collection<G> genotypes);
+    Collection<G> apply(Collection<G> chromosomes);
 
     int chromosomeCount();
 }

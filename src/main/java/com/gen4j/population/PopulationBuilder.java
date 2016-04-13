@@ -9,25 +9,25 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import com.gen4j.chromosome.Chromosome;
 import com.gen4j.factory.GeneticAlgorithmFactory;
-import com.gen4j.genotype.Genotype;
-import com.gen4j.population.generic.GenericChromosome;
+import com.gen4j.population.generic.GenericIndividual;
 
-public final class PopulationBuilder<G extends Genotype, V, P>
+public final class PopulationBuilder<G extends Chromosome, V, P>
 {
     private int size;
     private int chromosomeLength;
 
     private final GeneticAlgorithmFactory<G, V, P> factory;
     private Optional<P> populationInstantiatorParameter = Optional.empty();
-    private Collection<Chromosome<G>> initialChromosomes = Collections.emptyList();
+    private Collection<Individual<G>> initialChromosomes = Collections.emptyList();
 
     private PopulationBuilder(final GeneticAlgorithmFactory<G, V, P> factory)
     {
         this.factory = requireNonNull(factory);
     }
 
-    public static <G extends Genotype, V, P> PopulationBuilder<G, V, P> of(
+    public static <G extends Chromosome, V, P> PopulationBuilder<G, V, P> of(
             final GeneticAlgorithmFactory<G, V, P> factory) {
         return new PopulationBuilder<>(factory);
     }
@@ -44,13 +44,13 @@ public final class PopulationBuilder<G extends Genotype, V, P>
         return this;
     }
 
-    public PopulationBuilder<G, V, P> genotypeLength(final int length)
+    public PopulationBuilder<G, V, P> chromosomeLength(final int length)
     {
         this.chromosomeLength = length;
         return this;
     }
 
-    public PopulationBuilder<G, V, P> initialChromosomes(final Collection<Chromosome<G>> chromosomes) {
+    public PopulationBuilder<G, V, P> initialChromosomes(final Collection<Individual<G>> chromosomes) {
         initialChromosomes = chromosomes;
         return this;
     }
@@ -62,7 +62,7 @@ public final class PopulationBuilder<G extends Genotype, V, P>
         population.addAll(initialChromosomes);
         for (int i = population.size(); i < size; i++)
         {
-            final boolean added = population.add(new GenericChromosome<>(newGenotype(), factory.fitnessFunction()));
+            final boolean added = population.add(new GenericIndividual<>(newGenotype(), factory.fitnessFunction()));
 
             if (!added) {
                 i--;
@@ -73,7 +73,7 @@ public final class PopulationBuilder<G extends Genotype, V, P>
 
     private G newGenotype()
     {
-        return factory.genotypeGenerator().get().generate(chromosomeLength);
+        return factory.chromosomeGenerator().get().generate(chromosomeLength);
     }
 
     private Population<G> newPopulationInstance()
@@ -100,7 +100,7 @@ public final class PopulationBuilder<G extends Genotype, V, P>
 
     private void checkInitialChromosomesAndGenotypeGenerator(final List<String> errorMessages) {
 
-        if (factory.genotypeGenerator().isPresent()) {
+        if (factory.chromosomeGenerator().isPresent()) {
             return;
         }
 

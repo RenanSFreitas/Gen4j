@@ -9,22 +9,22 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
+import com.gen4j.chromosome.Chromosome;
 import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.fitness.FitnessFunction;
-import com.gen4j.genotype.Genotype;
 import com.gen4j.operator.GeneticOperator;
 import com.gen4j.operator.selection.Selector;
-import com.gen4j.population.Chromosome;
+import com.gen4j.population.Individual;
 import com.gen4j.population.ImmutablePopulation;
 import com.gen4j.population.Population;
 import com.gen4j.population.PopulationBuilder;
-import com.gen4j.population.generic.GenericChromosome;
+import com.gen4j.population.generic.GenericIndividual;
 import com.gen4j.utils.Pair;
 
 //TODO: tests for invalid stuff
 //TODO: refactor the operators stuff
 //TODO: stuff
-public class GeneticAlgorithm<G extends Genotype, V, P> implements com.gen4j.runner.GeneticAlgorithm<G, V, P> {
+public class GeneticAlgorithm<G extends Chromosome, V, P> implements com.gen4j.runner.GeneticAlgorithm<G, V, P> {
 
     private final List<Pair<GeneticOperator<G>, Selector<G>>> operators = new ArrayList<>();
     private final Random random = new Random(System.nanoTime());
@@ -56,7 +56,7 @@ public class GeneticAlgorithm<G extends Genotype, V, P> implements com.gen4j.run
 
         prepareSelectors(population);
 
-        final Collection<Chromosome<G>> generated = new ArrayList<>();
+        final Collection<Individual<G>> generated = new ArrayList<>();
 
         while(generated.size() < population.size() )
         {
@@ -64,7 +64,7 @@ public class GeneticAlgorithm<G extends Genotype, V, P> implements com.gen4j.run
         }
 
         final Population<G> newPopulation = PopulationBuilder.of(factory)
-                .genotypeLength(getFirst(population, null).genotype().length())
+                .chromosomeLength(getFirst(population, null).chromosome().length())
                 .initialChromosomes(generated)
                 .size(population.size())
                 .build();
@@ -78,7 +78,7 @@ public class GeneticAlgorithm<G extends Genotype, V, P> implements com.gen4j.run
         }
     }
 
-    private void addGeneratedChromosomes(final Population<G> population, final Collection<Chromosome<G>> generated,
+    private void addGeneratedChromosomes(final Population<G> population, final Collection<Individual<G>> generated,
             final FitnessFunction<G> fitnessFunction) {
 
         for (final Pair<GeneticOperator<G>, Selector<G>> pair : operators) {
@@ -88,9 +88,9 @@ public class GeneticAlgorithm<G extends Genotype, V, P> implements com.gen4j.run
                 // Select and collect generic material
                 final Collection<G> selected = transform(
                         selector.select(operator.chromosomeCount()),
-                        c -> c.genotype());
+                        c -> c.chromosome());
 
-                generated.addAll(transform(operator.apply(selected), g -> new GenericChromosome<>(g, fitnessFunction)));
+                generated.addAll(transform(operator.apply(selected), g -> new GenericIndividual<>(g, fitnessFunction)));
             }
         }
     }

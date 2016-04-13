@@ -1,4 +1,4 @@
-package com.gen4j.genotype.bit;
+package com.gen4j.chromosome.bit;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -8,13 +8,13 @@ import java.util.BitSet;
 import java.util.List;
 import java.util.Set;
 
-import com.gen4j.genotype.GenotypeEncoder;
+import com.gen4j.chromosome.ChromosomeEncoder;
 import com.gen4j.phenotype.Phenotype;
 import com.gen4j.phenotype.bit.BitSetPhenotype;
 import com.google.common.collect.ImmutableList;
 import com.google.common.math.IntMath;
 
-public class BitSetGenotypeEncoder implements GenotypeEncoder<BitSetGenotype, String> {
+public class BitChromosomeEncoder implements ChromosomeEncoder<BitChromosome, String> {
 
     private static final int DEFAULT_PRECISION = 6;
 
@@ -30,11 +30,11 @@ public class BitSetGenotypeEncoder implements GenotypeEncoder<BitSetGenotype, St
     private final double twoPowNBits;
 
 
-    public BitSetGenotypeEncoder(final Set<String> identifiers, final int lowerBound, final int upperBound) {
+    public BitChromosomeEncoder(final Set<String> identifiers, final int lowerBound, final int upperBound) {
         this(identifiers, lowerBound, upperBound, DEFAULT_PRECISION);
     }
 
-    public BitSetGenotypeEncoder(
+    public BitChromosomeEncoder(
             final Set<String> identifiers,
             final int lowerBound, final int upperBound,
             final int precision) {
@@ -53,10 +53,10 @@ public class BitSetGenotypeEncoder implements GenotypeEncoder<BitSetGenotype, St
     }
 
     @Override
-    public Phenotype<String> decode(final BitSetGenotype genotype) {
+    public Phenotype<String> decode(final BitChromosome chromosome) {
 
         final Phenotype<String> phenotype = new BitSetPhenotype();
-        final BitSet bits = genotype.value();
+        final BitSet bits = chromosome.value();
 
         int offset = 0;
         int counter = 1;
@@ -76,7 +76,7 @@ public class BitSetGenotypeEncoder implements GenotypeEncoder<BitSetGenotype, St
     }
 
     @Override
-    public BitSetGenotype encode(final Phenotype<String> phenotype) {
+    public BitChromosome encode(final Phenotype<String> phenotype) {
         final BitSet bits = new BitSet();
         int offset = 0;
         for (final String identifier : identifiers) {
@@ -94,7 +94,7 @@ public class BitSetGenotypeEncoder implements GenotypeEncoder<BitSetGenotype, St
             offset += nbits;
         }
 
-        return new BitSetGenotype(bits, nbits);
+        return new BitChromosome(bits, nbits);
     }
 
 }

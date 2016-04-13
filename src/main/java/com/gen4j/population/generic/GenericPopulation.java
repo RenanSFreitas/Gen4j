@@ -13,15 +13,15 @@ import java.util.NavigableMap;
 import java.util.Optional;
 import java.util.TreeMap;
 
-import com.gen4j.genotype.Genotype;
-import com.gen4j.population.Chromosome;
+import com.gen4j.chromosome.Chromosome;
+import com.gen4j.population.Individual;
 import com.gen4j.population.Population;
 import com.gen4j.population.PopulationInstantiator;
 
 //TODO junit
-public class GenericPopulation<G extends Genotype> implements Population<G>
+public class GenericPopulation<G extends Chromosome> implements Population<G>
 {
-    private static class GenericPopulationInstatiator<G extends Genotype>
+    private static class GenericPopulationInstatiator<G extends Chromosome>
             implements PopulationInstantiator<Integer, G> {
 
         @Override
@@ -30,13 +30,13 @@ public class GenericPopulation<G extends Genotype> implements Population<G>
         }
     }
 
-    public static <G extends Genotype> PopulationInstantiator<Integer, G> intantiator() {
+    public static <G extends Chromosome> PopulationInstantiator<Integer, G> intantiator() {
         return new GenericPopulationInstatiator<>();
     }
 
-    private final List<Chromosome<G>> chromosomes;
-    private final Comparator<? super Chromosome<G>> fitnessComparator = (c1, c2) -> compare(c1.fitness(), c2.fitness());
-    private NavigableMap<Chromosome<G>, Double> populationFitness;
+    private final List<Individual<G>> chromosomes;
+    private final Comparator<? super Individual<G>> fitnessComparator = (c1, c2) -> compare(c1.fitness(), c2.fitness());
+    private NavigableMap<Individual<G>, Double> populationFitness;
 
     public GenericPopulation(final int size)
     {
@@ -45,17 +45,17 @@ public class GenericPopulation<G extends Genotype> implements Population<G>
     }
 
     @Override
-    public boolean add(final Chromosome<G> chromosome) {
+    public boolean add(final Individual<G> chromosome) {
         return chromosomes.add(chromosome);
     }
 
     @Override
-    public boolean addAll(final Collection<Chromosome<G>> chromosomes) {
+    public boolean addAll(final Collection<Individual<G>> chromosomes) {
         return this.chromosomes.addAll(chromosomes);
     }
 
     @Override
-    public boolean remove(final Chromosome<G> chromosome) {
+    public boolean remove(final Individual<G> chromosome) {
         return chromosomes.remove(chromosome);
     }
 
@@ -70,12 +70,12 @@ public class GenericPopulation<G extends Genotype> implements Population<G>
     }
 
     @Override
-    public Iterator<Chromosome<G>> iterator() {
+    public Iterator<Individual<G>> iterator() {
         return chromosomes.iterator();
     }
 
     @Override
-    public NavigableMap<Chromosome<G>, Double> fitness() {
+    public NavigableMap<Individual<G>, Double> fitness() {
         if (populationFitness == null) {
             populationFitness = new TreeMap<>(fitnessComparator);
             chromosomes.forEach(c -> populationFitness.put(c, c.fitness()));
@@ -89,7 +89,7 @@ public class GenericPopulation<G extends Genotype> implements Population<G>
     }
 
     @Override
-    public Chromosome<G> fittest() {
+    public Individual<G> fittest() {
         return fitness().lastKey();
     }
 }
