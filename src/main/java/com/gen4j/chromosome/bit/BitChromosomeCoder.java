@@ -8,17 +8,13 @@ import java.util.BitSet;
 import java.util.List;
 import java.util.Set;
 
-import com.gen4j.chromosome.ChromosomeEncoder;
+import com.gen4j.chromosome.ChromosomeCoder;
 import com.gen4j.phenotype.Phenotype;
 import com.gen4j.phenotype.bit.BitSetPhenotype;
 import com.google.common.collect.ImmutableList;
 import com.google.common.math.IntMath;
 
-public class BitChromosomeEncoder implements ChromosomeEncoder<BitChromosome, String> {
-
-    private static final int DEFAULT_PRECISION = 6;
-
-    private final int nbits;
+public class BitChromosomeCoder implements ChromosomeCoder<BitChromosome, String> {
 
     private final int precisionValue;
 
@@ -27,14 +23,12 @@ public class BitChromosomeEncoder implements ChromosomeEncoder<BitChromosome, St
 
     private final List<String> identifiers;
 
+    private final int nbits;
     private final double twoPowNBits;
 
+    private final int chromosomeLength;
 
-    public BitChromosomeEncoder(final Set<String> identifiers, final int lowerBound, final int upperBound) {
-        this(identifiers, lowerBound, upperBound, DEFAULT_PRECISION);
-    }
-
-    public BitChromosomeEncoder(
+    public BitChromosomeCoder(
             final Set<String> identifiers,
             final int lowerBound, final int upperBound,
             final int precision) {
@@ -44,12 +38,18 @@ public class BitChromosomeEncoder implements ChromosomeEncoder<BitChromosome, St
         this.lowerBound = lowerBound;
         domainLength = upperBound - lowerBound;
         nbits = IntMath.log2(domainLength * precisionValue, RoundingMode.CEILING);
-        this.identifiers = ImmutableList.copyOf(checkNotNull(identifiers));
         twoPowNBits = Math.pow(2, nbits);
+        this.identifiers = ImmutableList.copyOf(checkNotNull(identifiers));
+        chromosomeLength = nbits * identifiers.size();
     }
 
     public int getNbits() {
         return nbits;
+    }
+
+    @Override
+    public int chromosomeLength() {
+        return chromosomeLength;
     }
 
     @Override

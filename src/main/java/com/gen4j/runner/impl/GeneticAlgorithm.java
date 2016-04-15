@@ -2,7 +2,6 @@ package com.gen4j.runner.impl;
 
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Collections2.transform;
-import static com.google.common.collect.Iterables.getFirst;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,8 +13,8 @@ import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.fitness.FitnessFunction;
 import com.gen4j.operator.GeneticOperator;
 import com.gen4j.operator.selection.Selector;
-import com.gen4j.population.Individual;
 import com.gen4j.population.ImmutablePopulation;
+import com.gen4j.population.Individual;
 import com.gen4j.population.Population;
 import com.gen4j.population.PopulationBuilder;
 import com.gen4j.population.generic.GenericIndividual;
@@ -64,7 +63,6 @@ public class GeneticAlgorithm<G extends Chromosome, V, P> implements com.gen4j.r
         }
 
         final Population<G> newPopulation = PopulationBuilder.of(factory)
-                .chromosomeLength(getFirst(population, null).chromosome().length())
                 .initialChromosomes(generated)
                 .size(population.size())
                 .build();

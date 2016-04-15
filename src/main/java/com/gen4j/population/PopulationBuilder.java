@@ -16,11 +16,12 @@ import com.gen4j.population.generic.GenericIndividual;
 public final class PopulationBuilder<G extends Chromosome, V, P>
 {
     private int size;
-    private int chromosomeLength;
 
     private final GeneticAlgorithmFactory<G, V, P> factory;
     private Optional<P> populationInstantiatorParameter = Optional.empty();
     private Collection<Individual<G>> initialChromosomes = Collections.emptyList();
+
+    private int chromosomeLength;
 
     private PopulationBuilder(final GeneticAlgorithmFactory<G, V, P> factory)
     {
@@ -44,12 +45,6 @@ public final class PopulationBuilder<G extends Chromosome, V, P>
         return this;
     }
 
-    public PopulationBuilder<G, V, P> chromosomeLength(final int length)
-    {
-        this.chromosomeLength = length;
-        return this;
-    }
-
     public PopulationBuilder<G, V, P> initialChromosomes(final Collection<Individual<G>> chromosomes) {
         initialChromosomes = chromosomes;
         return this;
@@ -60,6 +55,7 @@ public final class PopulationBuilder<G extends Chromosome, V, P>
         checkState();
         final Population<G> population = newPopulationInstance();
         population.addAll(initialChromosomes);
+        chromosomeLength = factory.coder().chromosomeLength();
         for (int i = population.size(); i < size; i++)
         {
             final boolean added = population.add(new GenericIndividual<>(newGenotype(), factory.fitnessFunction()));
@@ -94,7 +90,8 @@ public final class PopulationBuilder<G extends Chromosome, V, P>
     private void checkState(final List<String> errorMessages)
     {
         check(size > 0, "Population size should be greater than zero.", errorMessages);
-        check(chromosomeLength > 0, "Chromosome length should be greater than zero.", errorMessages);
+        check(factory.coder().chromosomeLength() > 0, "Chromosome length should be greater than zero.", errorMessages);
+
         checkInitialChromosomesAndGenotypeGenerator(errorMessages);
     }
 

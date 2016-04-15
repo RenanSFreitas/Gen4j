@@ -19,7 +19,7 @@ import org.powermock.api.easymock.annotation.Mock;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.gen4j.chromosome.Chromosome;
-import com.gen4j.chromosome.ChromosomeEncoder;
+import com.gen4j.chromosome.ChromosomeCoder;
 import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.fitness.FitnessFunction;
 import com.gen4j.operator.GeneticOperator;
@@ -43,7 +43,7 @@ public class GeneticAlgorithmTest {
     private FitnessFunction<Chromosome> fitnessFunction;
 
     @Mock
-    private ChromosomeEncoder<Chromosome, String> encoder;
+    private ChromosomeCoder<Chromosome, String> coder;
 
     @Mock
     private PopulationInstantiator<Void, Chromosome> populationInstantiator;
@@ -78,7 +78,7 @@ public class GeneticAlgorithmTest {
 
         resetAll();
 
-        expect(factory.encoder()).andReturn(encoder);
+        expect(factory.coder()).andReturn(coder);
         expect(factory.fitnessFunction()).andReturn(fitnessFunction).anyTimes();
         expect(factory.populationInstantiator()).andReturn(populationInstantiator);
         final int expectedStopCriteriaCalls = GENERATIONS_COUNT + 1;

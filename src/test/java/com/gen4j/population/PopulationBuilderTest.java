@@ -18,6 +18,7 @@ import org.powermock.api.easymock.annotation.Mock;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.gen4j.chromosome.Chromosome;
+import com.gen4j.chromosome.ChromosomeCoder;
 import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.fitness.FitnessFunction;
 import com.gen4j.population.generator.ChromosomeGenerator;
@@ -49,6 +50,9 @@ public class PopulationBuilderTest
     @Mock
     private Chromosome chromosome;
 
+    @Mock
+    private ChromosomeCoder<Chromosome, String> coder;
+
     private PopulationBuilder<Chromosome, String, Void> subject;
 
     @Rule
@@ -70,7 +74,6 @@ public class PopulationBuilderTest
 
         subject
             .size(VALID_POPULATION_SIZE)
-            .chromosomeLength(VALID_GENOTYPE_LENGTH)
             .build();
 
     }
@@ -82,6 +85,8 @@ public class PopulationBuilderTest
     @SuppressWarnings("unchecked")
     private void prepareCreationExpectations() {
 
+        expect(geneticAlgorithmFactory.coder()).andReturn(coder).times(2);
+        expect(coder.chromosomeLength()).andReturn(VALID_GENOTYPE_LENGTH).times(2);
         expect(geneticAlgorithmFactory.fitnessFunction()).andReturn(fitnessFunction).times(VALID_POPULATION_SIZE);
         expect(geneticAlgorithmFactory.populationInstantiator()).andReturn(populationInstantiator).times(VALID_POPULATION_SIZE);
 
@@ -96,28 +101,33 @@ public class PopulationBuilderTest
     public void testInvalidSize()
     {
         prepareCommonExpectations();
+        prepareChromosomeLengthExpectation(VALID_GENOTYPE_LENGTH);
         replayAll();
 
         thrown.expect(IllegalStateException.class);
         thrown.expectMessage("Population size should be greater than zero.");
 
         PopulationBuilder.of(geneticAlgorithmFactory)
-            .chromosomeLength(VALID_GENOTYPE_LENGTH)
             .size(INVALID_SIZE)
             .build();
+    }
+
+    private void prepareChromosomeLengthExpectation(final int value) {
+        expect(geneticAlgorithmFactory.coder()).andReturn(coder).times(1);
+        expect(coder.chromosomeLength()).andReturn(value).times(1);
     }
 
     @Test
     public void testInvalidLength()
     {
         prepareCommonExpectations();
+        prepareChromosomeLengthExpectation(INVALID_GENOTYPE_LENGTH);
         replayAll();
 
         thrown.expect(IllegalStateException.class);
         thrown.expectMessage("Chromosome length should be greater than zero.");
 
         PopulationBuilder.of(geneticAlgorithmFactory)
-                .chromosomeLength(INVALID_GENOTYPE_LENGTH)
                 .size(VALID_POPULATION_SIZE)
                 .build();
 
@@ -127,6 +137,7 @@ public class PopulationBuilderTest
     public void testInvalidInitialChromosomes()
     {
         expect(geneticAlgorithmFactory.chromosomeGenerator()).andReturn(Optional.empty());
+        prepareChromosomeLengthExpectation(VALID_GENOTYPE_LENGTH);
         replayAll();
 
         thrown.expect(IllegalStateException.class);
@@ -135,7 +146,6 @@ public class PopulationBuilderTest
 
         PopulationBuilder.of(geneticAlgorithmFactory)
             .size(VALID_POPULATION_SIZE)
-            .chromosomeLength(VALID_GENOTYPE_LENGTH)
             .build();
     }
 }
