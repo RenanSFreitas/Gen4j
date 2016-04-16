@@ -84,9 +84,8 @@ public class GeneticAlgorithmTest {
         final int expectedStopCriteriaCalls = GENERATIONS_COUNT + 1;
         expect(factory.stopCriteria()).andReturn(stopCriteria).times(expectedStopCriteriaCalls);
         expect(factory.chromosomeGenerator()).andReturn(Optional.empty());
-        expect(stopCriteria.apply(
-                anyObject(Population.class), leq(expectedStopCriteriaCalls)))
-        .andAnswer(() -> ((Integer)getCurrentArguments()[1]).intValue() <= expectedStopCriteriaCalls);
+        expect(stopCriteria.apply(anyObject(Population.class), leq(expectedStopCriteriaCalls)))
+                .andAnswer(() -> ((Integer) getCurrentArguments()[1]).intValue() <= expectedStopCriteriaCalls);
 
         expect(initialPopulation.size()).andReturn(POPULATION_SIZE).anyTimes();
         expect(operator.probability()).andReturn(0.7).anyTimes();

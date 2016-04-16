@@ -18,13 +18,13 @@ public class BitSetPhenotype implements Phenotype<String> {
     @Override
     public double variable(final String identifier) {
         checkArgument(!isNullOrEmpty(identifier));
-        return m.get(identifier);
+        return m.get(identifier).doubleValue();
     }
 
     @Override
     public void set(final String identifier, final double d) {
         checkArgument(!isNullOrEmpty(identifier));
-        m.put(identifier, d);
+        m.put(identifier, Double.valueOf(d));
     }
 
     @Override

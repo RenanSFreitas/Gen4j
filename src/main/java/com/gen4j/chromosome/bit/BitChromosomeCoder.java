@@ -12,21 +12,22 @@ import com.gen4j.chromosome.ChromosomeCoder;
 import com.gen4j.phenotype.Phenotype;
 import com.gen4j.phenotype.bit.BitSetPhenotype;
 import com.google.common.collect.ImmutableList;
+import com.google.common.math.DoubleMath;
 import com.google.common.math.IntMath;
 
 public class BitChromosomeCoder implements ChromosomeCoder<BitChromosome, String> {
 
-    private final int precisionValue;
+    private final double precisionValue;
 
-    private final int lowerBound;
-    private final int domainLength;
+    private final double lowerBound;
+    private final double domainLength;
 
     private final List<String> identifiers;
 
-    private final int nbits;
+    private final double nbits;
     private final double twoPowNBits;
 
-    private final int chromosomeLength;
+    private final double chromosomeLength;
 
     public BitChromosomeCoder(
             final Set<String> identifiers,
@@ -37,19 +38,19 @@ public class BitChromosomeCoder implements ChromosomeCoder<BitChromosome, String
         precisionValue = (int) Math.pow(10, precision);
         this.lowerBound = lowerBound;
         domainLength = upperBound - lowerBound;
-        nbits = IntMath.log2(domainLength * precisionValue, RoundingMode.CEILING);
+        nbits = DoubleMath.log2(domainLength * precisionValue, RoundingMode.CEILING);
         twoPowNBits = Math.pow(2, nbits);
         this.identifiers = ImmutableList.copyOf(checkNotNull(identifiers));
         chromosomeLength = nbits * identifiers.size();
     }
 
     public int getNbits() {
-        return nbits;
+        return (int) nbits;
     }
 
     @Override
     public int chromosomeLength() {
-        return chromosomeLength;
+        return (int) chromosomeLength;
     }
 
     @Override
@@ -94,7 +95,7 @@ public class BitChromosomeCoder implements ChromosomeCoder<BitChromosome, String
             offset += nbits;
         }
 
-        return new BitChromosome(bits, nbits);
+        return new BitChromosome(bits, (int) nbits);
     }
 
 }
