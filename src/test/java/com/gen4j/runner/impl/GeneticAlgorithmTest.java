@@ -103,7 +103,7 @@ public class GeneticAlgorithmTest {
 
         subject = new GeneticAlgorithm<>();
         subject.addGeneticOperator(operator, selector);
-        subject.execute(initialPopulation, factory);
+        subject.evolve(initialPopulation, factory);
     }
 
 }

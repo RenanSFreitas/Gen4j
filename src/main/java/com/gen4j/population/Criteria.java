@@ -11,7 +11,7 @@ public interface Criteria<G extends Chromosome> {
     }
 
     static <C extends Chromosome> Criteria<C> maxGenerations(final int max) {
-        return (p, g) -> max <= g;
+        return (p, g) -> max - 1 < g;
     }
 
     boolean apply(Population<G> population, int generation);

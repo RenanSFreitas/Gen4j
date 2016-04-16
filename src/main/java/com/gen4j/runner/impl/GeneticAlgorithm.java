@@ -66,7 +66,7 @@ public class GeneticAlgorithm<C extends Chromosome, V, P> implements com.gen4j.r
     }
 
     @Override
-    public GeneticAlgorithmSolution<C> execute(final Population<C> population,
+    public GeneticAlgorithmSolution<C> evolve(final Population<C> population,
             final GeneticAlgorithmFactory<C, V, P> factory) {
 
         checkState(!operatorsBySelector.isEmpty());

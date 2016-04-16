@@ -16,7 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.annotation.Mock;
-import org.powermock.api.support.membermodification.MemberModifier;
+import org.powermock.api.support.membermodification.MemberMatcher;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -47,7 +47,7 @@ public class BitSetMutationTest {
     @Before
     public void setUp() throws IllegalAccessException {
         subject = new BitSetMutation();
-        MemberModifier.field(BitSetMutation.class, "random").set(subject, random);
+        MemberMatcher.field(BitSetMutation.class, "random").set(subject, random);
 
         chromosomeBits = BitSets.fromString(GENOTYPE_BITS);
     }

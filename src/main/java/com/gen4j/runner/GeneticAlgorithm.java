@@ -9,7 +9,7 @@ import com.gen4j.runner.listener.GeneticAlgorithmListener;
 
 public interface GeneticAlgorithm<C extends Chromosome, V, P> {
 
-    GeneticAlgorithmSolution<C> execute(Population<C> population, GeneticAlgorithmFactory<C, V, P> factory);
+    GeneticAlgorithmSolution<C> evolve(Population<C> population, GeneticAlgorithmFactory<C, V, P> factory);
 
     void addGeneticOperator(GeneticOperator<C> operator, Selector<C> selector);
 
