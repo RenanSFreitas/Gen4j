@@ -5,7 +5,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.math.RoundingMode;
 import java.util.BitSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.gen4j.chromosome.ChromosomeCoder;
@@ -28,6 +30,9 @@ public class BitChromosomeCoder implements ChromosomeCoder<BitChromosome, String
     private final double twoPowNBits;
 
     private final double chromosomeLength;
+
+    private final Map<BitChromosome, Phenotype<String>> decodeCache = new HashMap<>();
+    private final Map<Phenotype<String>, BitChromosome> encodeCache = new HashMap<>();
 
     public BitChromosomeCoder(
             final Set<String> identifiers,
@@ -56,7 +61,14 @@ public class BitChromosomeCoder implements ChromosomeCoder<BitChromosome, String
     @Override
     public Phenotype<String> decode(final BitChromosome chromosome) {
 
-        final Phenotype<String> phenotype = new BitSetPhenotype();
+        Phenotype<String> phenotype = null;
+        phenotype = decodeCache.get(chromosome);
+        if (phenotype != null) {
+            return phenotype;
+        }
+        phenotype = new BitSetPhenotype();
+        decodeCache.put(chromosome, phenotype);
+
         final BitSet bits = chromosome.value();
 
         int offset = 0;
@@ -78,6 +90,10 @@ public class BitChromosomeCoder implements ChromosomeCoder<BitChromosome, String
 
     @Override
     public BitChromosome encode(final Phenotype<String> phenotype) {
+        BitChromosome chromosome = encodeCache.get(phenotype);
+        if (chromosome != null) {
+            return chromosome;
+        }
         final BitSet bits = new BitSet();
         int offset = 0;
         for (final String identifier : identifiers) {
@@ -94,8 +110,9 @@ public class BitChromosomeCoder implements ChromosomeCoder<BitChromosome, String
 
             offset += nbits;
         }
-
-        return new BitChromosome(bits, (int) nbits);
+        chromosome = new BitChromosome(bits, (int) nbits);
+        encodeCache.put(phenotype, chromosome);
+        return chromosome;
     }
 
 }
