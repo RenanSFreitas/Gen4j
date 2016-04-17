@@ -30,12 +30,13 @@ public final class GeneticAlgorithmListeners {
         }
 
         @Override
-        public void newGeneration(final Population<? extends Chromosome> population, final int generationCount) {
+        public void newGeneration(final Population<? extends Chromosome> population, final int generationCount,
+                final Individual<? extends Chromosome> fittest) {
             if (generationCount % regularity != 0) {
                 return;
             }
 
-            final byte[] bytes = getBytes(population, generationCount);
+            final byte[] bytes = getBytes(population, generationCount, fittest);
             try {
                 stream.write(bytes, 0, bytes.length);
             } catch (final IOException e) {
@@ -44,8 +45,9 @@ public final class GeneticAlgorithmListeners {
         }
 
         @Override
-        public void newSolution(final GeneticAlgorithmSolution<? extends Chromosome> solution) {
-            final byte[] bytes = getBytes(solution.population(), solution.generationsCount());
+        public void newSolution(final GeneticAlgorithmSolution<? extends Chromosome> solution,
+                final Individual<? extends Chromosome> fittest) {
+            final byte[] bytes = getBytes(solution.population(), solution.generationsCount(), fittest);
             try {
                 stream.write(bytes, 0, bytes.length);
                 stream.flush();
@@ -53,14 +55,18 @@ public final class GeneticAlgorithmListeners {
                 throw new RuntimeException(e);
             } finally {
                 try {
-                    if(System.out != stream)stream.close();
+                    if(System.out != stream) {
+                        stream.close();
+                    }
                 } catch (final IOException e) {
                     throw new RuntimeException(e);
                 }
             }
 
         }
-        abstract byte[] getBytes(final Population<? extends Chromosome> population, final int generationCount);
+
+        abstract byte[] getBytes(final Population<? extends Chromosome> population, final int generationCount,
+                Individual<? extends Chromosome> fittest);
     }
 
     public static GeneticAlgorithmListener writeBestFitness(final int regularity, final int precision) {
@@ -76,7 +82,9 @@ public final class GeneticAlgorithmListeners {
         return new OutputStreamListenerWriter(regularity, precision, stream) {
 
             @Override
-            byte[] getBytes(final Population<? extends Chromosome> population, final int generationCount) {
+            byte[] getBytes(final Population<? extends Chromosome> population, final int generationCount,
+                    final Individual<? extends Chromosome> fittest) {
+
                 return String.format("fitness = %." + precision + "f\n",
                         Double.valueOf(population.fittest().fitness())).getBytes();
             }
@@ -88,7 +96,8 @@ public final class GeneticAlgorithmListeners {
         return new OutputStreamListenerWriter(regularity, precision, stream) {
 
             @Override
-            byte[] getBytes(final Population<? extends Chromosome> population, final int generationCount) {
+            byte[] getBytes(final Population<? extends Chromosome> population, final int generationCount,
+                    final Individual<? extends Chromosome> fittest) {
                 double fitness = 0d;
                 for (final Individual<? extends Chromosome> individual : population) {
                     fitness += individual.fitness();
@@ -108,7 +117,8 @@ public final class GeneticAlgorithmListeners {
         return new OutputStreamListenerWriter(regularity, precision, stream) {
 
             @Override
-            byte[] getBytes(final Population<? extends Chromosome> population, final int generationCount) {
+            byte[] getBytes(final Population<? extends Chromosome> population, final int generationCount,
+                    final Individual<? extends Chromosome> fittest) {
                 final NavigableMap<?, Double> fitness = population.fitness();
                 double avg = 0d;
                 double total = 0d;
@@ -120,7 +130,8 @@ public final class GeneticAlgorithmListeners {
                 final Double min = fitness.firstEntry().getValue();
 
                 return String.format("gen=%d total = %." + precision + "f avg = %." + precision + "f max = %."
-                        + precision + "f min = %." + precision + "f\n", generationCount, total, avg, max, min)
+                            + precision + "f min = %." + precision + "f fittest = %." + precision + "f\n",
+                        generationCount, total, avg, max, min, fittest.fitness())
                         .getBytes();
             }
         };

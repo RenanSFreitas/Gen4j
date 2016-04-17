@@ -4,18 +4,21 @@
 package com.gen4j.runner.listener;
 
 import com.gen4j.chromosome.Chromosome;
+import com.gen4j.population.Individual;
 import com.gen4j.population.Population;
 import com.gen4j.runner.GeneticAlgorithmSolution;
 
 public abstract class AbstractGeneticAlgorithmListener implements GeneticAlgorithmListener {
 
     @Override
-    public void newGeneration(final Population<? extends Chromosome> population, final int generationCount) {
+    public void newGeneration(final Population<? extends Chromosome> population, final int generationCount,
+            final Individual<? extends Chromosome> fittest) {
         // Override me
     }
 
     @Override
-    public void newSolution(final GeneticAlgorithmSolution<? extends Chromosome> solution) {
+    public void newSolution(final GeneticAlgorithmSolution<? extends Chromosome> solution,
+            final Individual<? extends Chromosome> fittest) {
         // Override me
     }
 }

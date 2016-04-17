@@ -19,7 +19,6 @@ import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.fitness.FitnessFunction;
 import com.gen4j.operator.GeneticOperator;
 import com.gen4j.operator.selection.Selector;
-import com.gen4j.population.ImmutablePopulation;
 import com.gen4j.population.Individual;
 import com.gen4j.population.Population;
 import com.gen4j.population.PopulationBuilder;
@@ -37,6 +36,8 @@ public class GeneticAlgorithm<C extends Chromosome, V, P> implements com.gen4j.r
     private final Random random = new Random(System.nanoTime());
 
     private final List<GeneticAlgorithmListener> listeners = new ArrayList<>();
+
+    private Individual<C> fittest;
 
     @Override
     public void addGeneticOperator(final GeneticOperator<C> operator, final Selector<C> selector) {
@@ -62,14 +63,19 @@ public class GeneticAlgorithm<C extends Chromosome, V, P> implements com.gen4j.r
 
     private void notifyNewPopulation(final Population<C> population, final int generationCount) {
         for (int i = 0; i < listeners.size(); i++) {
-            listeners.get(i).newGeneration(population, generationCount);
+            listeners.get(i).newGeneration(population, generationCount, fittest);
         }
     }
 
     private void notifyNewSolution(final GeneticAlgorithmSolution<C> solution) {
         for (int i = 0; i < listeners.size(); i++) {
-            listeners.get(i).newSolution(solution);
+            listeners.get(i).newSolution(solution, fittest);
         }
+    }
+
+    @Override
+    public Individual<C> fittest() {
+        return fittest;
     }
 
     @Override
@@ -77,24 +83,33 @@ public class GeneticAlgorithm<C extends Chromosome, V, P> implements com.gen4j.r
             final GeneticAlgorithmFactory<C, V, P> factory) {
 
         checkState(!operatorsBySelector.isEmpty());
+        storeFittest(population);
+
+        int generation = 0;
+        notifyNewPopulation(population, generation);
 
         Population<C> currentPopulation = population;
 
-        int generation = 0;
-        notifyNewPopulation(currentPopulation, generation);
-
         while (!factory.stopCriteria().apply(currentPopulation, generation)) {
             currentPopulation = applyGeneticOperators(currentPopulation, factory);
+            storeFittest(currentPopulation);
             generation++;
-            notifyNewPopulation(ImmutablePopulation.of(currentPopulation), generation);
+            notifyNewPopulation(currentPopulation, generation);
         }
 
-        final GeneticAlgorithmSolution<C> solution = new GeneticAlgorithmSolution<>(
-                ImmutablePopulation.of(currentPopulation), generation);
+        final GeneticAlgorithmSolution<C> solution = new GeneticAlgorithmSolution<>(currentPopulation, generation,
+                fittest);
 
         notifyNewSolution(solution);
 
         return solution;
+    }
+
+    private void storeFittest(final Population<C> currentPopulation) {
+        final Individual<C> currentFittest = currentPopulation.fittest();
+        if (fittest == null || fittest.fitness() < currentFittest.fitness()) {
+            fittest = currentFittest;
+        }
     }
 
     private Population<C> applyGeneticOperators(final Population<C> population,
@@ -132,7 +147,8 @@ public class GeneticAlgorithm<C extends Chromosome, V, P> implements com.gen4j.r
     }
 
     private void addGeneratedChromosomes(final List<Individual<C>> generated,
-            final FitnessFunction<C> fitnessFunction, final Selector<C> selector, final Set<GeneticOperator<C>> operators) {
+            final FitnessFunction<C> fitnessFunction, final Selector<C> selector,
+            final Set<GeneticOperator<C>> operators) {
 
         for (final GeneticOperator<C> operator : operators) {
 

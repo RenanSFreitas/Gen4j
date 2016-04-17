@@ -64,7 +64,7 @@ public final class PopulationBuilder<G extends Chromosome, V, P>
                 i--;
             }
         }
-        return population;
+        return ImmutablePopulation.of(population);
     }
 
     private G newGenotype()
