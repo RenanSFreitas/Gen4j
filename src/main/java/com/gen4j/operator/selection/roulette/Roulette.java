@@ -52,7 +52,8 @@ final class Roulette<G extends Chromosome> {
     private Individual<G> sortChromosome(final double relativeFitness) {
 
         Pair<Individual<G>, Double> previous = null;
-        for (final Pair<Individual<G>, Double> current : roulette) {
+        for (int i = 0; i < roulette.size(); i++) {
+            final Pair<Individual<G>, Double> current = roulette.get(i);
             // compare chromosome relative fitness with the given one
             if (current.second() > relativeFitness) {
                 return current.first();
