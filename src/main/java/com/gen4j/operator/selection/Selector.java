@@ -1,6 +1,6 @@
 package com.gen4j.operator.selection;
 
-import java.util.Collection;
+import java.util.List;
 
 import com.gen4j.chromosome.Chromosome;
 import com.gen4j.population.Individual;
@@ -12,5 +12,5 @@ public interface Selector<G extends Chromosome> {
 
     Population<G> population();
 
-    Collection<Individual<G>> select(int count);
+    List<Individual<G>> select(int count);
 }

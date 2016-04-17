@@ -2,13 +2,15 @@ package com.gen4j.operator;
 
 import java.util.Collection;
 
-public interface GeneticOperator<G> {
+import com.gen4j.chromosome.Chromosome;
+
+public interface GeneticOperator<C extends Chromosome> {
 
     double probability();
 
     void probability(double probability);
 
-    Collection<G> apply(Collection<G> chromosomes);
+    Collection<C> apply(Collection<C> chromosomes);
 
     int chromosomeCount();
 }
