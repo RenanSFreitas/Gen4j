@@ -53,7 +53,7 @@ public final class GeneticAlgorithmListeners {
                 throw new RuntimeException(e);
             } finally {
                 try {
-                    stream.close();
+                    if(System.out != stream)stream.close();
                 } catch (final IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -99,6 +99,10 @@ public final class GeneticAlgorithmListeners {
         };
     }
 
+    public static GeneticAlgorithmListener writeFitnessStatistics(final int regularity, final int precision) {
+        return writeFitnessStatistics(regularity, precision, System.out);
+    }
+
     public static GeneticAlgorithmListener writeFitnessStatistics(final int regularity, final int precision,
             final OutputStream stream) {
         return new OutputStreamListenerWriter(regularity, precision, stream) {
@@ -107,14 +111,17 @@ public final class GeneticAlgorithmListeners {
             byte[] getBytes(final Population<? extends Chromosome> population, final int generationCount) {
                 final NavigableMap<?, Double> fitness = population.fitness();
                 double avg = 0d;
+                double total = 0d;
                 for (final Double val : fitness.values()) {
-                    avg += val.doubleValue();
+                    total += val.doubleValue();
                 }
-                avg /= fitness.size();
+                avg = total / fitness.size();
                 final Double max = fitness.lastEntry().getValue();
                 final Double min = fitness.firstEntry().getValue();
 
-                return String.format("generation=%d\navg = %."+precision+"f max = %."+precision+"f min = %."+precision+"f\n", generationCount, avg, max, min).getBytes();
+                return String.format("gen=%d total = %." + precision + "f avg = %." + precision + "f max = %."
+                        + precision + "f min = %." + precision + "f\n", generationCount, total, avg, max, min)
+                        .getBytes();
             }
         };
     }

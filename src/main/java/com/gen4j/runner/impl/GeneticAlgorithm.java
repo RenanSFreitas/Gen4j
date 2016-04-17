@@ -33,6 +33,7 @@ import com.gen4j.runner.listener.GeneticAlgorithmListener;
 public class GeneticAlgorithm<C extends Chromosome, V, P> implements com.gen4j.runner.GeneticAlgorithm<C, V, P> {
 
     private final Map<Selector<C>, Set<GeneticOperator<C>>> operatorsBySelector = new LinkedHashMap<>();
+
     private final Random random = new Random(System.nanoTime());
 
     private final List<GeneticAlgorithmListener> listeners = new ArrayList<>();
@@ -65,6 +66,12 @@ public class GeneticAlgorithm<C extends Chromosome, V, P> implements com.gen4j.r
         }
     }
 
+    private void notifyNewSolution(final GeneticAlgorithmSolution<C> solution) {
+        for (int i = 0; i < listeners.size(); i++) {
+            listeners.get(i).newSolution(solution);
+        }
+    }
+
     @Override
     public GeneticAlgorithmSolution<C> evolve(final Population<C> population,
             final GeneticAlgorithmFactory<C, V, P> factory) {
@@ -79,10 +86,15 @@ public class GeneticAlgorithm<C extends Chromosome, V, P> implements com.gen4j.r
         while (!factory.stopCriteria().apply(currentPopulation, generation)) {
             currentPopulation = applyGeneticOperators(currentPopulation, factory);
             generation++;
-            notifyNewPopulation(currentPopulation, generation);
+            notifyNewPopulation(ImmutablePopulation.of(currentPopulation), generation);
         }
 
-        return new GeneticAlgorithmSolution<>(ImmutablePopulation.of(currentPopulation), generation);
+        final GeneticAlgorithmSolution<C> solution = new GeneticAlgorithmSolution<>(
+                ImmutablePopulation.of(currentPopulation), generation);
+
+        notifyNewSolution(solution);
+
+        return solution;
     }
 
     private Population<C> applyGeneticOperators(final Population<C> population,
@@ -90,7 +102,7 @@ public class GeneticAlgorithm<C extends Chromosome, V, P> implements com.gen4j.r
 
         prepareSelectors(population);
 
-        final Collection<Individual<C>> generated = new ArrayList<>();
+        final List<Individual<C>> generated = new ArrayList<>();
 
         while(generated.size() < population.size() )
         {
@@ -111,7 +123,7 @@ public class GeneticAlgorithm<C extends Chromosome, V, P> implements com.gen4j.r
         }
     }
 
-    private void addGeneratedChromosomes(final Population<C> population, final Collection<Individual<C>> generated,
+    private void addGeneratedChromosomes(final Population<C> population, final List<Individual<C>> generated,
             final FitnessFunction<C> fitnessFunction) {
 
         for (final Entry<Selector<C>, Set<GeneticOperator<C>>> entry : operatorsBySelector.entrySet()) {
@@ -119,7 +131,7 @@ public class GeneticAlgorithm<C extends Chromosome, V, P> implements com.gen4j.r
         }
     }
 
-    private void addGeneratedChromosomes(final Collection<Individual<C>> generated,
+    private void addGeneratedChromosomes(final List<Individual<C>> generated,
             final FitnessFunction<C> fitnessFunction, final Selector<C> selector, final Set<GeneticOperator<C>> operators) {
 
         for (final GeneticOperator<C> operator : operators) {
@@ -130,8 +142,7 @@ public class GeneticAlgorithm<C extends Chromosome, V, P> implements com.gen4j.r
 
             // Select and collect generic material
             final Collection<C> selected = transform(
-                    selector.select(operator.chromosomeCount()),
-                    c -> c.chromosome());
+                    selector.select(operator.chromosomeCount()), c -> c.chromosome());
 
             generated.addAll(transform(
                     operator.apply(selected),
@@ -140,7 +151,7 @@ public class GeneticAlgorithm<C extends Chromosome, V, P> implements com.gen4j.r
     }
 
     private boolean shouldExecute(final GeneticOperator<C> operator) {
-        return random.nextDouble() < operator.probability();
+        return random.nextInt(100) / 100 < operator.probability();
     }
 
 }
