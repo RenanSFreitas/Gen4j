@@ -4,9 +4,9 @@ import static com.google.common.collect.Iterables.getOnlyElement;
 import static java.util.Collections.singleton;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.reset;
 import static org.junit.Assert.assertEquals;
+import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.resetAll;
 
 import java.util.BitSet;
 import java.util.Random;
@@ -21,6 +21,9 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.gen4j.chromosome.bit.BitChromosome;
+import com.gen4j.factory.AbstractGeneticAlgorithmFactory;
+import com.gen4j.fitness.FitnessFunction;
+import com.gen4j.population.Individual;
 import com.gen4j.utils.BitSets;
 
 @RunWith(PowerMockRunner.class)
@@ -38,11 +41,20 @@ public class BitSetMutationTest {
     @Mock
     private BitChromosome chromosome;
 
+    @Mock
+    private Individual<BitChromosome> individual;
+
     private static final String GENOTYPE_BITS = "00101011";
     private BitSet chromosomeBits;
 
     @TestSubject
     private BitSetMutation subject;
+
+    @Mock
+    private FitnessFunction<BitChromosome> fitnessFunction;
+
+    @Mock("fitnessFunction")
+    private AbstractGeneticAlgorithmFactory<BitChromosome> factory;
 
     @Before
     public void setUp() throws IllegalAccessException {
@@ -54,7 +66,8 @@ public class BitSetMutationTest {
 
     @Test
     public void testMutation() {
-        reset(random, chromosome);
+
+        resetAll();
 
         expect(chromosome.length()).andReturn(GENOTYPE_LENGTH);
 
@@ -62,11 +75,16 @@ public class BitSetMutationTest {
 
         expect(random.nextInt(eq(GENOTYPE_LENGTH))).andReturn(MUTANT_BIT);
 
-        replay(random, chromosome);
+        expect(individual.chromosome()).andReturn(chromosome);
 
-        final BitChromosome mutant = getOnlyElement(subject.apply(singleton(chromosome)));
+        expect(factory.fitnessFunction()).andReturn(fitnessFunction);
 
-        assertEquals(MUTANT_BIT_VALUE, mutant.value().get(MUTANT_BIT));
+        replayAll();
+
+        final Individual<BitChromosome> mutant = getOnlyElement(subject.apply(singleton(individual), factory));
+
+        assertEquals(MUTANT_BIT_VALUE, mutant.chromosome().value().get(MUTANT_BIT));
     }
 
 }
+

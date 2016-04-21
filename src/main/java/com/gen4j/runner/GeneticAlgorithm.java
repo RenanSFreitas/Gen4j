@@ -8,9 +8,9 @@ import com.gen4j.population.Individual;
 import com.gen4j.population.Population;
 import com.gen4j.runner.listener.GeneticAlgorithmListener;
 
-public interface GeneticAlgorithm<C extends Chromosome, V, P> {
+public interface GeneticAlgorithm<C extends Chromosome> {
 
-    GeneticAlgorithmSolution<C> evolve(Population<C> population, GeneticAlgorithmFactory<C, V, P> factory);
+    GeneticAlgorithmSolution<C> evolve(Population<C> population, GeneticAlgorithmFactory<C> factory);
 
     Individual<C> fittest();
 

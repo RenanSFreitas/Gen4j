@@ -1,13 +1,12 @@
 package com.gen4j.operator.bit;
 
-import static com.gen4j.utils.Strings.reverse;
+import static java.util.Arrays.asList;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.reset;
 import static org.junit.Assert.assertEquals;
+import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.resetAll;
 
-import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Iterator;
 import java.util.Random;
@@ -17,11 +16,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.annotation.Mock;
-import org.powermock.api.support.membermodification.MemberModifier;
+import org.powermock.api.support.membermodification.MemberMatcher;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.gen4j.chromosome.bit.BitChromosome;
+import com.gen4j.factory.AbstractGeneticAlgorithmFactory;
+import com.gen4j.fitness.FitnessFunction;
+import com.gen4j.population.Individual;
 import com.gen4j.utils.BitSets;
 
 @RunWith(PowerMockRunner.class)
@@ -35,20 +37,27 @@ public class BitSetCrossOverTest {
     private Random random;
 
     @Mock
-    private BitChromosome firstParent;
+    private Individual<BitChromosome> firstParent;
     @Mock
-    private BitChromosome secondParent;
+    private Individual<BitChromosome> secondParent;
 
     @Mock
-    private BitSet firstParentBits;
+    private BitChromosome firstParentChromosome;
     @Mock
-    private BitSet secondParentBits;
+    private BitChromosome secondParentChromosome;
 
-    private final String parentBitsString1 = reverse("10101010");
-    private final String parentBitsString2 = reverse("01010101");
 
-    private final String firstOffspring = "01010010";
-    private final String secondOffspring = "10101101";
+    @Mock("fitnessFunction")
+    private AbstractGeneticAlgorithmFactory<BitChromosome> factory;
+
+    @Mock
+    private FitnessFunction<BitChromosome> fitnessFunction;
+
+    private final BitSet firstParentBits = BitSets.fromString("10101010");
+    private final BitSet secondParentBits = BitSets.fromString("01010101");
+
+    private final BitSet firstOffspring = BitSets.fromString("01010010");
+    private final BitSet secondOffspring = BitSets.fromString("10101101");
 
     @TestSubject
     private BitSetCrossOver subject;
@@ -56,31 +65,32 @@ public class BitSetCrossOverTest {
     @Before
     public void setUp() throws IllegalAccessException {
         subject = new BitSetCrossOver();
-        MemberModifier.field(BitSetCrossOver.class, "random").set(subject, random);
+        MemberMatcher.field(BitSetCrossOver.class, "random").set(subject, random);
     }
 
     @Test
-    public void test() {
-        reset(random, firstParent, secondParent, firstParentBits, secondParentBits);
+    public void testCrossOver() {
 
-        expect(firstParent.length()).andReturn(GENOTYPE_LENGTH).times(2);
-        expect(secondParent.length()).andReturn(GENOTYPE_LENGTH).times(2);
+        resetAll();
+
+        expect(firstParentChromosome.length()).andReturn(GENOTYPE_LENGTH).times(2);
+        expect(secondParentChromosome.length()).andReturn(GENOTYPE_LENGTH).times(2);
 
         expect(random.nextInt(eq(GENOTYPE_LENGTH))).andReturn(CROSSOVER_POINT);
 
-        expect(firstParent.value()).andReturn(firstParentBits).times(GENOTYPE_LENGTH);
-        expect(secondParent.value()).andReturn(secondParentBits).times(GENOTYPE_LENGTH);
+        expect(firstParentChromosome.value()).andReturn(firstParentBits).times(GENOTYPE_LENGTH);
+        expect(secondParentChromosome.value()).andReturn(secondParentBits).times(GENOTYPE_LENGTH);
 
-        for (int i = 0; i < GENOTYPE_LENGTH; i++) {
-            expect(firstParentBits.get(eq(i))).andReturn(parentBitsString1.charAt(i) == '1').times(1);
-            expect(secondParentBits.get(eq(i))).andReturn(parentBitsString2.charAt(i) == '1').times(1);
-        }
+        expect(firstParent.chromosome()).andReturn(firstParentChromosome);
+        expect(secondParent.chromosome()).andReturn(secondParentChromosome);
 
-        replay(random, firstParent, secondParent, firstParentBits, secondParentBits);
+        expect(factory.fitnessFunction()).andReturn(fitnessFunction).times(2);
+        replayAll();
 
-        final Iterator<BitChromosome> actual = subject.apply(Arrays.asList(firstParent, secondParent)).iterator();
+        final Iterator<Individual<BitChromosome>> actual = subject.apply(asList(firstParent, secondParent), factory)
+                .iterator();
 
-        assertEquals(firstOffspring, BitSets.toString(actual.next().value(), GENOTYPE_LENGTH));
-        assertEquals(secondOffspring, BitSets.toString(actual.next().value(), GENOTYPE_LENGTH));
+        assertEquals(firstOffspring, actual.next().chromosome().value());
+        assertEquals(secondOffspring, actual.next().chromosome().value());
     }
 }

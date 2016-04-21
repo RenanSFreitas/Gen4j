@@ -87,9 +87,9 @@ public class BitChromosomeCoderTest {
 
         replay(chromosome, bits);
 
-        final Phenotype<String> actual = subject.decode(chromosome);
+        final Phenotype actual = subject.decode(chromosome);
 
-        final Phenotype<String> expected = expectedPhenotype();
+        final Phenotype expected = expectedPhenotype();
 
         final double precisionTolerance = Math.pow(10, -(PRECISION));
 
@@ -98,8 +98,8 @@ public class BitChromosomeCoderTest {
         assertEquals(actual.variable(X3), expected.variable(X3), precisionTolerance);
     }
 
-    private Phenotype<String> expectedPhenotype() {
-        final Phenotype<String> expected = new BitSetPhenotype();
+    private Phenotype expectedPhenotype() {
+        final Phenotype expected = new BitSetPhenotype();
 
         expected.set(X1, X1_VALUE);
         expected.set(X2, X2_VALUE);

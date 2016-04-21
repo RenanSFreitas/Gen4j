@@ -5,10 +5,13 @@ import static com.google.common.collect.Iterables.getOnlyElement;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 import com.gen4j.chromosome.bit.BitChromosome;
+import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.operator.GeneticOperator;
+import com.gen4j.population.Individual;
 import com.google.common.base.Preconditions;
 
 public final class BitSetMutation implements GeneticOperator<BitChromosome> {
@@ -23,12 +26,13 @@ public final class BitSetMutation implements GeneticOperator<BitChromosome> {
     }
 
     @Override
-    public Collection<BitChromosome> apply(final Collection<BitChromosome> chromosomes) {
+    public List<Individual<BitChromosome>> apply(final Collection<Individual<BitChromosome>> individuals,
+            final GeneticAlgorithmFactory<BitChromosome> factory) {
 
-        final BitChromosome mutant = new BitChromosome(getOnlyElement(chromosomes));
+        final BitChromosome mutant = new BitChromosome(getOnlyElement(individuals).chromosome());
         final BitSet bits = mutant.value();
         bits.flip(random.nextInt(mutant.length()));
-        return Collections.singletonList(mutant);
+        return Collections.singletonList(factory.individual(mutant));
     }
 
     @Override

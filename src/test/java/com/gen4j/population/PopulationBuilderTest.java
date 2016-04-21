@@ -33,7 +33,7 @@ public class PopulationBuilderTest
     private static final int VALID_GENOTYPE_LENGTH = 1;
 
     @Mock
-    private PopulationInstantiator<Void, Chromosome> populationInstantiator;
+    private PopulationInstantiator<Chromosome> populationInstantiator;
 
     @Mock
     private Population<Chromosome> population;
@@ -45,15 +45,15 @@ public class PopulationBuilderTest
     private ChromosomeGenerator<Chromosome> chromosomeGenerator;
 
     @Mock
-    private GeneticAlgorithmFactory<Chromosome, String, Void> geneticAlgorithmFactory;
+    private GeneticAlgorithmFactory<Chromosome> geneticAlgorithmFactory;
 
     @Mock
     private Chromosome chromosome;
 
     @Mock
-    private ChromosomeCoder<Chromosome, String> coder;
+    private ChromosomeCoder<Chromosome> coder;
 
-    private PopulationBuilder<Chromosome, String, Void> subject;
+    private PopulationBuilder<Chromosome> subject;
 
     @Rule
     private final ExpectedException thrown = ExpectedException.none();
@@ -88,9 +88,10 @@ public class PopulationBuilderTest
         expect(geneticAlgorithmFactory.coder()).andReturn(coder).times(2);
         expect(coder.chromosomeLength()).andReturn(VALID_GENOTYPE_LENGTH).times(2);
         expect(geneticAlgorithmFactory.fitnessFunction()).andReturn(fitnessFunction).times(VALID_POPULATION_SIZE);
-        expect(geneticAlgorithmFactory.populationInstantiator()).andReturn(populationInstantiator).times(VALID_POPULATION_SIZE);
+        expect(geneticAlgorithmFactory.populationInstantiator()).andReturn(populationInstantiator)
+                .times(VALID_POPULATION_SIZE);
 
-        expect(populationInstantiator.instantiate(anyObject(Optional.class))).andReturn(population);
+        expect(populationInstantiator.instantiate()).andReturn(population);
         expect(chromosomeGenerator.generate(eq(VALID_GENOTYPE_LENGTH))).andReturn(chromosome).times(VALID_POPULATION_SIZE);
         expect(population.addAll(anyObject(Collection.class))).andReturn(true);
         expect(population.size()).andReturn(0);

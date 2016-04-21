@@ -1,6 +1,5 @@
 package com.gen4j.population.generic;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.lang.Double.compare;
 
 import java.util.ArrayList;
@@ -10,7 +9,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NavigableMap;
-import java.util.Optional;
 import java.util.TreeMap;
 
 import com.gen4j.chromosome.Chromosome;
@@ -21,16 +19,15 @@ import com.gen4j.population.PopulationInstantiator;
 //TODO junit
 public class GenericPopulation<C extends Chromosome> implements Population<C>
 {
-    private static class GenericPopulationInstatiator<G extends Chromosome>
-            implements PopulationInstantiator<Integer, G> {
+    private static class GenericPopulationInstatiator<C extends Chromosome> implements PopulationInstantiator<C> {
 
         @Override
-        public Population<G> instantiate(final Optional<Integer> parameter) {
-            return new GenericPopulation<>(parameter.orElse(0));
+        public Population<C> instantiate() {
+            return new GenericPopulation<>();
         }
     }
 
-    public static <G extends Chromosome> PopulationInstantiator<Integer, G> intantiator() {
+    public static <C extends Chromosome> PopulationInstantiator<C> intantiator() {
         return new GenericPopulationInstatiator<>();
     }
 
@@ -38,10 +35,9 @@ public class GenericPopulation<C extends Chromosome> implements Population<C>
     private final Comparator<? super Individual<C>> fitnessComparator = (c1, c2) -> compare(c1.fitness(), c2.fitness());
     private NavigableMap<Individual<C>, Double> populationFitness;
 
-    public GenericPopulation(final int size)
+    public GenericPopulation()
     {
-        checkArgument(size > -1);
-        individuals = new ArrayList<>(size);
+        individuals = new ArrayList<>(50);
     }
 
     @Override

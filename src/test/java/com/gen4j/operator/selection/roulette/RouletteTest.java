@@ -98,7 +98,7 @@ public class RouletteTest {
     }
 
     private Population<Chromosome> population() {
-        final Population<Chromosome> population = new GenericPopulation<>(chromosomes.size());
+        final Population<Chromosome> population = new GenericPopulation<>();
         chromosomes.forEach(c -> population.add(c));
         return population;
     }

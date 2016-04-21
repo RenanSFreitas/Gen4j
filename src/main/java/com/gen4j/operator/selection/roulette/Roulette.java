@@ -1,7 +1,6 @@
 package com.gen4j.operator.selection.roulette;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -12,11 +11,11 @@ import com.gen4j.population.Individual;
 import com.gen4j.population.Population;
 import com.gen4j.utils.Pair;
 
-final class Roulette<G extends Chromosome> {
+final class Roulette<C extends Chromosome> {
 
     private final Random random = new Random(System.nanoTime());
 
-    private final List<Pair<Individual<G>, Double>> roulette;
+    private final List<Pair<Individual<C>, Double>> roulette;
 
     static <G extends Chromosome> Roulette<G> of(final Population<G> population) {
 
@@ -45,15 +44,15 @@ final class Roulette<G extends Chromosome> {
         return new Roulette<>(roulette);
     }
 
-    private Roulette(final List<Pair<Individual<G>, Double>> roulette) {
+    private Roulette(final List<Pair<Individual<C>, Double>> roulette) {
         this.roulette = roulette;
     }
 
-    private Individual<G> sortChromosome(final double relativeFitness) {
+    private Individual<C> sortChromosome(final double relativeFitness) {
 
-        Pair<Individual<G>, Double> previous = null;
+        Pair<Individual<C>, Double> previous = null;
         for (int i = 0; i < roulette.size(); i++) {
-            final Pair<Individual<G>, Double> current = roulette.get(i);
+            final Pair<Individual<C>, Double> current = roulette.get(i);
             // compare chromosome relative fitness with the given one
             if (current.second() > relativeFitness) {
                 return current.first();
@@ -64,11 +63,11 @@ final class Roulette<G extends Chromosome> {
         return previous.first();
     }
 
-    List<Individual<G>> sortChromosomes(final int count) {
-        final List<Individual<G>> chromosomes = new ArrayList<>(count);
+    List<Individual<C>> sortChromosomes(final int count) {
+        final List<Individual<C>> chromosomes = new ArrayList<>(count);
         for( int i = 0; i < count; i++ ) {
             chromosomes.add(sortChromosome(random.nextDouble()));
         }
-        return Collections.unmodifiableList(chromosomes);
+        return chromosomes;
     }
 }
