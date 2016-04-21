@@ -17,7 +17,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.math.DoubleMath;
 import com.google.common.math.IntMath;
 
-public class BitChromosomeCoder implements ChromosomeCoder<BitChromosome, String> {
+public class BitChromosomeCoder implements ChromosomeCoder<BitChromosome> {
 
     private final double precisionValue;
 
@@ -31,8 +31,8 @@ public class BitChromosomeCoder implements ChromosomeCoder<BitChromosome, String
 
     private final double chromosomeLength;
 
-    private final Map<BitChromosome, Phenotype<String>> decodeCache = new HashMap<>();
-    private final Map<Phenotype<String>, BitChromosome> encodeCache = new HashMap<>();
+    private final Map<BitChromosome, Phenotype> decodeCache = new HashMap<>();
+    private final Map<Phenotype, BitChromosome> encodeCache = new HashMap<>();
 
     public BitChromosomeCoder(
             final Set<String> identifiers,
@@ -59,9 +59,9 @@ public class BitChromosomeCoder implements ChromosomeCoder<BitChromosome, String
     }
 
     @Override
-    public Phenotype<String> decode(final BitChromosome chromosome) {
+    public Phenotype decode(final BitChromosome chromosome) {
 
-        Phenotype<String> phenotype = null;
+        Phenotype phenotype = null;
         phenotype = decodeCache.get(chromosome);
         if (phenotype != null) {
             return phenotype;
@@ -89,7 +89,7 @@ public class BitChromosomeCoder implements ChromosomeCoder<BitChromosome, String
     }
 
     @Override
-    public BitChromosome encode(final Phenotype<String> phenotype) {
+    public BitChromosome encode(final Phenotype phenotype) {
         BitChromosome chromosome = encodeCache.get(phenotype);
         if (chromosome != null) {
             return chromosome;

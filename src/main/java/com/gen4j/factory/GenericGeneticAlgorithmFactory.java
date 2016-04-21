@@ -4,11 +4,10 @@ import com.gen4j.chromosome.Chromosome;
 import com.gen4j.population.PopulationInstantiator;
 import com.gen4j.population.generic.GenericPopulation;
 
-public abstract class GenericGeneticAlgorithmFactory<G extends Chromosome, K>
-        extends AbstractGeneticAlgorithmFactory<G, K, Integer> {
+public abstract class GenericGeneticAlgorithmFactory<C extends Chromosome> extends AbstractGeneticAlgorithmFactory<C> {
 
     @Override
-    public PopulationInstantiator<Integer, G> populationInstantiator() {
+    public PopulationInstantiator<C> populationInstantiator() {
         return GenericPopulation.intantiator();
     }
 

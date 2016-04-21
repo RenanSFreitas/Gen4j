@@ -1,9 +1,9 @@
 package com.gen4j.phenotype;
 
-public interface Phenotype<V> {
+public interface Phenotype {
 
-    double variable(V identifier);
+    double variable(String identifier);
 
-    void set(V identifier, double d);
+    void set(String identifier, double d);
 
 }

@@ -9,7 +9,7 @@ import java.util.TreeMap;
 
 import com.gen4j.phenotype.Phenotype;
 
-public class BitSetPhenotype implements Phenotype<String> {
+public class BitSetPhenotype implements Phenotype {
 
     private final Map<String, Double> m = new HashMap<>();
 

@@ -11,7 +11,7 @@ import com.gen4j.factory.GenericGeneticAlgorithmFactory;
 import com.gen4j.population.generator.ChromosomeGenerator;
 import com.gen4j.population.generator.RandomBitChromosomeGenerator;
 
-public abstract class BitChromosomeFactory extends GenericGeneticAlgorithmFactory<BitChromosome, String> {
+public abstract class BitChromosomeFactory extends GenericGeneticAlgorithmFactory<BitChromosome> {
 
     private final BitChromosomeCoder coder;
 
@@ -20,7 +20,7 @@ public abstract class BitChromosomeFactory extends GenericGeneticAlgorithmFactor
     }
 
     @Override
-    public final ChromosomeCoder<BitChromosome, String> coder() {
+    public final ChromosomeCoder<BitChromosome> coder() {
         return coder;
     }
 

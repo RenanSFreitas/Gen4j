@@ -4,56 +4,53 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import com.gen4j.chromosome.Chromosome;
 import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.population.generic.GenericIndividual;
 
-public final class PopulationBuilder<G extends Chromosome, V, P>
+public final class PopulationBuilder<C extends Chromosome>
 {
     private int size;
 
-    private final GeneticAlgorithmFactory<G, V, P> factory;
-    private Optional<P> populationInstantiatorParameter = Optional.empty();
-    private Collection<Individual<G>> initialChromosomes = Collections.emptyList();
+    private final GeneticAlgorithmFactory<C> factory;
+    private Collection<Individual<C>> initialChromosomes = Collections.emptyList();
 
     private int chromosomeLength;
 
-    private PopulationBuilder(final GeneticAlgorithmFactory<G, V, P> factory)
+    private PopulationBuilder(final GeneticAlgorithmFactory<C> factory)
     {
         this.factory = requireNonNull(factory);
     }
 
-    public static <G extends Chromosome, V, P> PopulationBuilder<G, V, P> of(
-            final GeneticAlgorithmFactory<G, V, P> factory) {
+    public static <G extends Chromosome> PopulationBuilder<G> of(final GeneticAlgorithmFactory<G> factory) {
         return new PopulationBuilder<>(factory);
     }
 
-    public PopulationBuilder<G, V, P> constructorParameter(final P parameter)
-    {
-        populationInstantiatorParameter = Optional.of(parameter);
-        return this;
-    }
-
-    public PopulationBuilder<G, V, P> size(final int size)
+    public PopulationBuilder<C> size(final int size)
     {
         this.size = size;
         return this;
     }
 
-    public PopulationBuilder<G, V, P> initialChromosomes(final Collection<Individual<G>> chromosomes) {
+    public PopulationBuilder<C> initialChromosomes(final Individual<C>[] chromosomes) {
+        initialChromosomes = Arrays.asList(chromosomes);
+        return this;
+    }
+
+    public PopulationBuilder<C> initialChromosomes(final Collection<Individual<C>> chromosomes) {
         initialChromosomes = chromosomes;
         return this;
     }
 
-    public Population<G> build()
+    public Population<C> build()
     {
         checkState();
-        final Population<G> population = newPopulationInstance();
+        final Population<C> population = newPopulationInstance();
         population.addAll(initialChromosomes);
         chromosomeLength = factory.coder().chromosomeLength();
         for (int i = population.size(); i < size; i++)
@@ -67,14 +64,14 @@ public final class PopulationBuilder<G extends Chromosome, V, P>
         return ImmutablePopulation.of(population);
     }
 
-    private G newGenotype()
+    private C newGenotype()
     {
         return factory.chromosomeGenerator().get().generate(chromosomeLength);
     }
 
-    private Population<G> newPopulationInstance()
+    private Population<C> newPopulationInstance()
     {
-        return factory.populationInstantiator().instantiate(populationInstantiatorParameter);
+        return factory.populationInstantiator().instantiate();
     }
 
     private void checkState()

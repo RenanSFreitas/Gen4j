@@ -2,11 +2,11 @@ package com.gen4j.chromosome;
 
 import com.gen4j.phenotype.Phenotype;
 
-public interface ChromosomeCoder<G extends Chromosome, V> {
+public interface ChromosomeCoder<C extends Chromosome> {
 
-    Phenotype<V> decode(G chromosome);
+    Phenotype decode(C chromosome);
 
-    G encode(Phenotype<V> phenotype);
+    C encode(Phenotype phenotype);
 
     int chromosomeLength();
 }

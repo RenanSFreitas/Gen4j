@@ -6,18 +6,21 @@ import com.gen4j.chromosome.Chromosome;
 import com.gen4j.chromosome.ChromosomeCoder;
 import com.gen4j.fitness.FitnessFunction;
 import com.gen4j.population.Criteria;
+import com.gen4j.population.Individual;
 import com.gen4j.population.PopulationInstantiator;
 import com.gen4j.population.generator.ChromosomeGenerator;
 
-public interface GeneticAlgorithmFactory<G extends Chromosome, V, P> {
+public interface GeneticAlgorithmFactory<C extends Chromosome> {
 
-    ChromosomeCoder<G, V> coder();
+    Individual<C> individual(C chromosome);
 
-    FitnessFunction<G> fitnessFunction();
+    ChromosomeCoder<C> coder();
 
-    Criteria<G> stopCriteria();
+    FitnessFunction<C> fitnessFunction();
 
-    Optional<ChromosomeGenerator<G>> chromosomeGenerator();
+    Criteria<C> stopCriteria();
 
-    PopulationInstantiator<P, G> populationInstantiator();
+    Optional<ChromosomeGenerator<C>> chromosomeGenerator();
+
+    PopulationInstantiator<C> populationInstantiator();
 }
