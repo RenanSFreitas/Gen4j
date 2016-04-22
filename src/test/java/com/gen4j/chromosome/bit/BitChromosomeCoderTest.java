@@ -1,7 +1,6 @@
 package com.gen4j.chromosome.bit;
 
 import static com.gen4j.utils.Strings.reverse;
-import static com.google.common.collect.Sets.newLinkedHashSet;
 import static java.util.Arrays.asList;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
@@ -10,7 +9,7 @@ import static org.powermock.api.easymock.PowerMock.replay;
 import static org.powermock.api.easymock.PowerMock.reset;
 
 import java.util.BitSet;
-import java.util.Set;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -60,7 +59,7 @@ public class BitChromosomeCoderTest {
     private static final int PRECISION = 6;
 
     private BitChromosomeCoder subject;
-    private final Set<String> variablesIdentifiers = newLinkedHashSet(asList(X1, X2, X3));
+    private final List<String> variablesIdentifiers = asList(X1, X2, X3);
 
     private final String variablesBitString = new StringBuilder()
             .append(reverse("1000101110110101000111"))

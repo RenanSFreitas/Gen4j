@@ -1,18 +1,17 @@
 package com.gen4j.chromosome.bit;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.math.RoundingMode;
 import java.util.BitSet;
 import java.util.List;
-import java.util.Set;
 
 import com.gen4j.chromosome.ChromosomeCoder;
 import com.gen4j.coding.ChromosomeCodeType;
 import com.gen4j.phenotype.Phenotype;
 import com.gen4j.phenotype.bit.BitSetPhenotype;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.math.DoubleMath;
 import com.google.common.math.IntMath;
 
@@ -31,17 +30,20 @@ public class BitChromosomeCoder implements ChromosomeCoder<BitChromosome> {
     private final double chromosomeLength;
 
     public BitChromosomeCoder(
-            final Set<String> identifiers,
+            final List<String> identifiers,
             final int lowerBound, final int upperBound,
             final int precision) {
 
         checkArgument(upperBound > lowerBound);
+        checkArgument(identifiers != null);
+        checkArgument(ImmutableSet.copyOf(identifiers).size() == identifiers.size());
+
         precisionValue = (int) Math.pow(10, precision);
         this.lowerBound = lowerBound;
         domainLength = upperBound - lowerBound;
         nbits = DoubleMath.log2(domainLength * precisionValue, RoundingMode.CEILING);
         twoPowNBits = Math.pow(2, nbits);
-        this.identifiers = ImmutableList.copyOf(checkNotNull(identifiers));
+        this.identifiers = ImmutableList.copyOf(identifiers);
         chromosomeLength = nbits * identifiers.size();
     }
 
