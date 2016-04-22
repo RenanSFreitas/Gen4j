@@ -1,15 +1,17 @@
 package com.gen4j.chromosome.bit;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import java.math.RoundingMode;
 import java.util.BitSet;
 import java.util.List;
 
 import com.gen4j.chromosome.ChromosomeCoder;
+import com.gen4j.chromosome.Range;
 import com.gen4j.coding.ChromosomeCodeType;
 import com.gen4j.phenotype.Phenotype;
-import com.gen4j.phenotype.bit.BitSetPhenotype;
+import com.gen4j.phenotype.StandardPhenotype;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.math.DoubleMath;
@@ -19,9 +21,6 @@ public class BitChromosomeCoder implements ChromosomeCoder<BitChromosome> {
 
     private final double precisionValue;
 
-    private final double lowerBound;
-    private final double domainLength;
-
     private final List<String> identifiers;
 
     private final double nbits;
@@ -29,19 +28,19 @@ public class BitChromosomeCoder implements ChromosomeCoder<BitChromosome> {
 
     private final double chromosomeLength;
 
+    private final Range range;
+
     public BitChromosomeCoder(
             final List<String> identifiers,
-            final int lowerBound, final int upperBound,
+            final Range range,
             final int precision) {
 
-        checkArgument(upperBound > lowerBound);
         checkArgument(identifiers != null);
         checkArgument(ImmutableSet.copyOf(identifiers).size() == identifiers.size());
 
         precisionValue = (int) Math.pow(10, precision);
-        this.lowerBound = lowerBound;
-        domainLength = upperBound - lowerBound;
-        nbits = DoubleMath.log2(domainLength * precisionValue, RoundingMode.CEILING);
+        this.range = requireNonNull(range);
+        nbits = DoubleMath.log2(range.length() * precisionValue, RoundingMode.CEILING);
         twoPowNBits = Math.pow(2, nbits);
         this.identifiers = ImmutableList.copyOf(identifiers);
         chromosomeLength = nbits * identifiers.size();
@@ -59,7 +58,7 @@ public class BitChromosomeCoder implements ChromosomeCoder<BitChromosome> {
     @Override
     public Phenotype decode(final BitChromosome chromosome) {
 
-        final Phenotype phenotype = new BitSetPhenotype();
+        final Phenotype phenotype = new StandardPhenotype();
         final BitSet bits = chromosome.value();
         int offset = 0;
         int counter = 1;
@@ -69,7 +68,7 @@ public class BitChromosomeCoder implements ChromosomeCoder<BitChromosome> {
                 bitsValue += bits.get(i) ? IntMath.pow(2, i - offset) : 0;
             }
 
-            final double value = lowerBound + bitsValue * domainLength / (twoPowNBits - 1);
+            final double value = range.lowerBound() + bitsValue * range.length() / (twoPowNBits - 1);
             phenotype.set(identifier, value);
 
             offset += nbits;
@@ -85,7 +84,7 @@ public class BitChromosomeCoder implements ChromosomeCoder<BitChromosome> {
         for (final String identifier : identifiers) {
 
             final double x = phenotype.variable(identifier);
-            long bitsValue = Math.round(((x + (-1) * lowerBound) * (twoPowNBits - 1) / domainLength));
+            long bitsValue = Math.round(((x + (-1) * range.lowerBound()) * (twoPowNBits - 1) / range.length()));
 
             for (int i = 0; bitsValue != 0; i++) {
                 if (bitsValue % 2 != 0) {
@@ -102,5 +101,10 @@ public class BitChromosomeCoder implements ChromosomeCoder<BitChromosome> {
     @Override
     public ChromosomeCodeType codeType() {
         return ChromosomeCodeType.BIT;
+    }
+
+    @Override
+    public Range range() {
+        return range;
     }
 }

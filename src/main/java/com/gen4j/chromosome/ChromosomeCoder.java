@@ -12,4 +12,6 @@ public interface ChromosomeCoder<C extends Chromosome> {
     int chromosomeLength();
 
     ChromosomeCodeType codeType();
+
+    Range range();
 }
