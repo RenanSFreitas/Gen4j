@@ -41,7 +41,7 @@ public class GeneticAlgorithm<C extends Chromosome> implements com.gen4j.runner.
 
     public GeneticAlgorithm(final Selector<C> selector, final List<GeneticOperator<C>> operators) {
         checkArgument(operators != null && !operators.isEmpty());
-        checkArgument(ImmutableSet.copyOf(operators).size() < operators.size(), "Repeated variables");
+        checkArgument(ImmutableSet.copyOf(operators).size() == operators.size(), "Repeated variables");
         this.selector = Objects.requireNonNull(selector);
         this.operators = ImmutableList.copyOf(operators);
     }
