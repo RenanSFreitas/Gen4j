@@ -2,7 +2,7 @@ package com.gen4j.population.generator;
 
 import com.gen4j.chromosome.Chromosome;
 
-public interface ChromosomeGenerator<G extends Chromosome>
+public interface ChromosomeGenerator<C extends Chromosome>
 {
-    G generate(int length);
+    C generate(int length);
 }
