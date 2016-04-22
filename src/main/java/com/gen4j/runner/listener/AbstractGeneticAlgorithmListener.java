@@ -8,17 +8,15 @@ import com.gen4j.population.Individual;
 import com.gen4j.population.Population;
 import com.gen4j.runner.GeneticAlgorithmSolution;
 
-public abstract class AbstractGeneticAlgorithmListener implements GeneticAlgorithmListener {
+public abstract class AbstractGeneticAlgorithmListener<C extends Chromosome> implements GeneticAlgorithmListener<C> {
 
     @Override
-    public void newGeneration(final Population<? extends Chromosome> population, final int generationCount,
-            final Individual<? extends Chromosome> fittest) {
+    public void newGeneration(final Population<C> population, final int generationCount, final Individual<C> fittest) {
         // Override me
     }
 
     @Override
-    public void newSolution(final GeneticAlgorithmSolution<? extends Chromosome> solution,
-            final Individual<? extends Chromosome> fittest) {
+    public void newSolution(final GeneticAlgorithmSolution<C> solution, final Individual<C> fittest) {
         // Override me
     }
 }

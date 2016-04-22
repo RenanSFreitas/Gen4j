@@ -18,7 +18,8 @@ public final class GeneticAlgorithmListeners {
         throw new AssertionError("No instances for utility classes.");
     }
 
-    private static abstract class OutputStreamListenerWriter extends AbstractGeneticAlgorithmListener {
+    private static abstract class OutputStreamListenerWriter<C extends Chromosome>
+            extends AbstractGeneticAlgorithmListener<C> {
         final int regularity;
         final int precision;
         final OutputStream stream;
@@ -30,8 +31,8 @@ public final class GeneticAlgorithmListeners {
         }
 
         @Override
-        public void newGeneration(final Population<? extends Chromosome> population, final int generationCount,
-                final Individual<? extends Chromosome> fittest) {
+        public void newGeneration(final Population<C> population, final int generationCount,
+                final Individual<C> fittest) {
             if (generationCount % regularity != 0) {
                 return;
             }
@@ -45,8 +46,7 @@ public final class GeneticAlgorithmListeners {
         }
 
         @Override
-        public void newSolution(final GeneticAlgorithmSolution<? extends Chromosome> solution,
-                final Individual<? extends Chromosome> fittest) {
+        public void newSolution(final GeneticAlgorithmSolution<C> solution, final Individual<C> fittest) {
             final byte[] bytes = getBytes(solution.population(), solution.generationsCount(), fittest);
             try {
                 stream.write(bytes, 0, bytes.length);
@@ -65,25 +65,26 @@ public final class GeneticAlgorithmListeners {
 
         }
 
-        abstract byte[] getBytes(final Population<? extends Chromosome> population, final int generationCount,
-                Individual<? extends Chromosome> fittest);
+        abstract byte[] getBytes(final Population<C> population, final int generationCount, Individual<C> fittest);
     }
 
-    public static GeneticAlgorithmListener writeBestFitness(final int regularity, final int precision) {
+    public static <C extends Chromosome> GeneticAlgorithmListener<C> writeBestFitness(final int regularity,
+            final int precision) {
         return writeBestFitness(regularity, precision, System.out);
     }
 
-    public static GeneticAlgorithmListener writeAverageFitness(final int regularity, final int precision) {
+    public static <C extends Chromosome> GeneticAlgorithmListener<C> writeAverageFitness(final int regularity,
+            final int precision) {
         return writeAverageFitness(regularity, precision, System.out);
     }
 
-    public static GeneticAlgorithmListener writeBestFitness(final int regularity, final int precision,
+    public static <C extends Chromosome> GeneticAlgorithmListener<C> writeBestFitness(final int regularity,
+            final int precision,
             final OutputStream stream) {
-        return new OutputStreamListenerWriter(regularity, precision, stream) {
+        return new OutputStreamListenerWriter<C>(regularity, precision, stream) {
 
             @Override
-            byte[] getBytes(final Population<? extends Chromosome> population, final int generationCount,
-                    final Individual<? extends Chromosome> fittest) {
+            byte[] getBytes(final Population<C> population, final int generationCount, final Individual<C> fittest) {
 
                 return String.format("fitness = %." + precision + "f\n",
                         Double.valueOf(population.fittest().fitness())).getBytes();
@@ -91,15 +92,15 @@ public final class GeneticAlgorithmListeners {
         };
     }
 
-    public static GeneticAlgorithmListener writeAverageFitness(final int regularity, final int precision,
+    public static <C extends Chromosome> GeneticAlgorithmListener<C> writeAverageFitness(final int regularity,
+            final int precision,
             final OutputStream stream) {
-        return new OutputStreamListenerWriter(regularity, precision, stream) {
+        return new OutputStreamListenerWriter<C>(regularity, precision, stream) {
 
             @Override
-            byte[] getBytes(final Population<? extends Chromosome> population, final int generationCount,
-                    final Individual<? extends Chromosome> fittest) {
+            byte[] getBytes(final Population<C> population, final int generationCount, final Individual<C> fittest) {
                 double fitness = 0d;
-                for (final Individual<? extends Chromosome> individual : population) {
+                for (final Individual<C> individual : population) {
                     fitness += individual.fitness();
                 }
                 fitness /= population.size();
@@ -108,26 +109,27 @@ public final class GeneticAlgorithmListeners {
         };
     }
 
-    public static GeneticAlgorithmListener writeFitnessStatistics(final int regularity, final int precision) {
+    public static <C extends Chromosome> GeneticAlgorithmListener<C> writeFitnessStatistics(final int regularity,
+            final int precision) {
         return writeFitnessStatistics(regularity, precision, System.out);
     }
 
-    public static GeneticAlgorithmListener writeFitnessStatistics(final int regularity, final int precision,
+    public static <C extends Chromosome> GeneticAlgorithmListener<C> writeFitnessStatistics(final int regularity,
+            final int precision,
             final OutputStream stream) {
-        return new OutputStreamListenerWriter(regularity, precision, stream) {
+        return new OutputStreamListenerWriter<C>(regularity, precision, stream) {
 
             @Override
-            byte[] getBytes(final Population<? extends Chromosome> population, final int generationCount,
-                    final Individual<? extends Chromosome> fittest) {
-                final NavigableMap<?, Double> fitness = population.fitness();
+            byte[] getBytes(final Population<C> population, final int generationCount, final Individual<C> fittest) {
+                final NavigableMap<Individual<C>, Double> fitness = population.fitness();
                 double avg = 0d;
                 double total = 0d;
                 for (final Double val : fitness.values()) {
                     total += val.doubleValue();
                 }
                 avg = total / fitness.size();
-                final Double max = fitness.lastEntry().getValue();
-                final Double min = fitness.firstEntry().getValue();
+                final Double max = Double.valueOf(fitness.lastKey().fitness());
+                final Double min = Double.valueOf(fitness.firstKey().fitness());
 
                 return String.format("gen=%d total = %." + precision + "f avg = %." + precision + "f max = %."
                             + precision + "f min = %." + precision + "f fittest = %." + precision + "f\n",

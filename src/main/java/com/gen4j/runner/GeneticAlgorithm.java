@@ -16,9 +16,9 @@ public interface GeneticAlgorithm<C extends Chromosome> {
 
     void addGeneticOperator(GeneticOperator<C> operator, Selector<C> selector);
 
-    void addListener(GeneticAlgorithmListener listener);
+    void addListener(GeneticAlgorithmListener<C> listener);
 
-    void removeListener(GeneticAlgorithmListener listener);
+    void removeListener(GeneticAlgorithmListener<C> listener);
 
     void clearListeners();
 }

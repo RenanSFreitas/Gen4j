@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
-import java.util.Set;
 
 import com.gen4j.chromosome.Chromosome;
 import com.gen4j.factory.GeneticAlgorithmFactory;
@@ -21,6 +20,7 @@ import com.gen4j.population.PopulationBuilder;
 import com.gen4j.runner.GeneticAlgorithmSolution;
 import com.gen4j.runner.listener.GeneticAlgorithmListener;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 //TODO: tests for invalid stuff
 //TODO: refactor the operators stuff
@@ -35,12 +35,13 @@ public class GeneticAlgorithm<C extends Chromosome> implements com.gen4j.runner.
 
     private final Random random = new Random(System.nanoTime());
 
-    private final List<GeneticAlgorithmListener> listeners = new ArrayList<>();
+    private final List<GeneticAlgorithmListener<C>> listeners = new ArrayList<>();
 
     private Individual<C> fittest;
 
-    public GeneticAlgorithm(final Selector<C> selector, final Set<GeneticOperator<C>> operators) {
+    public GeneticAlgorithm(final Selector<C> selector, final List<GeneticOperator<C>> operators) {
         checkArgument(operators != null && !operators.isEmpty());
+        checkArgument(ImmutableSet.copyOf(operators).size() < operators.size(), "Repeated variables");
         this.selector = Objects.requireNonNull(selector);
         this.operators = ImmutableList.copyOf(operators);
     }
@@ -51,12 +52,12 @@ public class GeneticAlgorithm<C extends Chromosome> implements com.gen4j.runner.
     }
 
     @Override
-    public void addListener(final GeneticAlgorithmListener listener) {
+    public void addListener(final GeneticAlgorithmListener<C> listener) {
         listeners.add(requireNonNull(listener));
     }
 
     @Override
-    public void removeListener(final GeneticAlgorithmListener listener) {
+    public void removeListener(final GeneticAlgorithmListener<C> listener) {
         listeners.remove(requireNonNull(listener));
     }
 
@@ -93,19 +94,20 @@ public class GeneticAlgorithm<C extends Chromosome> implements com.gen4j.runner.
         int generation = 0;
         notifyNewPopulation(population, generation);
 
-        Population<C> currentPopulation = population;
+        Population<C> current = population;
 
-        while (!factory.stopCriteria().apply(currentPopulation, generation)) {
+        while (!factory.stopCriteria().apply(current, generation)) {
 
-            selector.population(currentPopulation);
-            currentPopulation = applyGeneticOperators(selector.select(currentPopulation.size()), factory);
-            storeFittest(currentPopulation);
+            selector.population(current);
+
+            current = applyGeneticOperators(selector.select(current.size()), factory);
+            storeFittest(current);
             generation++;
 
-            notifyNewPopulation(currentPopulation, generation);
+            notifyNewPopulation(current, generation);
         }
 
-        final GeneticAlgorithmSolution<C> solution = new GeneticAlgorithmSolution<>(currentPopulation, generation,
+        final GeneticAlgorithmSolution<C> solution = new GeneticAlgorithmSolution<>(current, generation,
                 fittest);
 
         notifyNewSolution(solution);
