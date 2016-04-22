@@ -17,7 +17,8 @@ public interface Criteria<G extends Chromosome> {
     static <C extends Chromosome> Criteria<C> noFittestChanges(final int generations, final double minimumImprovement) {
         return new Criteria<C>() {
             private int lastFitnessGeneration = 0;
-			private double lastFitness = Integer.MIN_VALUE;
+            private double lastFitness = Integer.MIN_VALUE;
+
             @Override
             public boolean apply(final Population<C> population, final int generation) {
                 if (generation - lastFitnessGeneration < generations) {
