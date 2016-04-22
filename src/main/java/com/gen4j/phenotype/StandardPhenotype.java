@@ -1,4 +1,4 @@
-package com.gen4j.phenotype.bit;
+package com.gen4j.phenotype;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -7,13 +7,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.gen4j.phenotype.Phenotype;
-
-public class BitSetPhenotype implements Phenotype {
+public final class StandardPhenotype implements Phenotype {
 
     private final Map<String, Double> m = new HashMap<>();
 
-    public BitSetPhenotype() {}
+    public StandardPhenotype() {}
 
     @Override
     public double variable(final String identifier) {
@@ -32,11 +30,11 @@ public class BitSetPhenotype implements Phenotype {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof BitSetPhenotype)) {
+        if (!(obj instanceof StandardPhenotype)) {
             return false;
         }
 
-        return m.equals(((BitSetPhenotype) obj).m);
+        return m.equals(((StandardPhenotype) obj).m);
     }
 
     @Override

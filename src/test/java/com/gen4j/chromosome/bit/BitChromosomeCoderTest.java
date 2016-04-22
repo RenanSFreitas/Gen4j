@@ -18,8 +18,9 @@ import org.powermock.api.easymock.annotation.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import com.gen4j.chromosome.Range;
 import com.gen4j.phenotype.Phenotype;
-import com.gen4j.phenotype.bit.BitSetPhenotype;
+import com.gen4j.phenotype.StandardPhenotype;
 
 /**
  * Based on Michalewicz example.
@@ -28,7 +29,7 @@ import com.gen4j.phenotype.bit.BitSetPhenotype;
  * programs</b>. Springer Science & Business Media, 2013, p.19-21.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(BitChromosome.class)
+@PrepareForTest({ BitChromosome.class, StandardPhenotype.class })
 public class BitChromosomeCoderTest {
 
     private static final double X3_VALUE = 1.627888;
@@ -47,7 +48,7 @@ public class BitChromosomeCoderTest {
     private BitChromosome chromosome;
 
     @Mock
-    private BitSetPhenotype phenotype;
+    private StandardPhenotype phenotype;
 
     @Mock
     private BitSet bits;
@@ -69,7 +70,7 @@ public class BitChromosomeCoderTest {
 
     @Before
     public void setup() {
-        subject = new BitChromosomeCoder(variablesIdentifiers, LOWER_BOUND, UPPER_BOUND, PRECISION);
+        subject = new BitChromosomeCoder(variablesIdentifiers, Range.of(LOWER_BOUND, UPPER_BOUND), PRECISION);
     }
 
     @Test
@@ -98,7 +99,7 @@ public class BitChromosomeCoderTest {
     }
 
     private Phenotype expectedPhenotype() {
-        final Phenotype expected = new BitSetPhenotype();
+        final Phenotype expected = new StandardPhenotype();
 
         expected.set(X1, X1_VALUE);
         expected.set(X2, X2_VALUE);
