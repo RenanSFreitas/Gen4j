@@ -5,21 +5,21 @@ import java.util.NavigableMap;
 
 import com.gen4j.chromosome.Chromosome;
 
-public interface Population<G extends Chromosome> extends Iterable<Individual<G>> {
+public interface Population<C extends Chromosome> extends Iterable<Individual<C>> {
 
-    boolean add(Individual<G> chromosome);
+    boolean add(Individual<C> chromosome);
 
-    boolean addAll(Collection<Individual<G>> chromosomes);
+    boolean addAll(Collection<Individual<C>> chromosomes);
 
-    boolean remove(Individual<G> chromosome);
+    boolean remove(Individual<C> chromosome);
 
     int size();
 
     boolean isEmpty();
 
-    NavigableMap<Individual<G>, Double> fitness();
+    NavigableMap<Individual<C>, Double> fitness();
 
     void clearFitness();
 
-    Individual<G> fittest();
+    Individual<C> fittest();
 }
