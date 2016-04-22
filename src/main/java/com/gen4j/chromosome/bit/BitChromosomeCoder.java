@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.gen4j.chromosome.ChromosomeCoder;
+import com.gen4j.coding.ChromosomeCodeType;
 import com.gen4j.phenotype.Phenotype;
 import com.gen4j.phenotype.bit.BitSetPhenotype;
 import com.google.common.collect.ImmutableList;
@@ -94,5 +95,10 @@ public class BitChromosomeCoder implements ChromosomeCoder<BitChromosome> {
             offset += nbits;
         }
         return new BitChromosome(bits, (int) nbits);
+    }
+
+    @Override
+    public ChromosomeCodeType codeType() {
+        return ChromosomeCodeType.BIT;
     }
 }
