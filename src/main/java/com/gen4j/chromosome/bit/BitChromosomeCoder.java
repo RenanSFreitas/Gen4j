@@ -5,9 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.math.RoundingMode;
 import java.util.BitSet;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.gen4j.chromosome.ChromosomeCoder;
@@ -30,9 +28,6 @@ public class BitChromosomeCoder implements ChromosomeCoder<BitChromosome> {
     private final double twoPowNBits;
 
     private final double chromosomeLength;
-
-    private final Map<BitChromosome, Phenotype> decodeCache = new HashMap<>();
-    private final Map<Phenotype, BitChromosome> encodeCache = new HashMap<>();
 
     public BitChromosomeCoder(
             final Set<String> identifiers,
@@ -61,16 +56,8 @@ public class BitChromosomeCoder implements ChromosomeCoder<BitChromosome> {
     @Override
     public Phenotype decode(final BitChromosome chromosome) {
 
-        Phenotype phenotype = null;
-        phenotype = decodeCache.get(chromosome);
-        if (phenotype != null) {
-            return phenotype;
-        }
-        phenotype = new BitSetPhenotype();
-        decodeCache.put(chromosome, phenotype);
-
+        final Phenotype phenotype = new BitSetPhenotype();
         final BitSet bits = chromosome.value();
-
         int offset = 0;
         int counter = 1;
         for (final String identifier : identifiers) {
@@ -90,10 +77,6 @@ public class BitChromosomeCoder implements ChromosomeCoder<BitChromosome> {
 
     @Override
     public BitChromosome encode(final Phenotype phenotype) {
-        BitChromosome chromosome = encodeCache.get(phenotype);
-        if (chromosome != null) {
-            return chromosome;
-        }
         final BitSet bits = new BitSet();
         int offset = 0;
         for (final String identifier : identifiers) {
@@ -110,9 +93,6 @@ public class BitChromosomeCoder implements ChromosomeCoder<BitChromosome> {
 
             offset += nbits;
         }
-        chromosome = new BitChromosome(bits, (int) nbits);
-        encodeCache.put(phenotype, chromosome);
-        return chromosome;
+        return new BitChromosome(bits, (int) nbits);
     }
-
 }
