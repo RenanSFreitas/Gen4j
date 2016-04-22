@@ -102,7 +102,7 @@ public class GeneticAlgorithmTest {
 
         replayAll();
 
-        subject = new GeneticAlgorithm<>(selector, Collections.singleton(operator));
+        subject = new GeneticAlgorithm<>(selector, Collections.singletonList(operator));
 
         final GeneticAlgorithmSolution<Chromosome> solution = subject.evolve(population, factory);
 
