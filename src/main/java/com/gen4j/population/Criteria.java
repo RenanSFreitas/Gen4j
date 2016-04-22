@@ -14,5 +14,28 @@ public interface Criteria<G extends Chromosome> {
         return (p, g) -> max - 1 < g;
     }
 
+    static <C extends Chromosome> Criteria<C> noFittestChanges(final int generations, final double minimumImprovement) {
+        return new Criteria<C>() {
+            private int lastFitnessGeneration = 0;
+            private double lastFitness;
+            @Override
+            public boolean apply(final Population<C> population, final int generation) {
+                if (generation - lastFitnessGeneration < generations) {
+                    // continue
+                    return false;
+                }
+
+                final double currentFitness = population.fittest().fitness();
+                final boolean fitnessImproved = DoubleMath.fuzzyCompare(lastFitness, currentFitness,
+                        minimumImprovement) < 0;
+                if (fitnessImproved) {
+                    lastFitness = currentFitness;
+                    lastFitnessGeneration = generation;
+                }
+                return !fitnessImproved;
+            }
+        };
+    }
+
     boolean apply(Population<G> population, int generation);
 }
