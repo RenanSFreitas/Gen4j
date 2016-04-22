@@ -55,7 +55,8 @@ public final class PopulationBuilder<C extends Chromosome>
         chromosomeLength = factory.coder().chromosomeLength();
         for (int i = population.size(); i < size; i++)
         {
-            final boolean added = population.add(new GenericIndividual<>(newGenotype(), factory.fitnessFunction()));
+            final boolean added = population
+                    .add(new GenericIndividual<>(newGenotype(), factory.fitnessFunction(), factory.coder()));
 
             if (!added) {
                 i--;

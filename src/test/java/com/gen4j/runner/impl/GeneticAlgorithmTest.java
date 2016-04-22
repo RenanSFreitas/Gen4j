@@ -44,7 +44,7 @@ public class GeneticAlgorithmTest {
     private Criteria<Chromosome> stopCriteria;
 
     @Mock
-    private FitnessFunction<Chromosome> fitnessFunction;
+    private FitnessFunction fitnessFunction;
 
     @Mock
     private ChromosomeCoder<Chromosome> coder;

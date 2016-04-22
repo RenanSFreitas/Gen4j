@@ -8,5 +8,5 @@ public interface GeneticAlgorithmInput<G extends Chromosome> {
 
     Criteria<G> stopCriteria();
 
-    FitnessFunction<G> fitnessFunction();
+    FitnessFunction fitnessFunction();
 }

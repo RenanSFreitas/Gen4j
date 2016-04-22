@@ -5,6 +5,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.Objects;
 
 import com.gen4j.chromosome.Chromosome;
+import com.gen4j.chromosome.ChromosomeCoder;
 import com.gen4j.fitness.FitnessFunction;
 import com.gen4j.population.Individual;
 import com.google.common.base.MoreObjects;
@@ -12,12 +13,15 @@ import com.google.common.base.MoreObjects;
 public final class GenericIndividual<C extends Chromosome> implements Individual<C> {
 
     private final C chromosome;
-    private final FitnessFunction<C> fitnessFunction;
+    private final FitnessFunction fitnessFunction;
     private double fitness = Double.MIN_VALUE;
+    private final ChromosomeCoder<C> coder;
 
-    public GenericIndividual(final C chromosome, final FitnessFunction<C> fitnessFunction) {
+    public GenericIndividual(final C chromosome, final FitnessFunction fitnessFunction,
+            final ChromosomeCoder<C> coder) {
         this.fitnessFunction = requireNonNull(fitnessFunction);
         this.chromosome = requireNonNull(chromosome);
+        this.coder = requireNonNull(coder);
     }
 
     @Override
@@ -28,7 +32,7 @@ public final class GenericIndividual<C extends Chromosome> implements Individual
     @Override
     public final double fitness() {
         if (fitness == Double.MIN_VALUE) {
-            fitness = fitnessFunction.evaluate(chromosome);
+            fitness = fitnessFunction.evaluate(coder.decode(chromosome));
         }
         return fitness;
     }

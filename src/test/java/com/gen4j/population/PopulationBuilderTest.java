@@ -39,7 +39,7 @@ public class PopulationBuilderTest
     private Population<Chromosome> population;
 
     @Mock
-    private FitnessFunction<Chromosome> fitnessFunction;
+    private FitnessFunction fitnessFunction;
 
     @Mock
     private ChromosomeGenerator<Chromosome> chromosomeGenerator;
@@ -85,7 +85,7 @@ public class PopulationBuilderTest
     @SuppressWarnings("unchecked")
     private void prepareCreationExpectations() {
 
-        expect(geneticAlgorithmFactory.coder()).andReturn(coder).times(2);
+        expect(geneticAlgorithmFactory.coder()).andReturn(coder).times(2 + VALID_POPULATION_SIZE);
         expect(coder.chromosomeLength()).andReturn(VALID_GENOTYPE_LENGTH).times(2);
         expect(geneticAlgorithmFactory.fitnessFunction()).andReturn(fitnessFunction).times(VALID_POPULATION_SIZE);
         expect(geneticAlgorithmFactory.populationInstantiator()).andReturn(populationInstantiator)

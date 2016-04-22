@@ -20,6 +20,7 @@ import org.powermock.api.support.membermodification.MemberMatcher;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import com.gen4j.chromosome.ChromosomeCoder;
 import com.gen4j.chromosome.bit.BitChromosome;
 import com.gen4j.factory.AbstractGeneticAlgorithmFactory;
 import com.gen4j.fitness.FitnessFunction;
@@ -51,10 +52,13 @@ public class BitSetMutationTest {
     private BitSetMutation subject;
 
     @Mock
-    private FitnessFunction<BitChromosome> fitnessFunction;
+    private FitnessFunction fitnessFunction;
 
     @Mock("fitnessFunction")
     private AbstractGeneticAlgorithmFactory<BitChromosome> factory;
+
+    @Mock
+    private ChromosomeCoder<BitChromosome> coder;
 
     @Before
     public void setUp() throws IllegalAccessException {
@@ -78,6 +82,8 @@ public class BitSetMutationTest {
         expect(individual.chromosome()).andReturn(chromosome);
 
         expect(factory.fitnessFunction()).andReturn(fitnessFunction);
+
+        expect(factory.coder()).andReturn(coder);
 
         replayAll();
 

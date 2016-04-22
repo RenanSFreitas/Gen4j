@@ -16,10 +16,10 @@ import com.gen4j.population.generator.RandomBitChromosomeGenerator;
 public class BitChromosomeFactory extends GenericGeneticAlgorithmFactory<BitChromosome> {
 
     private final BitChromosomeCoder coder;
-    private final FitnessFunction<BitChromosome> fitnessFunction;
+    private final FitnessFunction fitnessFunction;
     private final Criteria<BitChromosome> stopCriteria;
 
-    public BitChromosomeFactory(final BitChromosomeCoder coder, final FitnessFunction<BitChromosome> fitnessFunction,
+    public BitChromosomeFactory(final BitChromosomeCoder coder, final FitnessFunction fitnessFunction,
             final Criteria<BitChromosome> stopCriteria) {
         this.coder = requireNonNull(coder);
         this.fitnessFunction = requireNonNull(fitnessFunction);
@@ -37,7 +37,7 @@ public class BitChromosomeFactory extends GenericGeneticAlgorithmFactory<BitChro
     }
 
     @Override
-    public FitnessFunction<BitChromosome> fitnessFunction() {
+    public FitnessFunction fitnessFunction() {
         return fitnessFunction;
     }
 

@@ -20,6 +20,7 @@ import org.powermock.api.support.membermodification.MemberMatcher;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import com.gen4j.chromosome.ChromosomeCoder;
 import com.gen4j.chromosome.bit.BitChromosome;
 import com.gen4j.factory.AbstractGeneticAlgorithmFactory;
 import com.gen4j.fitness.FitnessFunction;
@@ -51,7 +52,10 @@ public class BitSetCrossOverTest {
     private AbstractGeneticAlgorithmFactory<BitChromosome> factory;
 
     @Mock
-    private FitnessFunction<BitChromosome> fitnessFunction;
+    private FitnessFunction fitnessFunction;
+
+    @Mock
+    private ChromosomeCoder<BitChromosome> coder;
 
     private final BitSet firstParentBits = BitSets.fromString("10101010");
     private final BitSet secondParentBits = BitSets.fromString("01010101");
@@ -85,6 +89,7 @@ public class BitSetCrossOverTest {
         expect(secondParent.chromosome()).andReturn(secondParentChromosome);
 
         expect(factory.fitnessFunction()).andReturn(fitnessFunction).times(2);
+        expect(factory.coder()).andReturn(coder).times(2);
         replayAll();
 
         final Iterator<Individual<BitChromosome>> actual = subject.apply(asList(firstParent, secondParent), factory)

@@ -16,7 +16,7 @@ public interface GeneticAlgorithmFactory<C extends Chromosome> {
 
     ChromosomeCoder<C> coder();
 
-    FitnessFunction<C> fitnessFunction();
+    FitnessFunction fitnessFunction();
 
     Criteria<C> stopCriteria();
 

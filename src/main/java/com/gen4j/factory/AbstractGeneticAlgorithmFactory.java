@@ -17,6 +17,6 @@ public abstract class AbstractGeneticAlgorithmFactory<C extends Chromosome>
 
     @Override
     public Individual<C> individual(final C chromosome) {
-        return new GenericIndividual<>(chromosome, fitnessFunction());
+        return new GenericIndividual<>(chromosome, fitnessFunction(), coder());
     }
 }
