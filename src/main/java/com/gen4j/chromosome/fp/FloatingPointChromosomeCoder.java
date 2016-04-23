@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.gen4j.chromosome.ChromosomeCoder;
 import com.gen4j.chromosome.Range;
-import com.gen4j.coding.ChromosomeCodeType;
 import com.gen4j.phenotype.Phenotype;
 import com.gen4j.phenotype.StandardPhenotype;
 import com.google.common.base.Preconditions;
@@ -44,11 +43,6 @@ public class FloatingPointChromosomeCoder implements ChromosomeCoder<FloatingPoi
     @Override
     public int chromosomeLength() {
         return identifiers.size();
-    }
-
-    @Override
-    public ChromosomeCodeType codeType() {
-        return ChromosomeCodeType.FLOATING_POINT;
     }
 
     @Override
