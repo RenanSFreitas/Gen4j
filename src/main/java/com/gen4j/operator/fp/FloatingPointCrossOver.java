@@ -17,7 +17,7 @@ import com.gen4j.population.Individual;
 import com.gen4j.population.generic.GenericIndividual;
 import com.google.common.base.Preconditions;
 
-public class FloatingPointCrossOver extends AbstractGeneticOperator<FloatingPointChromosome> {
+public final class FloatingPointCrossOver extends AbstractGeneticOperator<FloatingPointChromosome> {
 
     public FloatingPointCrossOver() {
         super(0.65, 2, ChromosomeCodeType.FLOATING_POINT);

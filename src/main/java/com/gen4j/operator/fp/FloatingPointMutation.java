@@ -13,7 +13,7 @@ import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.operator.AbstractGeneticOperator;
 import com.gen4j.population.Individual;
 
-public class FloatingPointMutation extends AbstractGeneticOperator<FloatingPointChromosome> {
+public final class FloatingPointMutation extends AbstractGeneticOperator<FloatingPointChromosome> {
 
     public FloatingPointMutation() {
         super(0.25, 1, ChromosomeCodeType.FLOATING_POINT);

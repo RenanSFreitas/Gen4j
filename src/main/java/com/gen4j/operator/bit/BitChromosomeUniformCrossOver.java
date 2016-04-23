@@ -14,7 +14,7 @@ import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.operator.AbstractGeneticOperator;
 import com.gen4j.population.Individual;
 
-public class BitChromosomeUniformCrossOver extends AbstractGeneticOperator<BitChromosome> {
+public final class BitChromosomeUniformCrossOver extends AbstractGeneticOperator<BitChromosome> {
 
     public BitChromosomeUniformCrossOver() {
         super(0.25, 2, ChromosomeCodeType.BIT);
