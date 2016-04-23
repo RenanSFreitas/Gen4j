@@ -1,7 +1,9 @@
 package com.gen4j.runner.impl;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.collect.Iterables.getOnlyElement;
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toSet;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -9,8 +11,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
+import java.util.Set;
 
 import com.gen4j.chromosome.Chromosome;
+import com.gen4j.chromosome.code.ChromosomeCodeType;
 import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.operator.GeneticOperator;
 import com.gen4j.operator.selection.Selector;
@@ -39,11 +43,18 @@ public class GeneticAlgorithm<C extends Chromosome> implements com.gen4j.runner.
 
     private Individual<C> fittest;
 
+    private final GeneticAlgorithmSolution.Builder<C> solutionBuilder = GeneticAlgorithmSolution.builder();
+
     public GeneticAlgorithm(final Selector<C> selector, final List<GeneticOperator<C>> operators) {
         checkArgument(operators != null && !operators.isEmpty());
         checkArgument(ImmutableSet.copyOf(operators).size() == operators.size(), "Repeated variables");
+        final Set<ChromosomeCodeType> codeTypes = operators.stream().map(GeneticOperator::chromosomeCodeType).collect(toSet());
+        checkArgument(codeTypes.size() == 1, "Multiple code types: " + codeTypes);
+
         this.selector = Objects.requireNonNull(selector);
         this.operators = ImmutableList.copyOf(operators);
+
+        solutionBuilder.codeType(getOnlyElement(codeTypes));
     }
 
     @Override
@@ -107,8 +118,10 @@ public class GeneticAlgorithm<C extends Chromosome> implements com.gen4j.runner.
             notifyNewPopulation(current, generation);
         }
 
-        final GeneticAlgorithmSolution<C> solution = new GeneticAlgorithmSolution<>(current, generation,
-                fittest);
+        GeneticAlgorithmSolution<C> solution = solutionBuilder.population(current)
+                .fittest(fittest)
+                .generationsCount(generation)
+                .build();
 
         notifyNewSolution(solution);
 
