@@ -28,8 +28,8 @@ import com.gen4j.population.Individual;
 import com.gen4j.utils.BitSets;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BitSetMutation.class, BitChromosome.class })
-public class BitSetMutationTest {
+@PrepareForTest({ BitChromosomeMutation.class, BitChromosome.class })
+public class BitChromosomeMutationTest {
 
 
     private static final int GENOTYPE_LENGTH = 8;
@@ -49,7 +49,7 @@ public class BitSetMutationTest {
     private BitSet chromosomeBits;
 
     @TestSubject
-    private BitSetMutation subject;
+    private BitChromosomeMutation subject;
 
     @Mock
     private FitnessFunction fitnessFunction;
@@ -62,8 +62,8 @@ public class BitSetMutationTest {
 
     @Before
     public void setUp() throws IllegalAccessException {
-        subject = new BitSetMutation();
-        MemberMatcher.field(BitSetMutation.class, "random").set(subject, random);
+        subject = new BitChromosomeMutation();
+        MemberMatcher.field(BitChromosomeMutation.class, "random").set(subject, random);
 
         chromosomeBits = BitSets.fromString(GENOTYPE_BITS);
     }

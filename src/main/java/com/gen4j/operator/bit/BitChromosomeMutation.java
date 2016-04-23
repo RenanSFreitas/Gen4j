@@ -12,9 +12,9 @@ import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.operator.AbstractGeneticOperator;
 import com.gen4j.population.Individual;
 
-public final class BitSetMutation extends AbstractGeneticOperator<BitChromosome> {
+public final class BitChromosomeMutation extends AbstractGeneticOperator<BitChromosome> {
 
-    public BitSetMutation() {
+    public BitChromosomeMutation() {
         super(0.01, 1);
     }
 

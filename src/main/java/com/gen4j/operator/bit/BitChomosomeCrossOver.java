@@ -14,7 +14,7 @@ import com.gen4j.operator.AbstractGeneticOperator;
 import com.gen4j.population.Individual;
 import com.google.common.base.Preconditions;
 
-public final class BitSetCrossOver extends AbstractGeneticOperator<BitChromosome> {
+public final class BitChomosomeCrossOver extends AbstractGeneticOperator<BitChromosome> {
 
     private static class OffspringBitSets {
         BitSet offspring1;
@@ -26,7 +26,7 @@ public final class BitSetCrossOver extends AbstractGeneticOperator<BitChromosome
         }
     }
 
-    public BitSetCrossOver() {
+    public BitChomosomeCrossOver() {
         super(0.25, 2);
     }
 

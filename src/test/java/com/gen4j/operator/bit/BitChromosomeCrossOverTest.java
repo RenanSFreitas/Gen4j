@@ -28,8 +28,8 @@ import com.gen4j.population.Individual;
 import com.gen4j.utils.BitSets;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BitSetCrossOver.class, BitChromosome.class })
-public class BitSetCrossOverTest {
+@PrepareForTest({ BitChomosomeCrossOver.class, BitChromosome.class })
+public class BitChromosomeCrossOverTest {
 
     private final int GENOTYPE_LENGTH = 8;
     private final int CROSSOVER_POINT = 3;
@@ -64,12 +64,12 @@ public class BitSetCrossOverTest {
     private final BitSet secondOffspring = BitSets.fromString("10101101");
 
     @TestSubject
-    private BitSetCrossOver subject;
+    private BitChomosomeCrossOver subject;
 
     @Before
     public void setUp() throws IllegalAccessException {
-        subject = new BitSetCrossOver();
-        MemberMatcher.field(BitSetCrossOver.class, "random").set(subject, random);
+        subject = new BitChomosomeCrossOver();
+        MemberMatcher.field(BitChomosomeCrossOver.class, "random").set(subject, random);
     }
 
     @Test
