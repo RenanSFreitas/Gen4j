@@ -22,7 +22,7 @@ public abstract class AbstractGeneticOperator<C extends Chromosome> implements G
 
     @Override
     public final int chromosomeCount() {
-        return 0;
+        return chromosomeCount;
     }
 
     @Override
