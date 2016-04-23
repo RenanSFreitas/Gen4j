@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.gen4j.chromosome.ChromosomeCoder;
+import com.gen4j.chromosome.code.ChromosomeCodeType;
 import com.gen4j.chromosome.fp.FloatingPointChromosome;
 import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.fitness.FitnessFunction;
@@ -19,7 +20,7 @@ import com.google.common.base.Preconditions;
 public class FloatingPointCrossOver extends AbstractGeneticOperator<FloatingPointChromosome> {
 
     public FloatingPointCrossOver() {
-        super(0.65, 2);
+        super(0.65, 2, ChromosomeCodeType.FLOATING_POINT);
     }
 
     @Override
@@ -60,5 +61,10 @@ public class FloatingPointCrossOver extends AbstractGeneticOperator<FloatingPoin
                 new FloatingPointChromosome(offspringValue2), fitnessFunction, coder);
 
         return unmodifiableList(asList(offspring1, offspring2));
+    }
+
+    @Override
+    public String toString() {
+        return "Single poit floating-point-chromosome cross over";
     }
 }

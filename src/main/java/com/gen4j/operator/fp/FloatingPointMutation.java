@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.gen4j.chromosome.Range;
+import com.gen4j.chromosome.code.ChromosomeCodeType;
 import com.gen4j.chromosome.fp.FloatingPointChromosome;
 import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.operator.AbstractGeneticOperator;
@@ -15,7 +16,7 @@ import com.gen4j.population.Individual;
 public class FloatingPointMutation extends AbstractGeneticOperator<FloatingPointChromosome> {
 
     public FloatingPointMutation() {
-        super(0.25, 1);
+        super(0.25, 1, ChromosomeCodeType.FLOATING_POINT);
     }
 
     @Override
@@ -32,5 +33,10 @@ public class FloatingPointMutation extends AbstractGeneticOperator<FloatingPoint
         chromosomeValue[random.nextInt(length)] = random.nextDouble() * range.length() + range.lowerBound();
 
         return Collections.singletonList(factory.individual(new FloatingPointChromosome(chromosomeValue)));
+    }
+
+    @Override
+    public String toString() {
+        return "Random float floating-point-chromosome mutation";
     }
 }

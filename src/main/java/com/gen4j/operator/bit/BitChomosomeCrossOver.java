@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.gen4j.chromosome.bit.BitChromosome;
+import com.gen4j.chromosome.code.ChromosomeCodeType;
 import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.operator.AbstractGeneticOperator;
 import com.gen4j.population.Individual;
@@ -27,7 +28,7 @@ public final class BitChomosomeCrossOver extends AbstractGeneticOperator<BitChro
     }
 
     public BitChomosomeCrossOver() {
-        super(0.25, 2);
+        super(0.25, 2, ChromosomeCodeType.BIT);
     }
 
     @Override
@@ -65,5 +66,10 @@ public final class BitChomosomeCrossOver extends AbstractGeneticOperator<BitChro
             offspring2.set(i, p1.get(i));
         }
         return new OffspringBitSets(offspring1, offspring2);
+    }
+
+    @Override
+    public String toString() {
+        return "Single point bit-chromosome cross over";
     }
 }

@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.gen4j.chromosome.bit.BitChromosome;
+import com.gen4j.chromosome.code.ChromosomeCodeType;
 import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.operator.AbstractGeneticOperator;
 import com.gen4j.population.Individual;
@@ -15,7 +16,7 @@ import com.gen4j.population.Individual;
 public final class BitChromosomeMutation extends AbstractGeneticOperator<BitChromosome> {
 
     public BitChromosomeMutation() {
-        super(0.01, 1);
+        super(0.01, 1, ChromosomeCodeType.BIT);
     }
 
     @Override
@@ -26,5 +27,10 @@ public final class BitChromosomeMutation extends AbstractGeneticOperator<BitChro
         final BitSet bits = mutant.value();
         bits.flip(random.nextInt(mutant.length()));
         return Collections.singletonList(factory.individual(mutant));
+    }
+
+    @Override
+    public String toString() {
+        return "Bit flip bit-chromosome mutation";
     }
 }

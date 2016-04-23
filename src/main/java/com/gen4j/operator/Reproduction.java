@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.gen4j.chromosome.Chromosome;
+import com.gen4j.chromosome.code.ChromosomeCodeType;
 import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.population.Individual;
 
@@ -16,7 +17,7 @@ public final class Reproduction<C extends Chromosome> extends AbstractGeneticOpe
     private static final int CHROMOSOME_COUNT = 1;
 
     public Reproduction() {
-        super(1, CHROMOSOME_COUNT);
+        super(1, CHROMOSOME_COUNT, ChromosomeCodeType.FLOATING_POINT);
     }
 
     @Override
@@ -24,5 +25,10 @@ public final class Reproduction<C extends Chromosome> extends AbstractGeneticOpe
             final GeneticAlgorithmFactory<C> factory) {
         checkArgument(individuals.size() == CHROMOSOME_COUNT);
         return singletonList(getOnlyElement(individuals));
+    }
+
+    @Override
+    public String toString() {
+        return "Chromosome reproduction";
     }
 }
