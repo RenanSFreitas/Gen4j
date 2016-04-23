@@ -6,31 +6,20 @@ import static java.util.Collections.unmodifiableList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 
 import com.gen4j.chromosome.ChromosomeCoder;
 import com.gen4j.chromosome.fp.FloatingPointChromosome;
 import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.fitness.FitnessFunction;
-import com.gen4j.operator.GeneticOperator;
+import com.gen4j.operator.AbstractGeneticOperator;
 import com.gen4j.population.Individual;
 import com.gen4j.population.generic.GenericIndividual;
 import com.google.common.base.Preconditions;
 
-public class FloatingPointCrossOver implements GeneticOperator<FloatingPointChromosome> {
+public class FloatingPointCrossOver extends AbstractGeneticOperator<FloatingPointChromosome> {
 
-    private double probability = 0.25;
-    private final Random random = new Random(System.nanoTime());
-
-    @Override
-    public double probability() {
-        return probability;
-    }
-
-    @Override
-    public void probability(final double probability) {
-        Preconditions.checkArgument(probability > 0d && probability < 1d);
-        this.probability = probability;
+    public FloatingPointCrossOver() {
+        super(0.65, 2);
     }
 
     @Override
@@ -72,10 +61,4 @@ public class FloatingPointCrossOver implements GeneticOperator<FloatingPointChro
 
         return unmodifiableList(asList(offspring1, offspring2));
     }
-
-    @Override
-    public int chromosomeCount() {
-        return 2;
-    }
-
 }

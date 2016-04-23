@@ -10,22 +10,13 @@ import java.util.List;
 import com.gen4j.chromosome.Chromosome;
 import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.population.Individual;
-import com.google.common.base.Preconditions;
 
-public final class Reproduction<C extends Chromosome> implements GeneticOperator<C> {
+public final class Reproduction<C extends Chromosome> extends AbstractGeneticOperator<C> {
 
     private static final int CHROMOSOME_COUNT = 1;
-    private double probability = 1d;
 
-    @Override
-    public double probability() {
-        return probability;
-    }
-
-    @Override
-    public void probability(final double probability) {
-        Preconditions.checkArgument(probability > 0d && probability <= 1d);
-        this.probability = probability;
+    public Reproduction() {
+        super(1, CHROMOSOME_COUNT);
     }
 
     @Override
@@ -34,10 +25,4 @@ public final class Reproduction<C extends Chromosome> implements GeneticOperator
         checkArgument(individuals.size() == CHROMOSOME_COUNT);
         return singletonList(getOnlyElement(individuals));
     }
-
-    @Override
-    public int chromosomeCount() {
-        return CHROMOSOME_COUNT;
-    }
-
 }

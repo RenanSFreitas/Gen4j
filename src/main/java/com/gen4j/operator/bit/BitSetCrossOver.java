@@ -7,19 +7,14 @@ import java.util.BitSet;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 
 import com.gen4j.chromosome.bit.BitChromosome;
 import com.gen4j.factory.GeneticAlgorithmFactory;
-import com.gen4j.operator.GeneticOperator;
+import com.gen4j.operator.AbstractGeneticOperator;
 import com.gen4j.population.Individual;
 import com.google.common.base.Preconditions;
 
-public final class BitSetCrossOver implements GeneticOperator<BitChromosome> {
-
-    private final Random random = new Random(System.nanoTime());
-
-    private double probability = 0.25;
+public final class BitSetCrossOver extends AbstractGeneticOperator<BitChromosome> {
 
     private static class OffspringBitSets {
         BitSet offspring1;
@@ -31,9 +26,8 @@ public final class BitSetCrossOver implements GeneticOperator<BitChromosome> {
         }
     }
 
-    @Override
-    public int chromosomeCount() {
-        return 2;
+    public BitSetCrossOver() {
+        super(0.25, 2);
     }
 
     @Override
@@ -71,33 +65,5 @@ public final class BitSetCrossOver implements GeneticOperator<BitChromosome> {
             offspring2.set(i, p1.get(i));
         }
         return new OffspringBitSets(offspring1, offspring2);
-    }
-
-    private OffspringBitSets cross0(final int crossOverPoint, final BitChromosome parent1, final BitChromosome parent2) {
-        final int length = parent1.length();
-        final BitSet offspring1 = new BitSet(length);
-        final BitSet offspring2 = new BitSet(length);
-        final BitSet p1 = parent1.value();
-        final BitSet p2 = parent2.value();
-        for (int i = 0; i < crossOverPoint; i++) {
-            offspring1.set(i, p1.get(i));
-            offspring2.set(i, p2.get(i));
-        }
-        for (int i = crossOverPoint; i < length; i++) {
-            offspring1.set(i, p2.get(i));
-            offspring2.set(i, p1.get(i));
-        }
-        return new OffspringBitSets(offspring1, offspring2);
-    }
-
-    @Override
-    public double probability() {
-        return probability;
-    }
-
-    @Override
-    public void probability(final double probability) {
-        Preconditions.checkArgument(probability > 0d && probability < 1d);
-        this.probability = probability;
     }
 }
