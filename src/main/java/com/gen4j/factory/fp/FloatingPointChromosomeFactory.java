@@ -6,6 +6,7 @@ package com.gen4j.factory.fp;
 import java.util.Optional;
 
 import com.gen4j.chromosome.ChromosomeCoder;
+import com.gen4j.chromosome.Range;
 import com.gen4j.chromosome.fp.FloatingPointChromosome;
 import com.gen4j.factory.CustomGeneticAlgorithmFactory;
 import com.gen4j.fitness.FitnessFunction;
@@ -28,10 +29,11 @@ public class FloatingPointChromosomeFactory extends CustomGeneticAlgorithmFactor
     }
 
     public FloatingPointChromosomeFactory(final ChromosomeCoder<FloatingPointChromosome> coder,
-            final FitnessFunction fitnessFunction, final Criteria<FloatingPointChromosome> criteria,
-            final int lowerBound, final int upperBound) {
+            final FitnessFunction fitnessFunction, 
+            final Criteria<FloatingPointChromosome> criteria,
+            final Range optimizationRange) {
         super(coder, fitnessFunction, criteria);
-        generator = Optional.of(new RandomFloatingPointChromosomeGenerator(lowerBound, upperBound));
+        generator = Optional.of(new RandomFloatingPointChromosomeGenerator(optimizationRange));
     }
 
     @Override

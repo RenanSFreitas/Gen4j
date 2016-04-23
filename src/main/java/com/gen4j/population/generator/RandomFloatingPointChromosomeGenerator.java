@@ -3,10 +3,11 @@
  */
 package com.gen4j.population.generator;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Random;
 
+import com.gen4j.chromosome.Range;
 import com.gen4j.chromosome.fp.FloatingPointChromosome;
 
 public class RandomFloatingPointChromosomeGenerator implements ChromosomeGenerator<FloatingPointChromosome> {
@@ -15,10 +16,10 @@ public class RandomFloatingPointChromosomeGenerator implements ChromosomeGenerat
     private final Random random = new Random(System.nanoTime());
     private final double domainLength;
 
-    public RandomFloatingPointChromosomeGenerator(final int lowerBound, final int upperBound) {
-        checkArgument(lowerBound < upperBound);
-        this.lowerBound = lowerBound;
-        domainLength = upperBound - lowerBound;
+    public RandomFloatingPointChromosomeGenerator(final Range optimizationRange) {
+        checkNotNull(optimizationRange);
+        lowerBound = optimizationRange.lowerBound();
+        domainLength = optimizationRange.length();
     }
 
     @Override
