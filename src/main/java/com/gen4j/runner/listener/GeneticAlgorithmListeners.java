@@ -5,11 +5,11 @@ package com.gen4j.runner.listener;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.NavigableMap;
 
 import com.gen4j.chromosome.Chromosome;
 import com.gen4j.population.Individual;
 import com.gen4j.population.Population;
+import com.gen4j.population.PopulationStatistics;
 import com.gen4j.runner.GeneticAlgorithmSolution;
 
 public final class GeneticAlgorithmListeners {
@@ -121,15 +121,12 @@ public final class GeneticAlgorithmListeners {
 
             @Override
             byte[] getBytes(final Population<C> population, final int generationCount, final Individual<C> fittest) {
-                final NavigableMap<Individual<C>, Double> fitness = population.fitness();
-                double avg = 0d;
-                double total = 0d;
-                for (final Double val : fitness.values()) {
-                    total += val.doubleValue();
-                }
-                avg = total / fitness.size();
-                final Double max = Double.valueOf(fitness.lastKey().fitness());
-                final Double min = Double.valueOf(fitness.firstKey().fitness());
+
+                final PopulationStatistics statistics = population.statistics();
+                final Double avg = Double.valueOf(statistics.meanFitness());
+                final Double total = Double.valueOf(statistics.totalFitness());
+                final Double max = Double.valueOf(statistics.maxFitness());
+                final Double min = Double.valueOf(statistics.minFitness());
 
                 return String.format("gen=%d total = %." + precision + "f avg = %." + precision + "f max = %."
                             + precision + "f min = %." + precision + "f fittest = %." + precision + "f\n",

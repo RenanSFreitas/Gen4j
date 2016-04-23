@@ -22,4 +22,6 @@ public interface Population<C extends Chromosome> extends Iterable<Individual<C>
     void clearFitness();
 
     Individual<C> fittest();
+
+    PopulationStatistics statistics();
 }

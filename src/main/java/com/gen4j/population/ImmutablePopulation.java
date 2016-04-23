@@ -70,4 +70,9 @@ public final class ImmutablePopulation<G extends Chromosome> implements Populati
     public Individual<G> fittest() {
         return delegate.fittest();
     }
+
+    @Override
+    public PopulationStatistics statistics() {
+        return delegate.statistics();
+    }
 }

@@ -15,6 +15,7 @@ import com.gen4j.chromosome.Chromosome;
 import com.gen4j.population.Individual;
 import com.gen4j.population.Population;
 import com.gen4j.population.PopulationInstantiator;
+import com.gen4j.population.PopulationStatistics;
 
 //TODO junit
 public class GenericPopulation<C extends Chromosome> implements Population<C>
@@ -72,6 +73,7 @@ public class GenericPopulation<C extends Chromosome> implements Population<C>
 
     @Override
     public NavigableMap<Individual<C>, Double> fitness() {
+        // TODO if an individual is modified, this cached map may become invalid
         if (populationFitness == null) {
             populationFitness = new TreeMap<>(fitnessComparator);
             for (final Individual<C> individual : individuals) {
@@ -89,5 +91,10 @@ public class GenericPopulation<C extends Chromosome> implements Population<C>
     @Override
     public Individual<C> fittest() {
         return fitness().lastKey();
+    }
+
+    @Override
+    public PopulationStatistics statistics() {
+        return PopulationStatistics.of(this);
     }
 }
