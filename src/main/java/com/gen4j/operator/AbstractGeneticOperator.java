@@ -13,24 +13,15 @@ public abstract class AbstractGeneticOperator<C extends Chromosome> implements G
     protected final Random random = new Random(System.nanoTime());
 
     private double probability;
-    private final int chromosomeCount;
 
     private final ChromosomeCodeType codeType;
 
-    public AbstractGeneticOperator(final double probability, final int chromosomeCount,
-            final ChromosomeCodeType codeType) {
+    public AbstractGeneticOperator(final double probability, final ChromosomeCodeType codeType) {
 
         checkArgument(probability > 0d && probability < 1d);
-        checkArgument(chromosomeCount > 0d);
 
         this.probability = probability;
-        this.chromosomeCount = chromosomeCount;
         this.codeType = requireNonNull(codeType);
-    }
-
-    @Override
-    public final int chromosomeCount() {
-        return chromosomeCount;
     }
 
     @Override

@@ -1,59 +1,37 @@
 package com.gen4j.operator.bit;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-
 import java.util.BitSet;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.function.Function;
 
 import com.gen4j.chromosome.bit.BitChromosome;
 import com.gen4j.chromosome.code.ChromosomeCodeType;
-import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.operator.AbstractGeneticOperator;
+import com.gen4j.operator.CrossOver;
 import com.gen4j.population.Individual;
-import com.google.common.base.Preconditions;
+import com.gen4j.utils.Pair;
 
-public final class BitChomosomeCrossOver extends AbstractGeneticOperator<BitChromosome> {
+public final class BitChromosomeCrossOver extends AbstractGeneticOperator<BitChromosome>
+        implements CrossOver<BitChromosome> {
 
-    private static class OffspringBitSets {
-        BitSet offspring1;
-        BitSet offspring2;
-
-        public OffspringBitSets(final BitSet offspring1, final BitSet offspring2) {
-            this.offspring1 = offspring1;
-            this.offspring2 = offspring2;
-        }
-    }
-
-    public BitChomosomeCrossOver() {
-        super(0.25, 2, ChromosomeCodeType.BIT);
+    public BitChromosomeCrossOver() {
+        super(0.25, ChromosomeCodeType.BIT);
     }
 
     @Override
-    public List<Individual<BitChromosome>> apply(final Collection<Individual<BitChromosome>> individuals,
-            final GeneticAlgorithmFactory<BitChromosome> factory) {
+    public Pair<Individual<BitChromosome>, Individual<BitChromosome>> apply(
+            final Pair<Individual<BitChromosome>, Individual<BitChromosome>> parents,
+            final Function<BitChromosome, Individual<BitChromosome>> toIndividual) {
 
-        Preconditions.checkArgument(individuals.size() == 2);
-        final Iterator<Individual<BitChromosome>> iterator = individuals.iterator();
-        return apply(iterator.next().chromosome(), iterator.next().chromosome(), factory);
+        final int crossOverPoint = random.nextInt(parents.first().chromosome().length());
+        return cross(crossOverPoint, parents.first().chromosome(), parents.second().chromosome(), toIndividual);
     }
 
-    private List<Individual<BitChromosome>> apply(final BitChromosome g1, final BitChromosome g2,
-            final GeneticAlgorithmFactory<BitChromosome> factory) {
-
-        final int length = g1.length();
-
-        final int crossOverPoint = random.nextInt(length);
-        final OffspringBitSets bitSets = cross(crossOverPoint, g1, g2);
-        final BitChromosome offspring1 = new BitChromosome(bitSets.offspring1, length);
-        final BitChromosome offspring2 = new BitChromosome(bitSets.offspring2, length);
-
-        return unmodifiableList(asList(factory.individual(offspring1), factory.individual(offspring2)));
-    }
-
-    private OffspringBitSets cross(final int crossOverPoint, final BitChromosome parent1, final BitChromosome parent2) {
+    private Pair<Individual<BitChromosome>, Individual<BitChromosome>> cross(final int crossOverPoint,
+            final BitChromosome parent1, final BitChromosome parent2,
+            final Function<BitChromosome, Individual<BitChromosome>> toIndividual) {
+        if (parent1.equals(parent2)) {
+            return Pair.of(toIndividual.apply(parent1), toIndividual.apply(parent2));
+        }
         final int length = parent1.length();
         final BitSet offspring1 = new BitSet(length);
         final BitSet offspring2 = new BitSet(length);
@@ -65,7 +43,9 @@ public final class BitChomosomeCrossOver extends AbstractGeneticOperator<BitChro
             offspring1.set(i, p2.get(i));
             offspring2.set(i, p1.get(i));
         }
-        return new OffspringBitSets(offspring1, offspring2);
+        return Pair.of(
+                toIndividual.apply(new BitChromosome(offspring1, length)),
+                toIndividual.apply(new BitChromosome(offspring2, length)));
     }
 
     @Override

@@ -1,42 +1,43 @@
 package com.gen4j.operator.fp;
 
-import static com.google.common.collect.Iterables.getOnlyElement;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.function.Function;
 
 import com.gen4j.chromosome.Range;
 import com.gen4j.chromosome.code.ChromosomeCodeType;
 import com.gen4j.chromosome.fp.FloatingPointChromosome;
-import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.operator.AbstractGeneticOperator;
+import com.gen4j.operator.Mutation;
 import com.gen4j.population.Individual;
 
-public final class FloatingPointMutation extends AbstractGeneticOperator<FloatingPointChromosome> {
+public final class FloatingPointMutation extends AbstractGeneticOperator<FloatingPointChromosome>
+        implements Mutation<FloatingPointChromosome> {
 
     public FloatingPointMutation() {
-        super(0.25, 1, ChromosomeCodeType.FLOATING_POINT);
+        super(0.25, ChromosomeCodeType.FLOATING_POINT);
     }
 
     @Override
-    public List<Individual<FloatingPointChromosome>> apply(
-            final Collection<Individual<FloatingPointChromosome>> individuals,
-            final GeneticAlgorithmFactory<FloatingPointChromosome> factory) {
+    public Individual<FloatingPointChromosome> apply(final Individual<FloatingPointChromosome> individual,
+            final Function<FloatingPointChromosome, Individual<FloatingPointChromosome>> toIndividual) {
 
-        final double[] originalValue = getOnlyElement(individuals).chromosome().value();
+        final FloatingPointChromosome chromosome = individual.chromosome();
+        final double[] originalValue = chromosome.value();
         final int length = originalValue.length;
-        final double[] chromosomeValue = new double[length];
-        System.arraycopy(originalValue, 0, chromosomeValue, 0, length);
+        final double[] newValue = new double[length];
+        System.arraycopy(originalValue, 0, newValue, 0, length);
 
-        final Range range = factory.coder().range();
-        chromosomeValue[random.nextInt(length)] = random.nextDouble() * range.length() + range.lowerBound();
-
-        return Collections.singletonList(factory.individual(new FloatingPointChromosome(chromosomeValue)));
+        final Range range = chromosome.range();
+        for (int j = 0; j < chromosome.length(); j++) {
+            if (random.nextDouble() < probability()) {
+                newValue[random.nextInt(length)] = random.nextDouble() * range.length() + range.lowerBound();
+            }
+        }
+        return toIndividual.apply(new FloatingPointChromosome(newValue, range));
     }
 
     @Override
     public String toString() {
         return "Random float floating-point-chromosome mutation";
     }
+
 }

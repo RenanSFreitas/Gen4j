@@ -17,10 +17,9 @@ public final class Reproduction<C extends Chromosome> extends AbstractGeneticOpe
     private static final int CHROMOSOME_COUNT = 1;
 
     public Reproduction() {
-        super(1, CHROMOSOME_COUNT, ChromosomeCodeType.FLOATING_POINT);
+        super(0.3, ChromosomeCodeType.FLOATING_POINT);
     }
 
-    @Override
     public List<Individual<C>> apply(final Collection<Individual<C>> individuals,
             final GeneticAlgorithmFactory<C> factory) {
         checkArgument(individuals.size() == CHROMOSOME_COUNT);

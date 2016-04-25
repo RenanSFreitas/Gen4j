@@ -1,32 +1,35 @@
 package com.gen4j.operator.bit;
 
-import static com.google.common.collect.Iterables.getOnlyElement;
-
 import java.util.BitSet;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.function.Function;
 
 import com.gen4j.chromosome.bit.BitChromosome;
 import com.gen4j.chromosome.code.ChromosomeCodeType;
-import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.operator.AbstractGeneticOperator;
+import com.gen4j.operator.Mutation;
 import com.gen4j.population.Individual;
 
-public final class BitChromosomeMutation extends AbstractGeneticOperator<BitChromosome> {
+public final class BitChromosomeMutation extends AbstractGeneticOperator<BitChromosome>
+        implements Mutation<BitChromosome> {
 
     public BitChromosomeMutation() {
-        super(0.01, 1, ChromosomeCodeType.BIT);
+        super(0.05, ChromosomeCodeType.BIT);
     }
 
     @Override
-    public List<Individual<BitChromosome>> apply(final Collection<Individual<BitChromosome>> individuals,
-            final GeneticAlgorithmFactory<BitChromosome> factory) {
+    public Individual<BitChromosome> apply(final Individual<BitChromosome> individual,
+            final Function<BitChromosome, Individual<BitChromosome>> toIndividual) {
 
-        final BitChromosome mutant = new BitChromosome(getOnlyElement(individuals).chromosome());
-        final BitSet bits = mutant.value();
-        bits.flip(random.nextInt(mutant.length()));
-        return Collections.singletonList(factory.individual(mutant));
+        final BitChromosome chromosome = individual.chromosome();
+        final BitSet bits = new BitSet();
+        bits.or(chromosome.value());
+        final int length = chromosome.length();
+        for (int j = 0; j < length; j++) {
+            if (random.nextDouble() < probability()) {
+                bits.flip(j);
+            }
+        }
+        return toIndividual.apply(new BitChromosome(bits, length));
     }
 
     @Override
