@@ -4,7 +4,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.NavigableMap;
+import java.util.List;
 
 import com.gen4j.chromosome.Chromosome;
 import com.google.common.collect.Iterators;
@@ -52,7 +52,7 @@ public final class ImmutablePopulation<G extends Chromosome> implements Populati
     }
 
     @Override
-    public NavigableMap<Individual<G>, Double> fitness() {
+    public List<Individual<G>> fitness() {
         return delegate.fitness();
     }
 
@@ -74,5 +74,10 @@ public final class ImmutablePopulation<G extends Chromosome> implements Populati
     @Override
     public PopulationStatistics statistics() {
         return delegate.statistics();
+    }
+
+    @Override
+    public List<Individual<G>> toList() {
+        return delegate.toList();
     }
 }

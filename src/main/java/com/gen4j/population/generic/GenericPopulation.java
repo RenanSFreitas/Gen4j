@@ -8,8 +8,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.NavigableMap;
-import java.util.TreeMap;
 
 import com.gen4j.chromosome.Chromosome;
 import com.gen4j.population.Individual;
@@ -32,9 +30,9 @@ public class GenericPopulation<C extends Chromosome> implements Population<C>
         return new GenericPopulationInstatiator<>();
     }
 
-    private final List<Individual<C>> individuals;
+    private List<Individual<C>> individuals;
     private final Comparator<? super Individual<C>> fitnessComparator = (c1, c2) -> compare(c1.fitness(), c2.fitness());
-    private NavigableMap<Individual<C>, Double> populationFitness;
+    private boolean populationFitness;
 
     public GenericPopulation()
     {
@@ -72,25 +70,29 @@ public class GenericPopulation<C extends Chromosome> implements Population<C>
     }
 
     @Override
-    public NavigableMap<Individual<C>, Double> fitness() {
+    public List<Individual<C>> toList() {
+        return Collections.unmodifiableList(individuals);
+    }
+
+    @Override
+    public List<Individual<C>> fitness() {
         // TODO if an individual is modified, this cached map may become invalid
-        if (populationFitness == null) {
-            populationFitness = new TreeMap<>(fitnessComparator);
-            for (final Individual<C> individual : individuals) {
-                populationFitness.put(individual, individual.fitness());
-            }
+        if (!populationFitness) {
+            Collections.sort(individuals, fitnessComparator);
+            individuals = Collections.unmodifiableList(individuals);
+            populationFitness = true;
         }
-        return Collections.unmodifiableNavigableMap(populationFitness);
+        return individuals;
     }
 
     @Override
     public void clearFitness() {
-        populationFitness = null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Individual<C> fittest() {
-        return fitness().lastKey();
+        return fitness().get(individuals.size() - 1);
     }
 
     @Override
