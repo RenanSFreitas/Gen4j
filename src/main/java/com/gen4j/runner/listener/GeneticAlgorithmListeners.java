@@ -127,10 +127,17 @@ public final class GeneticAlgorithmListeners {
                 final Double total = Double.valueOf(statistics.totalFitness());
                 final Double max = Double.valueOf(statistics.maxFitness());
                 final Double min = Double.valueOf(statistics.minFitness());
+                final Double med = Double.valueOf(statistics.medianFitness());
 
-                return String.format("gen=%d total = %." + precision + "f avg = %." + precision + "f max = %."
-                            + precision + "f min = %." + precision + "f fittest = %." + precision + "f\n",
-                        generationCount, total, avg, max, min, fittest.fitness())
+                return String.format(
+                        "gen=%d "
+                        + "tot = %." + precision + "f "
+                        + "avg = %." + precision + "f "
+                        + "med = %." + precision + "f "
+                        + "max = %." + precision + "f "
+                        + "min = %." + precision + "f "
+                        + "fit = %." + precision + "f\n",
+                        generationCount, total, avg, med, max, min, fittest.fitness())
                         .getBytes();
             }
         };

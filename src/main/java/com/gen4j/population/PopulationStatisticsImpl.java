@@ -7,12 +7,15 @@ final class PopulationStatisticsImpl implements PopulationStatistics {
     private final double total;
     private final double min;
     private final double max;
+    private final double med;
 
-    PopulationStatisticsImpl(final int populationSize, final double avg, final double std, final double total, final double min,
+    PopulationStatisticsImpl(final int populationSize, final double avg, final double std, final double med,
+            final double total, final double min,
             final double max) {
         this.populationSize = populationSize;
         this.avg = avg;
         this.std = std;
+        this.med = med;
         this.total = total;
         this.min = min;
         this.max = max;
@@ -38,6 +41,10 @@ final class PopulationStatisticsImpl implements PopulationStatistics {
         return avg;
     }
 
+    @Override
+    public double medianFitness() {
+        return med;
+    }
     @Override
     public double maxFitness() {
         return max;

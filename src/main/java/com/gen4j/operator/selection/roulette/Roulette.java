@@ -17,28 +17,25 @@ final class Roulette<C extends Chromosome> {
 
     private final List<Pair<Individual<C>, Double>> roulette;
 
-    static <G extends Chromosome> Roulette<G> of(final Population<G> population) {
+    static <C extends Chromosome> Roulette<C> of(final Population<C> population) {
 
-        final NavigableMap<Individual<G>, Double> populationFitness = population.fitness();
+        final List<Individual<C>> populationFitness = population.fitness();
 
-        final double minimum = populationFitness.firstKey().fitness();
+        final double maximum = populationFitness.get(populationFitness.size()-1).fitness();
 
-        // Displacement to ensure relative fitness belongs to [0;1]
-        final double displacement = minimum < 0d ? -minimum : 0d;
-
-        final double totalFitness = populationFitness.values()
+        final double sumFitness = populationFitness
                 .stream()
-                .mapToDouble(d -> d.doubleValue() + displacement)
+                .mapToDouble(i -> Math.exp(-8 * i.fitness() / maximum))
                 .sum();
 
 
-        final List<Pair<Individual<G>, Double>> roulette = new ArrayList<>(population.size());
+        final List<Pair<Individual<C>, Double>> roulette = new ArrayList<>(population.size());
 
         double accumulatedFitness = 0d;
-        for (final Map.Entry<Individual<G>, Double> fitness : populationFitness.descendingMap().entrySet()) {
+        for (final Individual<C> individual : populationFitness) {
             // sums currrent relative fitness (displaced)
-            accumulatedFitness += (fitness.getValue() + displacement) / totalFitness;
-            roulette.add(Pair.of(fitness.getKey(), accumulatedFitness));
+            accumulatedFitness += Math.exp(-8 * individual.fitness() / maximum) / sumFitness;
+            roulette.add(Pair.of(individual, accumulatedFitness));
         }
 
         return new Roulette<>(roulette);
