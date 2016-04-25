@@ -1,30 +1,27 @@
 package com.gen4j.runner.impl;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.collect.Iterables.getOnlyElement;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.toSet;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
-import java.util.Set;
+import java.util.function.Function;
 
 import com.gen4j.chromosome.Chromosome;
-import com.gen4j.chromosome.code.ChromosomeCodeType;
 import com.gen4j.factory.GeneticAlgorithmFactory;
+import com.gen4j.operator.CrossOver;
 import com.gen4j.operator.GeneticOperator;
+import com.gen4j.operator.Mutation;
 import com.gen4j.operator.selection.Selector;
 import com.gen4j.population.Individual;
 import com.gen4j.population.Population;
 import com.gen4j.population.PopulationBuilder;
 import com.gen4j.runner.GeneticAlgorithmSolution;
 import com.gen4j.runner.listener.GeneticAlgorithmListener;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
+import com.gen4j.utils.Pair;
 
 //TODO: tests for invalid stuff
 //TODO: refactor the operators stuff
@@ -32,10 +29,8 @@ import com.google.common.collect.ImmutableSet;
 public class GeneticAlgorithm<C extends Chromosome> implements com.gen4j.runner.GeneticAlgorithm<C> {
 
     private final Selector<C> selector;
-    private final List<GeneticOperator<C>> operators;
-    private int[] individualCounts;
-
-    private final Map<Selector<C>, GeneticOperator<C>> extraOperatorsBySelector = new LinkedHashMap<>();
+    private final CrossOver<C> crossOver;
+    private final Mutation<C> mutation;
 
     private final Random random = new Random(System.nanoTime());
 
@@ -45,21 +40,21 @@ public class GeneticAlgorithm<C extends Chromosome> implements com.gen4j.runner.
 
     private final GeneticAlgorithmSolution.Builder<C> solutionBuilder = GeneticAlgorithmSolution.builder();
 
-    public GeneticAlgorithm(final Selector<C> selector, final List<GeneticOperator<C>> operators) {
-        checkArgument(operators != null && !operators.isEmpty());
-        checkArgument(ImmutableSet.copyOf(operators).size() == operators.size(), "Repeated variables");
-        final Set<ChromosomeCodeType> codeTypes = operators.stream().map(GeneticOperator::chromosomeCodeType).collect(toSet());
-        checkArgument(codeTypes.size() == 1, "Multiple code types: " + codeTypes);
+    public GeneticAlgorithm(final Selector<C> selector, final CrossOver<C> crossOver, final Mutation<C> mutation) {
+        checkNotNull(crossOver);
+        checkNotNull(mutation);
+        checkArgument(crossOver.chromosomeCodeType() == mutation.chromosomeCodeType(),
+                "Cross over and mutation code types mismatch");
 
         this.selector = Objects.requireNonNull(selector);
-        this.operators = ImmutableList.copyOf(operators);
-
-        solutionBuilder.codeType(getOnlyElement(codeTypes));
+        solutionBuilder.codeType(crossOver.chromosomeCodeType());
+        this.crossOver = crossOver;
+        this.mutation = mutation;
     }
 
     @Override
     public void addGeneticOperator(final GeneticOperator<C> operator, final Selector<C> selector) {
-        extraOperatorsBySelector.put(selector, operator);
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -83,6 +78,12 @@ public class GeneticAlgorithm<C extends Chromosome> implements com.gen4j.runner.
         }
     }
 
+    private void notifyNewFittest(final Individual<C> newFittest, final Individual<C> oldFittest) {
+        for (int i = 0; i < listeners.size(); i++) {
+            listeners.get(i).newFittest(newFittest, oldFittest);
+        }
+    }
+
     private void notifyNewSolution(final GeneticAlgorithmSolution<C> solution) {
         for (int i = 0; i < listeners.size(); i++) {
             listeners.get(i).newSolution(solution, fittest);
@@ -100,27 +101,26 @@ public class GeneticAlgorithm<C extends Chromosome> implements com.gen4j.runner.
 
         storeFittest(population);
 
-        initializeIndividualCount(population);
+        int generationCount = 0;
 
-        int generation = 0;
-        notifyNewPopulation(population, generation);
+        notifyNewPopulation(population, generationCount);
 
         Population<C> current = population;
 
-        while (!factory.stopCriteria().apply(current, generation)) {
+        while (!factory.stopCriteria().apply(current, generationCount, fittest)) {
 
             selector.population(current);
 
-            current = applyGeneticOperators(selector.select(current.size()), factory);
+            current = applyGeneticOperators(current, factory);
             storeFittest(current);
-            generation++;
+            generationCount++;
 
-            notifyNewPopulation(current, generation);
+            notifyNewPopulation(current, generationCount);
         }
 
-        GeneticAlgorithmSolution<C> solution = solutionBuilder.population(current)
+        final GeneticAlgorithmSolution<C> solution = solutionBuilder.population(current)
                 .fittest(fittest)
-                .generationsCount(generation)
+                .generationsCount(generationCount)
                 .build();
 
         notifyNewSolution(solution);
@@ -128,54 +128,45 @@ public class GeneticAlgorithm<C extends Chromosome> implements com.gen4j.runner.
         return solution;
     }
 
-    private void initializeIndividualCount(final Population<C> population) {
-        individualCounts = new int[population.size()];
-        for (int i = 0; i < operators.size(); i++) {
-            final GeneticOperator<C> operator = operators.get(i);
-            individualCounts[i] = (int) Math.floor(operator.chromosomeCount() * population.size());
-        }
-    }
-
     private void storeFittest(final Population<C> currentPopulation) {
         final Individual<C> currentFittest = currentPopulation.fittest();
         if (fittest == null || fittest.fitness() < currentFittest.fitness()) {
+            notifyNewFittest(currentFittest, fittest);
             fittest = currentFittest;
         }
     }
 
-    private Population<C> applyGeneticOperators(final List<Individual<C>> selected,
+    private Population<C> applyGeneticOperators(final Population<C> current,
             final GeneticAlgorithmFactory<C> factory) {
 
-        for (int i = 0; i < operators.size(); i++) {
-            applyGeneticOperator(selected, factory, operators.get(i), individualCounts[i]);
+        final Function<C, Individual<C>> toIndividual = c -> factory.individual(c);
+
+        final List<Individual<C>> newIndividuals = new ArrayList<>();
+
+        while (newIndividuals.size() < current.size() - 1) {
+            final Pair<Individual<C>, Individual<C>> parents = selector.selectPair();
+
+            Pair<Individual<C>, Individual<C>> offspring = null;
+
+            if(random.nextDouble() < crossOver.probability()) {
+                offspring = crossOver.apply(parents, toIndividual);
+            } else {
+                offspring = parents;
+            }
+
+            newIndividuals.add(mutation.apply(offspring.first(), toIndividual));
+            newIndividuals.add(mutation.apply(offspring.second(), toIndividual));
+
+//            if (random.nextDouble() < 0.3) {
+//                newIndividuals.addAll(selector.select(3));
+//            }
         }
+        newIndividuals.add(fittest);
 
         return PopulationBuilder.of(factory)
-                .initialChromosomes(selected)
-                .size(selected.size())
+                .initial(newIndividuals)
+                .size(newIndividuals.size())
                 .build();
     }
 
-    private void applyGeneticOperator(final List<Individual<C>> selected,
-            final GeneticAlgorithmFactory<C> factory,
-            final GeneticOperator<C> operator,
-            final int individualsCount) {
-
-        final int operatorCount = operator.chromosomeCount();
-        final List<Individual<C>> operatorInput = new ArrayList<>(operatorCount);
-
-        for (int count = individualsCount; count > 0; count -= operatorCount) {
-            final int[] indexes = new int[operatorCount];
-            for (int i = 0; i < operatorCount; i++) {
-                indexes[i] = random.nextInt(selected.size());
-                operatorInput.add(selected.get(indexes[i]));
-            }
-
-            final List<Individual<C>> result = operator.apply(operatorInput, factory);
-            for (int i = 0; i < operatorCount; i++) {
-                selected.set(indexes[i], result.get(i));
-            }
-            operatorInput.clear();
-        }
-    }
 }

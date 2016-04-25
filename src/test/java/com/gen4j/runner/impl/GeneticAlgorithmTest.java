@@ -121,7 +121,7 @@ public class GeneticAlgorithmTest {
 
         expect(coder.chromosomeLength()).andReturn(CHROMOSOME_LENGHT).times(GENERATIONS_COUNT, Integer.MAX_VALUE);
         expect(populationInstantiator.instantiate()).andReturn(population).times(GENERATIONS_COUNT);
-        expect(stopCriteria.apply(anyObject(Population.class), leq(expectedStopCriteriaCalls)))
+        expect(stopCriteria.apply(anyObject(Population.class), leq(expectedStopCriteriaCalls), anyObject(Individual.class)))
                 .andAnswer(() -> ((Integer) getCurrentArguments()[1]).intValue() >= GENERATIONS_COUNT)
                 .times(expectedStopCriteriaCalls);
     }
