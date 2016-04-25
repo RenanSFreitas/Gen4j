@@ -3,8 +3,8 @@ package com.gen4j.operator.selection.roulette;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.NavigableMap;
 import java.util.Random;
+import java.util.TreeMap;
 
 import com.gen4j.chromosome.Chromosome;
 import com.gen4j.population.Individual;
@@ -17,28 +17,26 @@ final class Roulette<C extends Chromosome> {
 
     private final List<Pair<Individual<C>, Double>> roulette;
 
-    static <G extends Chromosome> Roulette<G> of(final Population<G> population) {
+    static <C extends Chromosome> Roulette<C> of(final Population<C> population) {
 
-        final NavigableMap<Individual<G>, Double> populationFitness = population.fitness();
+        final List<Individual<C>> populationFitness = population.fitness();
 
-        final double minimum = populationFitness.firstKey().fitness();
+        final double maximum = populationFitness.get(populationFitness.size() - 1).fitness();
 
         // Displacement to ensure relative fitness belongs to [0;1]
-        final double displacement = minimum < 0d ? -minimum : 0d;
-
-        final double totalFitness = populationFitness.values()
+        final double sumFitness = populationFitness
                 .stream()
-                .mapToDouble(d -> d.doubleValue() + displacement)
+                .mapToDouble(i -> Math.exp(-8 * i.fitness() / maximum))
                 .sum();
 
 
-        final List<Pair<Individual<G>, Double>> roulette = new ArrayList<>(population.size());
+        final List<Pair<Individual<C>, Double>> roulette = new ArrayList<>(population.size());
 
         double accumulatedFitness = 0d;
-        for (final Map.Entry<Individual<G>, Double> fitness : populationFitness.descendingMap().entrySet()) {
-            // sums currrent relative fitness (displaced)
-            accumulatedFitness += (fitness.getValue() + displacement) / totalFitness;
-            roulette.add(Pair.of(fitness.getKey(), accumulatedFitness));
+        for (final Individual<C> individual : populationFitness) {
+            // sums current relative fitness (displaced)
+            accumulatedFitness += Math.exp(-8 * individual.fitness() / maximum) / sumFitness;
+            roulette.add(Pair.of(individual, accumulatedFitness));
         }
 
         return new Roulette<>(roulette);
@@ -63,6 +61,10 @@ final class Roulette<C extends Chromosome> {
         return previous.first();
     }
 
+    public Individual<C> sortChromosome() {
+        return sortChromosome(random.nextDouble());
+    }
+
     List<Individual<C>> sortChromosomes(final int count) {
         final List<Individual<C>> chromosomes = new ArrayList<>(count);
         for( int i = 0; i < count; i++ ) {
@@ -70,4 +72,19 @@ final class Roulette<C extends Chromosome> {
         }
         return chromosomes;
     }
+
+    private static <C extends Chromosome> void print(final List<Individual<C>> individuals) {
+        final TreeMap<Double, Integer> count = new TreeMap<>();
+
+        for (final Individual<C> i : individuals) {
+            final Double k = Double.valueOf(i.fitness());
+            final Integer c = count.getOrDefault(k, Integer.valueOf(0)) + 1;
+            count.put(k, c);
+        }
+
+        for (final Map.Entry<Double, Integer> e : count.entrySet()) {
+            System.out.println(e.getKey() + " | " + e.getValue());
+        }
+    }
+
 }
