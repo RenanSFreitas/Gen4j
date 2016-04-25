@@ -14,11 +14,13 @@ public class FloatingPointChromosomeCoder implements ChromosomeCoder<FloatingPoi
 
     private final List<String> identifiers;
     private final Range range;
+    private final double scale;
 
-    public FloatingPointChromosomeCoder(final List<String> identifiers, final Range range) {
+    public FloatingPointChromosomeCoder(final List<String> identifiers, final Range range, final double scale) {
         Preconditions.checkArgument(identifiers != null && !identifiers.isEmpty());
         this.identifiers = identifiers;
         this.range = requireNonNull(range);
+        this.scale = scale;
     }
     @Override
     public Phenotype decode(final FloatingPointChromosome chromosome) {
@@ -26,7 +28,7 @@ public class FloatingPointChromosomeCoder implements ChromosomeCoder<FloatingPoi
         final double[] chromosomeValue = chromosome.value();
         for (int i = 0; i < chromosomeValue.length; i++) {
             final double val = chromosomeValue[i];
-            phenotype.set(identifiers.get(i), val);
+            phenotype.set(identifiers.get(i), val / scale);
         }
         return phenotype;
     }
@@ -35,9 +37,9 @@ public class FloatingPointChromosomeCoder implements ChromosomeCoder<FloatingPoi
     public FloatingPointChromosome encode(final Phenotype phenotype) {
         final double[] chromosomeValue = new double[identifiers.size()];
         for (int i = 0; i < chromosomeValue.length; i++) {
-            chromosomeValue[i] = phenotype.variable(identifiers.get(i));
+            chromosomeValue[i] = scale * phenotype.variable(identifiers.get(i));
         }
-        return new FloatingPointChromosome(chromosomeValue);
+        return new FloatingPointChromosome(chromosomeValue, range);
     }
 
     @Override

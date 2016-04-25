@@ -83,7 +83,7 @@ public class BitChromosomeCoder implements ChromosomeCoder<BitChromosome> {
         for (final String identifier : identifiers) {
 
             final double x = phenotype.variable(identifier);
-            long bitsValue = Math.round(((x + (-1) * range.lowerBound()) * (twoPowNBits - 1) / range.length()));
+            long bitsValue = Math.round((x - range.lowerBound()) * (twoPowNBits - 1) / range.length());
 
             for (int i = 0; bitsValue != 0; i++) {
                 if (bitsValue % 2 != 0) {

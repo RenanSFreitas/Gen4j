@@ -12,23 +12,20 @@ import com.gen4j.chromosome.fp.FloatingPointChromosome;
 
 public class RandomFloatingPointChromosomeGenerator implements ChromosomeGenerator<FloatingPointChromosome> {
 
-    private final double lowerBound;
     private final Random random = new Random(System.nanoTime());
-    private final double domainLength;
+    private final Range range;
 
     public RandomFloatingPointChromosomeGenerator(final Range optimizationRange) {
-        checkNotNull(optimizationRange);
-        lowerBound = optimizationRange.lowerBound();
-        domainLength = optimizationRange.length();
+        range = checkNotNull(optimizationRange);
     }
 
     @Override
     public FloatingPointChromosome generate(final int length) {
         final double[] chromosomeValue = new double[length];
         for(int i = 0; i < chromosomeValue.length; i++ ) {
-            chromosomeValue[i] = random.nextDouble() * domainLength + lowerBound;
+            chromosomeValue[i] = random.nextDouble() * range.length() + range.lowerBound();
         }
-        return new FloatingPointChromosome(chromosomeValue);
+        return new FloatingPointChromosome(chromosomeValue, range);
     }
 
 }
