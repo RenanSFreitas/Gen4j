@@ -2,8 +2,6 @@ package com.gen4j.operator.selection.roulette;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.NavigableMap;
 import java.util.Random;
 
 import com.gen4j.chromosome.Chromosome;
@@ -22,10 +20,13 @@ final class Roulette<C extends Chromosome> {
         final List<Individual<C>> populationFitness = population.fitness();
 
         final double maximum = populationFitness.get(populationFitness.size()-1).fitness();
+        final int selectionPressure = -8;
+//        final double minimum = populationFitness.get(0).fitness();
 
         final double sumFitness = populationFitness
                 .stream()
-                .mapToDouble(i -> Math.exp(-8 * i.fitness() / maximum))
+                .mapToDouble(i -> Math.exp(selectionPressure * i.fitness() / maximum))
+//                .mapToDouble(i -> i.fitness() + minimum)
                 .sum();
 
 
@@ -34,7 +35,8 @@ final class Roulette<C extends Chromosome> {
         double accumulatedFitness = 0d;
         for (final Individual<C> individual : populationFitness) {
             // sums currrent relative fitness (displaced)
-            accumulatedFitness += Math.exp(-8 * individual.fitness() / maximum) / sumFitness;
+            accumulatedFitness += Math.exp(selectionPressure * individual.fitness() / maximum) / sumFitness;
+//            accumulatedFitness += (individual.fitness() + minimum) / sumFitness;
             roulette.add(Pair.of(individual, accumulatedFitness));
         }
 
