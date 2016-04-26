@@ -1,10 +1,8 @@
 package com.gen4j.operator.bit;
 
-import static com.google.common.collect.Iterables.getOnlyElement;
-
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import com.gen4j.chromosome.bit.BitChromosome;
@@ -23,10 +21,18 @@ public final class BitChromosomeMutation extends AbstractGeneticOperator<BitChro
     public List<Individual<BitChromosome>> apply(final Collection<Individual<BitChromosome>> individuals,
             final GeneticAlgorithmFactory<BitChromosome> factory) {
 
-        final BitChromosome mutant = new BitChromosome(getOnlyElement(individuals).chromosome());
-        final BitSet bits = mutant.value();
-        bits.flip(random.nextInt(mutant.length()));
-        return Collections.singletonList(factory.individual(mutant));
+        final List<Individual<BitChromosome>> result = new ArrayList<>();
+        for (final Individual<BitChromosome> individual : individuals) {
+            final BitChromosome mutant = new BitChromosome(individual.chromosome());
+            final BitSet bits = (BitSet) mutant.value().clone();
+            for (int i = 0; i < bits.length(); i++) {
+                if (random.nextDouble() < probability()) {
+                    bits.flip(i);
+                }
+            }
+            result.add(factory.individual(mutant));
+        }
+        return result;
     }
 
     @Override

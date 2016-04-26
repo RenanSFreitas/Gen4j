@@ -1,9 +1,7 @@
 package com.gen4j.operator.fp;
 
-import static com.google.common.collect.Iterables.getOnlyElement;
-
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import com.gen4j.chromosome.Range;
@@ -24,15 +22,24 @@ public final class FloatingPointMutation extends AbstractGeneticOperator<Floatin
             final Collection<Individual<FloatingPointChromosome>> individuals,
             final GeneticAlgorithmFactory<FloatingPointChromosome> factory) {
 
-        final double[] originalValue = getOnlyElement(individuals).chromosome().value();
-        final int length = originalValue.length;
-        final double[] chromosomeValue = new double[length];
-        System.arraycopy(originalValue, 0, chromosomeValue, 0, length);
+        final List<Individual<FloatingPointChromosome>> result = new ArrayList<>();
 
-        final Range range = factory.coder().range();
-        chromosomeValue[random.nextInt(length)] = random.nextDouble() * range.length() + range.lowerBound();
+        for (final Individual<FloatingPointChromosome> individual : individuals) {
+            final double[] originalValue = individual.chromosome().value();
+            final int length = originalValue.length;
+            final double[] chromosomeValue = new double[length];
+            final Range range = factory.coder().range();
+            for (int i = 0; i < chromosomeValue.length; i++) {
+                if (random.nextDouble() < probability()) {
+                    chromosomeValue[i] = random.nextDouble() * range.length() + range.lowerBound();
+                } else {
+                    chromosomeValue[i] = originalValue[i];
+                }
+            }
+            result.add(factory.individual(new FloatingPointChromosome(chromosomeValue)));
+        }
 
-        return Collections.singletonList(factory.individual(new FloatingPointChromosome(chromosomeValue)));
+        return result;
     }
 
     @Override
