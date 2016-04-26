@@ -45,10 +45,6 @@ public class BitChromosomeCoder implements ChromosomeCoder<BitChromosome> {
         chromosomeLength = nbits * identifiers.size();
     }
 
-    public int getNbits() {
-        return (int) nbits;
-    }
-
     @Override
     public int chromosomeLength() {
         return (int) chromosomeLength;
@@ -94,7 +90,7 @@ public class BitChromosomeCoder implements ChromosomeCoder<BitChromosome> {
 
             offset += nbits;
         }
-        return new BitChromosome(bits, (int) nbits);
+        return new BitChromosome(bits, (int) chromosomeLength);
     }
 
     @Override
