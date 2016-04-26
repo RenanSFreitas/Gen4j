@@ -1,7 +1,5 @@
 package com.gen4j.operator.selection;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -29,16 +27,13 @@ public final class TournamentSelector<C extends Chromosome> extends AbstractSele
     public void population(final Population<C> population) {
         // checkArgument(arity < population.size(), "Population too small for
         // tournament of arity %d", arity);
-        arity = DoubleMath.roundToInt(population.size() * 0.7, RoundingMode.FLOOR);
+        arity = DoubleMath.roundToInt(population.size() * 0.05, RoundingMode.FLOOR);
         super.population(population);
     }
 
     private Individual<C> select(final List<Individual<C>> individuals) {
-        if (arity == 2) {
-            return tournamentOfTwo(individuals);
-        }
-
         return tournament(individuals);
+        // return individuals.get(random.nextInt(individuals.size()));
     }
 
     private Individual<C> tournament(final List<Individual<C>> individuals) {
@@ -50,17 +45,6 @@ public final class TournamentSelector<C extends Chromosome> extends AbstractSele
         }
 
         return tree.last();
-    }
-
-    private Individual<C> tournamentOfTwo(final List<Individual<C>> individuals) {
-
-        final int size = individuals.size();
-
-        final Individual<C> firstIndividual = individuals.get(random.nextInt(size));
-        final Individual<C> secondIndividual = individuals.get(random.nextInt(size));
-
-        return firstIndividual.fitness() > secondIndividual.fitness() ?
-                firstIndividual : secondIndividual;
     }
 
     @Override
