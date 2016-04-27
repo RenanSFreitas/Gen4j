@@ -15,8 +15,7 @@ public final class RouletteSelector<G extends Chromosome> extends AbstractSelect
     private final int selectionPressure;
 
     public RouletteSelector(final int selectionPressure) {
-        checkArgument(selectionPressure < 0,
-                "Roulette Wheel selection pressure should be below 0. Please, check the documentation");
+        checkArgument(selectionPressure < 0, "Roulette Wheel selection pressure should be below 0. Please, check the documentation");
         this.selectionPressure = selectionPressure;
     }
 
