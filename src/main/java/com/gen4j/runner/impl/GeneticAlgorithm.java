@@ -104,8 +104,6 @@ public class GeneticAlgorithm<C extends Chromosome> implements com.gen4j.runner.
     public GeneticAlgorithmSolution<C> evolve(final Population<C> population,
             final GeneticAlgorithmFactory<C> factory) {
 
-        checkArgument(population.size() > elitismCount);
-
         GeneticAlgorithmSolution<C> solution = null;
 
         try {
@@ -122,6 +120,9 @@ public class GeneticAlgorithm<C extends Chromosome> implements com.gen4j.runner.
 
     private GeneticAlgorithmSolution<C> performEvolution(final Population<C> population,
             final GeneticAlgorithmFactory<C> factory) {
+
+        checkArgument(population.size() > elitismCount, "Population size %s too small for elitism of %s individuals",
+                population.size(), elitismCount);
 
         storeFittest(population);
 
