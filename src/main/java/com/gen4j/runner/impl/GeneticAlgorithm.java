@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,9 +21,6 @@ import com.gen4j.population.PopulationBuilder;
 import com.gen4j.runner.GeneticAlgorithmSolution;
 import com.gen4j.runner.listener.GeneticAlgorithmListener;
 
-//TODO: tests for invalid stuff
-//TODO: refactor the operators stuff
-//TODO: stuff
 public class GeneticAlgorithm<C extends Chromosome> implements com.gen4j.runner.GeneticAlgorithm<C> {
 
     private final Selector<C> selector;
@@ -37,6 +35,8 @@ public class GeneticAlgorithm<C extends Chromosome> implements com.gen4j.runner.
 
     private Individual<C> fittest;
 
+    private int elitismCount;
+
     private final GeneticAlgorithmSolution.Builder<C> solutionBuilder = GeneticAlgorithmSolution.builder();
 
     public GeneticAlgorithm(final Selector<C> selector, final GeneticOperator<C> crossOver,
@@ -49,6 +49,11 @@ public class GeneticAlgorithm<C extends Chromosome> implements com.gen4j.runner.
         this.mutation = mutation;
 
         solutionBuilder.codeType(crossOver.chromosomeCodeType());
+    }
+
+    public void setElitismCount(final int elitismCount) {
+        checkArgument(elitismCount > -1);
+        this.elitismCount = elitismCount;
     }
 
     @Override
@@ -83,6 +88,12 @@ public class GeneticAlgorithm<C extends Chromosome> implements com.gen4j.runner.
         }
     }
 
+    private void notifyEvolutionInterrupted(final Throwable cause) {
+        for (final GeneticAlgorithmListener<C> listener : listeners) {
+            listener.evolutionInterruped(cause);
+        }
+    }
+
     @Override
     public Individual<C> fittest() {
         return fittest;
@@ -92,25 +103,42 @@ public class GeneticAlgorithm<C extends Chromosome> implements com.gen4j.runner.
     public GeneticAlgorithmSolution<C> evolve(final Population<C> population,
             final GeneticAlgorithmFactory<C> factory) {
 
+        checkArgument(population.size() > elitismCount);
+
+        GeneticAlgorithmSolution<C> solution = null;
+
+        try {
+
+            solution = performEvolution(population, factory);
+
+        } catch (final Throwable cause) {
+            notifyEvolutionInterrupted(cause);
+            throw cause;
+        }
+
+        return solution;
+    }
+
+    private GeneticAlgorithmSolution<C> performEvolution(final Population<C> population,
+            final GeneticAlgorithmFactory<C> factory) {
+
         storeFittest(population);
 
         int generation = 0;
         notifyNewPopulation(population, generation);
 
-        Population<C> current = population;
+        Population<C> currentGeneration = population;
 
-        while (!factory.stopCriteria().apply(current, generation)) {
+        while (!factory.stopCriteria().apply(currentGeneration, generation)) {
 
-            selector.population(current);
-
-            current = applyGeneticOperators(selector.select(current.size()), factory);
-            storeFittest(current);
+            currentGeneration = applyGeneticOperators(currentGeneration, factory);
+            storeFittest(currentGeneration);
             generation++;
 
-            notifyNewPopulation(current, generation);
+            notifyNewPopulation(currentGeneration, generation);
         }
 
-        final GeneticAlgorithmSolution<C> solution = solutionBuilder.population(current)
+        final GeneticAlgorithmSolution<C> solution = solutionBuilder.population(currentGeneration)
                 .fittest(fittest)
                 .generationsCount(generation)
                 .build();
@@ -119,7 +147,6 @@ public class GeneticAlgorithm<C extends Chromosome> implements com.gen4j.runner.
 
         return solution;
     }
-
     private void storeFittest(final Population<C> currentPopulation) {
         final Individual<C> currentFittest = currentPopulation.fittest();
         if (fittest == null || fittest.fitness() < currentFittest.fitness()) {
@@ -127,12 +154,14 @@ public class GeneticAlgorithm<C extends Chromosome> implements com.gen4j.runner.
         }
     }
 
-    private Population<C> applyGeneticOperators(final List<Individual<C>> selected,
-            final GeneticAlgorithmFactory<C> factory) {
+    private Population<C> applyGeneticOperators(final Population<C> currentGeneration, final GeneticAlgorithmFactory<C> factory) {
 
-        final List<Individual<C>> next = new ArrayList<>(selected.size());
+        selector.population(currentGeneration);
+        final List<Individual<C>> nextGeneration = new ArrayList<>(currentGeneration.size());
 
-        while (next.size() < selected.size()) {
+        nextGeneration.addAll(getFittestIndividuals(currentGeneration));
+
+        while (nextGeneration.size() < currentGeneration.size()) {
 
             List<Individual<C>> individuals = selector.select(2);
             if (random.nextDouble() < crossOver.probability()) {
@@ -141,14 +170,19 @@ public class GeneticAlgorithm<C extends Chromosome> implements com.gen4j.runner.
 
             individuals = mutation.apply(individuals, factory);
 
-            next.addAll(individuals);
+            nextGeneration.addAll(individuals);
         }
 
         // selected.add(fittest);
 
         return PopulationBuilder.of(factory)
-                .initialChromosomes(next)
-                .size(next.size())
+                .initialChromosomes(nextGeneration)
+                .size(nextGeneration.size())
                 .build();
+    }
+
+    private Collection<? extends Individual<C>> getFittestIndividuals(final Population<C> current) {
+        final List<Individual<C>> individuals = current.fitness();
+        return individuals.subList(individuals.size() - elitismCount, individuals.size());
     }
 }

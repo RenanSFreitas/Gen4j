@@ -11,4 +11,6 @@ public interface GeneticAlgorithmListener<C extends Chromosome> {
 
     void newSolution(GeneticAlgorithmSolution<C> solution, Individual<C> fittest);
 
+    void evolutionInterruped(Throwable cause);
+
 }

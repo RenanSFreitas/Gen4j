@@ -20,5 +20,7 @@ public interface GeneticAlgorithm<C extends Chromosome> {
 
     void removeListener(GeneticAlgorithmListener<C> listener);
 
+    void setElitismCount(int elitismCount);
+
     void clearListeners();
 }

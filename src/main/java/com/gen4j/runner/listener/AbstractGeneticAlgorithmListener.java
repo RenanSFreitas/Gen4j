@@ -19,4 +19,9 @@ public abstract class AbstractGeneticAlgorithmListener<C extends Chromosome> imp
     public void newSolution(final GeneticAlgorithmSolution<C> solution, final Individual<C> fittest) {
         // Override me
     }
+
+    @Override
+    public void evolutionInterruped(final Throwable cause) {
+        // Override me
+    }
 }
