@@ -31,7 +31,6 @@ final class Roulette<C extends Chromosome> {
 
         double accumulatedFitness = 0d;
         for (final Individual<C> individual : populationFitness) {
-            // sums currrent relative fitness (displaced)
             accumulatedFitness += Math.exp(selectionPressure * individual.fitness() / maximum) / sumFitness;
             roulette.add(Pair.of(individual, accumulatedFitness));
         }
