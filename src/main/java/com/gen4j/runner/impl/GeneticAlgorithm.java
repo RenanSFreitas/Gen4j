@@ -51,6 +51,7 @@ public class GeneticAlgorithm<C extends Chromosome> implements com.gen4j.runner.
         solutionBuilder.codeType(crossOver.chromosomeCodeType());
     }
 
+    @Override
     public void setElitismCount(final int elitismCount) {
         checkArgument(elitismCount > -1);
         this.elitismCount = elitismCount;
@@ -172,8 +173,6 @@ public class GeneticAlgorithm<C extends Chromosome> implements com.gen4j.runner.
 
             nextGeneration.addAll(individuals);
         }
-
-        // selected.add(fittest);
 
         return PopulationBuilder.of(factory)
                 .initialChromosomes(nextGeneration)
