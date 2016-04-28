@@ -11,7 +11,6 @@ import java.util.List;
 
 import com.gen4j.chromosome.Chromosome;
 import com.gen4j.factory.GeneticAlgorithmFactory;
-import com.gen4j.population.generic.GenericIndividual;
 
 public final class PopulationBuilder<C extends Chromosome>
 {
@@ -55,8 +54,7 @@ public final class PopulationBuilder<C extends Chromosome>
         chromosomeLength = factory.coder().chromosomeLength();
         for (int i = population.size(); i < size; i++)
         {
-            final boolean added = population
-                    .add(new GenericIndividual<>(newGenotype(), factory.fitnessFunction(), factory.coder()));
+            final boolean added = population.add(factory.individual(newGenotype()));
 
             if (!added) {
                 i--;
