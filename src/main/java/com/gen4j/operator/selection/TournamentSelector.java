@@ -2,7 +2,6 @@ package com.gen4j.operator.selection;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -12,7 +11,6 @@ import java.util.TreeSet;
 import com.gen4j.chromosome.Chromosome;
 import com.gen4j.population.Individual;
 import com.gen4j.population.Population;
-import com.google.common.math.DoubleMath;
 
 public final class TournamentSelector<C extends Chromosome> extends AbstractSelector<C> {
 
@@ -20,9 +18,9 @@ public final class TournamentSelector<C extends Chromosome> extends AbstractSele
     private final Comparator<Individual<C>> comparator = (c1, c2) -> Double.compare(c1.fitness(), c2.fitness());
     private final Random random = new Random(System.nanoTime());
 
-    public TournamentSelector(final double arity) {
+    public TournamentSelector(final int arity) {
         checkArgument(arity > 1, "Tournament arity should be greater than 1");
-        this.arity = DoubleMath.roundToInt(arity, RoundingMode.FLOOR);
+        this.arity = arity;
     }
 
     @Override
