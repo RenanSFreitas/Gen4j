@@ -25,7 +25,7 @@ public final class TournamentSelector<C extends Chromosome> extends AbstractSele
 
     @Override
     public void population(final Population<C> population) {
-        checkArgument(arity < population.size(), "Population too small for tournament of arity %d", arity);
+        checkArgument(arity < population.size(), "Population too small for tournament of arity %s", arity);
         super.population(population);
     }
 
