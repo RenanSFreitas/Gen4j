@@ -62,4 +62,19 @@ public final class GenericIndividual<C extends Chromosome> implements Individual
                 .add("fit", fitness())
                 .toString();
     }
+
+    @Override
+    public int compareTo(final Individual<C> that) {
+        final double thisFitness = this.fitness();
+        final double thatFitness = that.fitness();
+        if (thisFitness < thatFitness) {
+            return -1;
+        }
+
+        if (thisFitness > thatFitness) {
+            return 1;
+        }
+
+        return 0;
+    }
 }
