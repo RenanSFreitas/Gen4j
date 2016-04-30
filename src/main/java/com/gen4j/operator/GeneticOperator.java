@@ -14,7 +14,8 @@ public interface GeneticOperator<C extends Chromosome> {
 
     void probability(double probability);
 
-    List<Individual<C>> apply(Collection<Individual<C>> individuals, GeneticAlgorithmFactory<C> factory);
+    List<Individual<C>> apply(Collection<Individual<C>> individuals, GeneticAlgorithmFactory<C> factory,
+            int generationCount);
 
     int chromosomeCount();
 

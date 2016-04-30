@@ -33,7 +33,7 @@ public final class BitChromosomeSinglePointCrossOver extends AbstractGeneticOper
 
     @Override
     public List<Individual<BitChromosome>> apply(final Collection<Individual<BitChromosome>> individuals,
-            final GeneticAlgorithmFactory<BitChromosome> factory) {
+            final GeneticAlgorithmFactory<BitChromosome> factory, int generationCount) {
 
         Preconditions.checkArgument(individuals.size() == 2);
         final Iterator<Individual<BitChromosome>> iterator = individuals.iterator();

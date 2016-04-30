@@ -11,15 +11,15 @@ import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.operator.AbstractGeneticOperator;
 import com.gen4j.population.Individual;
 
-public final class BitChromosomeMutation extends AbstractGeneticOperator<BitChromosome> {
+public final class BitFlipMutation extends AbstractGeneticOperator<BitChromosome> {
 
-    public BitChromosomeMutation() {
+    public BitFlipMutation() {
         super(0.01, 1, ChromosomeCodeType.BIT);
     }
 
     @Override
     public List<Individual<BitChromosome>> apply(final Collection<Individual<BitChromosome>> individuals,
-            final GeneticAlgorithmFactory<BitChromosome> factory) {
+            final GeneticAlgorithmFactory<BitChromosome> factory, int generationCount) {
 
         final List<Individual<BitChromosome>> result = new ArrayList<>();
         for (final Individual<BitChromosome> individual : individuals) {
@@ -37,6 +37,6 @@ public final class BitChromosomeMutation extends AbstractGeneticOperator<BitChro
 
     @Override
     public String toString() {
-        return "Bit flip bit-chromosome mutation";
+        return "Bit flip mutation";
     }
 }

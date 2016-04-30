@@ -141,7 +141,7 @@ public class GeneticAlgorithmTest {
             }
         }
         expect(selector.select(eq(POPULATION_SIZE))).andReturn(selectedIndividuals).anyTimes();
-        expect(operator.apply(anyObject(Collection.class), eq(factory))).andReturn(selectedIndividuals).anyTimes();
+//        expect(operator.apply(anyObject(Collection.class), eq(factory), generationCount)).andReturn(selectedIndividuals).anyTimes();
     }
 
 }

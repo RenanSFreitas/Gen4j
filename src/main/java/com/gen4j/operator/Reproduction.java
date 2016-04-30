@@ -22,7 +22,7 @@ public final class Reproduction<C extends Chromosome> extends AbstractGeneticOpe
 
     @Override
     public List<Individual<C>> apply(final Collection<Individual<C>> individuals,
-            final GeneticAlgorithmFactory<C> factory) {
+            final GeneticAlgorithmFactory<C> factory, int generationCount) {
         checkArgument(individuals.size() == CHROMOSOME_COUNT);
         return singletonList(getOnlyElement(individuals));
     }

@@ -20,7 +20,7 @@ public final class FloatingPointMutation extends AbstractGeneticOperator<Floatin
     @Override
     public List<Individual<FloatingPointChromosome>> apply(
             final Collection<Individual<FloatingPointChromosome>> individuals,
-            final GeneticAlgorithmFactory<FloatingPointChromosome> factory) {
+            final GeneticAlgorithmFactory<FloatingPointChromosome> factory, int generationCount) {
 
         final List<Individual<FloatingPointChromosome>> result = new ArrayList<>();
 

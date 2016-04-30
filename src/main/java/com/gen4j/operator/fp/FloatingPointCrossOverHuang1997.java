@@ -23,7 +23,7 @@ public final class FloatingPointCrossOverHuang1997 extends AbstractGeneticOperat
     @Override
     public List<Individual<FloatingPointChromosome>> apply(
             final Collection<Individual<FloatingPointChromosome>> individuals,
-            final GeneticAlgorithmFactory<FloatingPointChromosome> factory) {
+            final GeneticAlgorithmFactory<FloatingPointChromosome> factory, int generationCount) {
 
         Preconditions.checkArgument(individuals.size() == 2);
         final Iterator<Individual<FloatingPointChromosome>> iterator = individuals.iterator();

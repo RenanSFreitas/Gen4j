@@ -22,7 +22,7 @@ public final class BitChromosomeUniformCrossOver extends AbstractGeneticOperator
 
     @Override
     public List<Individual<BitChromosome>> apply(final Collection<Individual<BitChromosome>> individuals,
-            final GeneticAlgorithmFactory<BitChromosome> factory) {
+            final GeneticAlgorithmFactory<BitChromosome> factory, int generationCount) {
 
         final Iterator<Individual<BitChromosome>> iterator = individuals.iterator();
         return apply(iterator.next().chromosome(), iterator.next().chromosome(), factory);

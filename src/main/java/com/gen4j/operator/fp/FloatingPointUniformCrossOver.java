@@ -21,7 +21,7 @@ public final class FloatingPointUniformCrossOver extends AbstractGeneticOperator
     @Override
     public List<Individual<FloatingPointChromosome>> apply(
             final Collection<Individual<FloatingPointChromosome>> individuals,
-            final GeneticAlgorithmFactory<FloatingPointChromosome> factory) {
+            final GeneticAlgorithmFactory<FloatingPointChromosome> factory, int generationCount) {
 
         final Iterator<Individual<FloatingPointChromosome>> iterator = individuals.iterator();
         return apply(iterator.next().chromosome(), iterator.next().chromosome(), factory);

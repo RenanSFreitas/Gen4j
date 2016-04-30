@@ -2,9 +2,9 @@ package com.gen4j.runner;
 
 import com.gen4j.chromosome.Chromosome;
 import com.gen4j.factory.GeneticAlgorithmFactory;
+import com.gen4j.generation.replacement.GenerationReplacer;
 import com.gen4j.population.Individual;
 import com.gen4j.population.Population;
-import com.gen4j.population.exchange.PopulationExchanger;
 import com.gen4j.runner.listener.GeneticAlgorithmListener;
 
 public interface GeneticAlgorithm<C extends Chromosome> {
@@ -19,7 +19,7 @@ public interface GeneticAlgorithm<C extends Chromosome> {
 
     void setElitismCount(int elitismCount);
 
-    void setPopulationExchanger(PopulationExchanger<C> exchanger);
+    void setPopulationExchanger(GenerationReplacer<C> exchanger);
 
     void clearListeners();
 }

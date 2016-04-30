@@ -12,13 +12,13 @@ import java.util.Random;
 
 import com.gen4j.chromosome.Chromosome;
 import com.gen4j.factory.GeneticAlgorithmFactory;
+import com.gen4j.generation.replacement.GenerationReplacer;
+import com.gen4j.generation.replacement.StandardGenerationReplacer;
 import com.gen4j.operator.GeneticOperator;
 import com.gen4j.operator.selection.Selector;
 import com.gen4j.population.Individual;
 import com.gen4j.population.Population;
 import com.gen4j.population.PopulationBuilder;
-import com.gen4j.population.exchange.PopulationExchanger;
-import com.gen4j.population.exchange.StandardPopulationExchanger;
 import com.gen4j.runner.GeneticAlgorithmSolution;
 import com.gen4j.runner.listener.GeneticAlgorithmListener;
 import com.google.common.math.DoubleMath;
@@ -37,7 +37,7 @@ public final class GeneticAlgorithm<C extends Chromosome> implements com.gen4j.r
 
     private int elitismCount;
 
-    private PopulationExchanger<C> exchanger = StandardPopulationExchanger.TOTAL_EXCHANGE.get();
+    private GenerationReplacer<C> replacer = StandardGenerationReplacer.GENERATIONAL.get();
 
     private final GeneticAlgorithmSolution.Builder<C> solutionBuilder = GeneticAlgorithmSolution.builder();
 
@@ -60,8 +60,8 @@ public final class GeneticAlgorithm<C extends Chromosome> implements com.gen4j.r
     }
 
     @Override
-    public void setPopulationExchanger(final PopulationExchanger<C> exchanger) {
-        this.exchanger = requireNonNull(exchanger);
+    public void setPopulationExchanger(final GenerationReplacer<C> exchanger) {
+        this.replacer = requireNonNull(exchanger);
     }
 
     @Override
@@ -135,7 +135,7 @@ public final class GeneticAlgorithm<C extends Chromosome> implements com.gen4j.r
 
         while (!factory.stopCriteria().apply(currentGeneration, generation)) {
 
-            currentGeneration = applyGeneticOperators(currentGeneration, factory);
+            currentGeneration = applyGeneticOperators(currentGeneration, factory, generation);
             storeFittest(currentGeneration);
             generation++;
 
@@ -151,6 +151,7 @@ public final class GeneticAlgorithm<C extends Chromosome> implements com.gen4j.r
 
         return solution;
     }
+
     private void storeFittest(final Population<C> currentPopulation) {
         final Individual<C> currentFittest = currentPopulation.fittest();
         if (fittest == null || fittest.fitness() < currentFittest.fitness()) {
@@ -159,18 +160,18 @@ public final class GeneticAlgorithm<C extends Chromosome> implements com.gen4j.r
     }
 
     private Population<C> applyGeneticOperators0(final Population<C> currentGeneration,
-            final GeneticAlgorithmFactory<C> factory) {
+            final GeneticAlgorithmFactory<C> factory, final int generationCount) {
 
         selector.population(currentGeneration);
 
         final List<Individual<C>> intermediatePopulation = new ArrayList<>(currentGeneration.size()*3);
 
         while (intermediatePopulation.size() < currentGeneration.size()) {
-            intermediatePopulation.addAll(crossOver.apply(selector.select(2), factory));
+            intermediatePopulation.addAll(crossOver.apply(selector.select(2), factory, generationCount));
         }
 
         intermediatePopulation.addAll(mutation
-                .apply(selector.select(DoubleMath.roundToInt(currentGeneration.size(), RoundingMode.FLOOR)), factory));
+                .apply(selector.select(DoubleMath.roundToInt(currentGeneration.size(), RoundingMode.FLOOR)), factory, generationCount));
 
         while (intermediatePopulation.size() < 3 * currentGeneration.size()) {
             intermediatePopulation.add(factory.individual(factory.chromosomeGenerator().get()
@@ -196,32 +197,32 @@ public final class GeneticAlgorithm<C extends Chromosome> implements com.gen4j.r
         return offspring;
     }
 
-    private Population<C> applyGeneticOperators(final Population<C> currentGeneration,
-            final GeneticAlgorithmFactory<C> factory) {
+    private Population<C> applyGeneticOperators(final Population<C> generation,
+            final GeneticAlgorithmFactory<C> factory, final int generationCount) {
 
-        selector.population(currentGeneration);
-        final List<Individual<C>> nextGeneration = new ArrayList<>(currentGeneration.size());
+        selector.population(generation);
+        final List<Individual<C>> nextGenerationList = new ArrayList<>(generation.size());
 
-        nextGeneration.addAll(getFittestIndividuals(currentGeneration));
+        nextGenerationList.addAll(getFittestIndividuals(generation));
 
-        while (nextGeneration.size() < currentGeneration.size()) {
+        while (nextGenerationList.size() < generation.size()) {
 
             List<Individual<C>> individuals = selector.select(2);
             if (random.nextDouble() < crossOver.probability()) {
-                individuals = crossOver.apply(individuals, factory);
+                individuals = crossOver.apply(individuals, factory, generationCount);
             }
 
-            individuals = mutation.apply(individuals, factory);
+            individuals = mutation.apply(individuals, factory, generationCount);
 
-            nextGeneration.addAll(individuals);
+            nextGenerationList.addAll(individuals);
         }
 
-        final Population<C> offspring = PopulationBuilder.of(factory)
-                .initialChromosomes(nextGeneration)
-                .size(nextGeneration.size())
+        final Population<C> nextGeneration = PopulationBuilder.of(factory)
+                .initialChromosomes(nextGenerationList)
+                .size(nextGenerationList.size())
                 .build();
 
-        return exchanger.exchange(currentGeneration, offspring, factory);
+        return replacer.replace(generation, nextGeneration, factory);
     }
 
     private Collection<? extends Individual<C>> getFittestIndividuals(final Population<C> current) {

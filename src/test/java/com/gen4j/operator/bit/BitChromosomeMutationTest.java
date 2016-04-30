@@ -28,7 +28,7 @@ import com.gen4j.population.Individual;
 import com.gen4j.utils.BitSets;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BitChromosomeMutation.class, BitChromosome.class })
+@PrepareForTest({ BitFlipMutation.class, BitChromosome.class })
 public class BitChromosomeMutationTest {
 
 
@@ -49,7 +49,7 @@ public class BitChromosomeMutationTest {
     private BitSet chromosomeBits;
 
     @TestSubject
-    private BitChromosomeMutation subject;
+    private BitFlipMutation subject;
 
     @Mock
     private FitnessFunction fitnessFunction;
@@ -62,8 +62,8 @@ public class BitChromosomeMutationTest {
 
     @Before
     public void setUp() throws IllegalAccessException {
-        subject = new BitChromosomeMutation();
-        MemberMatcher.field(BitChromosomeMutation.class, "random").set(subject, random);
+        subject = new BitFlipMutation();
+        MemberMatcher.field(BitFlipMutation.class, "random").set(subject, random);
 
         chromosomeBits = BitSets.fromString(GENOTYPE_BITS);
     }
@@ -87,7 +87,7 @@ public class BitChromosomeMutationTest {
 
         replayAll();
 
-        final Individual<BitChromosome> mutant = getOnlyElement(subject.apply(singleton(individual), factory));
+        final Individual<BitChromosome> mutant = getOnlyElement(subject.apply(singleton(individual), factory, generationCount));
 
         assertEquals(MUTANT_BIT_VALUE, mutant.chromosome().value().get(MUTANT_BIT));
     }
