@@ -15,24 +15,25 @@ final class Roulette<C extends Chromosome> {
 
     private final List<Pair<Individual<C>, Double>> roulette;
 
-    static <C extends Chromosome> Roulette<C> of(final Population<C> population, final int selectionPressure) {
+    static <C extends Chromosome> Roulette<C> of(final Population<C> population) {
 
-        final List<Individual<C>> populationFitness = population.fitness();
+        final List<Individual<C>> fitness = population.fitness();
 
-        final double maximum = populationFitness.get(populationFitness.size()-1).fitness();
+        final double maximum = fitness.get(fitness.size() - 1).fitness();
+        final double minimum = fitness.get(0).fitness();
 
-        final double sumFitness = populationFitness
-                .stream()
-                .mapToDouble(i -> Math.exp(selectionPressure * i.fitness() / maximum))
+        double maxMinusMin = maximum - minimum;
+        final double sumFitness = fitness.stream()
+                .mapToDouble(i -> (i.fitness() - minimum) / maxMinusMin)
                 .sum();
-
 
         final List<Pair<Individual<C>, Double>> roulette = new ArrayList<>(population.size());
 
-        double accumulatedFitness = 0d;
-        for (final Individual<C> individual : populationFitness) {
-            accumulatedFitness += Math.exp(selectionPressure * individual.fitness() / maximum) / sumFitness;
-            roulette.add(Pair.of(individual, accumulatedFitness));
+        double cumulativeProbability = 0d;
+        for (int i = 0; i < fitness.size(); i++) {
+            final Individual<C> individual = fitness.get(i);
+            cumulativeProbability += ((individual.fitness() - minimum) / maxMinusMin) / sumFitness;
+            roulette.add(Pair.of(individual, cumulativeProbability));
         }
 
         return new Roulette<>(roulette);
