@@ -11,6 +11,7 @@ import com.gen4j.chromosome.Chromosome;
 import com.gen4j.chromosome.code.ChromosomeCodeType;
 import com.gen4j.population.Individual;
 import com.gen4j.population.Population;
+import com.gen4j.population.Populations;
 
 public final class GeneticAlgorithmSolution<C extends Chromosome> {
 
@@ -18,6 +19,7 @@ public final class GeneticAlgorithmSolution<C extends Chromosome> {
     private final int generationsCount;
     private final Individual<C> fittest;
     private final ChromosomeCodeType codeType;
+    private final boolean converged;
 
     public static class Builder<C extends Chromosome> {
         private Population<C> population;
@@ -70,6 +72,7 @@ public final class GeneticAlgorithmSolution<C extends Chromosome> {
         this.generationsCount = generationsCount;
         this.fittest = requireNonNull(fittest);
         this.codeType = requireNonNull(codeType);
+        this.converged = Populations.converged(population);
     }
 
     /**
@@ -98,5 +101,9 @@ public final class GeneticAlgorithmSolution<C extends Chromosome> {
      */
     public ChromosomeCodeType codeType() {
         return codeType;
+    }
+
+    public boolean converged() {
+        return converged;
     }
 }
