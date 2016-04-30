@@ -19,12 +19,12 @@ public final class BitFlipMutation extends AbstractGeneticOperator<BitChromosome
 
     @Override
     public List<Individual<BitChromosome>> apply(final Collection<Individual<BitChromosome>> individuals,
-            final GeneticAlgorithmFactory<BitChromosome> factory, int generationCount) {
+            final GeneticAlgorithmFactory<BitChromosome> factory, final int generationCount) {
 
         final List<Individual<BitChromosome>> result = new ArrayList<>();
         for (final Individual<BitChromosome> individual : individuals) {
             final BitChromosome mutant = new BitChromosome(individual.chromosome());
-            final BitSet bits = (BitSet) mutant.value().clone();
+            final BitSet bits = mutant.value();
             for (int i = 0; i < bits.length(); i++) {
                 if (random.nextDouble() < probability()) {
                     bits.flip(i);
