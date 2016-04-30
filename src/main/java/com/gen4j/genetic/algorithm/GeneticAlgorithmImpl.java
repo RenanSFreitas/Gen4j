@@ -1,9 +1,8 @@
-package com.gen4j.runner.impl;
+package com.gen4j.genetic.algorithm;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -19,11 +18,9 @@ import com.gen4j.operator.selection.Selector;
 import com.gen4j.population.Individual;
 import com.gen4j.population.Population;
 import com.gen4j.population.PopulationBuilder;
-import com.gen4j.runner.GeneticAlgorithmSolution;
 import com.gen4j.runner.listener.GeneticAlgorithmListener;
-import com.google.common.math.DoubleMath;
 
-public final class GeneticAlgorithm<C extends Chromosome> implements com.gen4j.runner.GeneticAlgorithm<C> {
+final class GeneticAlgorithmImpl<C extends Chromosome> implements GeneticAlgorithm<C> {
 
     private final Selector<C> selector;
     private final GeneticOperator<C> crossOver;
@@ -41,7 +38,7 @@ public final class GeneticAlgorithm<C extends Chromosome> implements com.gen4j.r
 
     private final GeneticAlgorithmSolution.Builder<C> solutionBuilder = GeneticAlgorithmSolution.builder();
 
-    public GeneticAlgorithm(final Selector<C> selector, final GeneticOperator<C> crossOver,
+    GeneticAlgorithmImpl(final Selector<C> selector, final GeneticOperator<C> crossOver,
             final GeneticOperator<C> mutation) {
         checkArgument(crossOver.chromosomeCodeType() == mutation.chromosomeCodeType(),
                 "Multiple code types. Should be either BIT or FLOATING_POINT.");
@@ -157,44 +154,6 @@ public final class GeneticAlgorithm<C extends Chromosome> implements com.gen4j.r
         if (fittest == null || fittest.fitness() < currentFittest.fitness()) {
             fittest = currentFittest;
         }
-    }
-
-    private Population<C> applyGeneticOperators0(final Population<C> currentGeneration,
-            final GeneticAlgorithmFactory<C> factory, final int generationCount) {
-
-        selector.population(currentGeneration);
-
-        final List<Individual<C>> intermediatePopulation = new ArrayList<>(currentGeneration.size()*3);
-
-        while (intermediatePopulation.size() < currentGeneration.size()) {
-            intermediatePopulation.addAll(crossOver.apply(selector.select(2), factory, generationCount));
-        }
-
-        intermediatePopulation.addAll(mutation
-                .apply(selector.select(DoubleMath.roundToInt(currentGeneration.size(), RoundingMode.FLOOR)), factory, generationCount));
-
-        while (intermediatePopulation.size() < 3 * currentGeneration.size()) {
-            intermediatePopulation.add(factory.individual(factory.chromosomeGenerator().get()
-                    .generate(currentGeneration.toList().get(0).chromosome().length())));
-        }
-
-        final List<Individual<C>> nextGeneration = new ArrayList<>(currentGeneration.size());
-
-        selector.population(PopulationBuilder.of(factory)
-                .initialChromosomes(intermediatePopulation)
-                .size(intermediatePopulation.size())
-                .build());
-
-        nextGeneration.addAll(selector.select(currentGeneration.size()));
-
-        final Population<C> offspring = PopulationBuilder.of(factory)
-                .initialChromosomes(nextGeneration)
-                .size(nextGeneration.size())
-                .build();
-
-        // return PopulationExchange.<C>
-        // totalExchange().exchange(currentGeneration, offspring, factory);
-        return offspring;
     }
 
     private Population<C> applyGeneticOperators(final Population<C> generation,

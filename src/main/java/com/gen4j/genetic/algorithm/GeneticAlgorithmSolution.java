@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.gen4j.runner;
+package com.gen4j.genetic.algorithm;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;

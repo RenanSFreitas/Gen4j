@@ -1,9 +1,9 @@
 package com.gen4j.runner.listener;
 
 import com.gen4j.chromosome.Chromosome;
+import com.gen4j.genetic.algorithm.GeneticAlgorithmSolution;
 import com.gen4j.population.Individual;
 import com.gen4j.population.Population;
-import com.gen4j.runner.GeneticAlgorithmSolution;
 
 public interface GeneticAlgorithmListener<C extends Chromosome> {
 

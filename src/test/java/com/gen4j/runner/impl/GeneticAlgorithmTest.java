@@ -12,7 +12,6 @@ import static org.powermock.api.easymock.PowerMock.resetAll;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,13 +24,14 @@ import com.gen4j.chromosome.Chromosome;
 import com.gen4j.chromosome.ChromosomeCoder;
 import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.fitness.FitnessFunction;
+import com.gen4j.genetic.algorithm.GeneticAlgorithm;
+import com.gen4j.genetic.algorithm.GeneticAlgorithmSolution;
 import com.gen4j.operator.GeneticOperator;
 import com.gen4j.operator.selection.Selector;
 import com.gen4j.population.Criteria;
 import com.gen4j.population.Individual;
 import com.gen4j.population.Population;
 import com.gen4j.population.PopulationInstantiator;
-import com.gen4j.runner.GeneticAlgorithmSolution;
 
 @RunWith(PowerMockRunner.class)
 public class GeneticAlgorithmTest {
@@ -59,7 +59,10 @@ public class GeneticAlgorithmTest {
     private Selector<Chromosome> selector;
 
     @Mock
-    private GeneticOperator<Chromosome> operator;
+    private GeneticOperator<Chromosome> crossOver;
+
+    @Mock
+    private GeneticOperator<Chromosome> mutation;
 
     @Mock
     private GeneticAlgorithmFactory<Chromosome> factory;
@@ -102,7 +105,7 @@ public class GeneticAlgorithmTest {
 
         replayAll();
 
-        subject = new GeneticAlgorithm<>(selector, Collections.singletonList(operator));
+        subject = GeneticAlgorithm.create(selector, crossOver, mutation);
 
         final GeneticAlgorithmSolution<Chromosome> solution = subject.evolve(population, factory);
 
@@ -128,8 +131,8 @@ public class GeneticAlgorithmTest {
 
     @SuppressWarnings("unchecked")
     private void prepareOperators() {
-        expect(operator.probability()).andReturn(0.7).anyTimes();
-        expect(operator.chromosomeCount()).andReturn(2).anyTimes();
+        expect(crossOver.probability()).andReturn(0.7).anyTimes();
+        expect(crossOver.chromosomeCount()).andReturn(2).anyTimes();
         selector.population(anyObject(Population.class));
         expectLastCall().anyTimes();
         selectedIndividuals = new ArrayList<>();
