@@ -1,11 +1,10 @@
-package com.gen4j.population.exchange;
+package com.gen4j.generation.replacement;
 
 import com.gen4j.chromosome.Chromosome;
 import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.population.Population;
 
-public interface PopulationExchanger<C extends Chromosome> {
+public interface GenerationReplacer<C extends Chromosome> {
 
-    Population<C> exchange(Population<C> parent, Population<C> offspring,
-            GeneticAlgorithmFactory<C> factory);
+    Population<C> replace(Population<C> generation, Population<C> nextGeneration, GeneticAlgorithmFactory<C> factory);
 }

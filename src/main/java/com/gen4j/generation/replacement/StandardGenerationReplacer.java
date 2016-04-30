@@ -1,4 +1,4 @@
-package com.gen4j.population.exchange;
+package com.gen4j.generation.replacement;
 
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Lists.newArrayList;
@@ -13,35 +13,36 @@ import com.gen4j.chromosome.Chromosome;
 import com.gen4j.population.Individual;
 import com.gen4j.population.PopulationBuilder;
 
-public enum StandardPopulationExchanger {
+public enum StandardGenerationReplacer {
 
-    TOTAL_EXCHANGE {
+    GENERATIONAL {
         @Override
-        public <C extends Chromosome> PopulationExchanger<C> get() {
-            return (p, o, f) -> o;
+        public <C extends Chromosome> GenerationReplacer<C> get() {
+            return (generation, nextGeneration, factory) -> nextGeneration;
         }
     },
     STEADY_STATE {
         @Override
-        public <C extends Chromosome> PopulationExchanger<C> get() {
-            return (p, o, f) -> {
-                final List<Individual<C>> exchanged = newArrayList(concat(p.fitness(), o.fitness()));
+        public <C extends Chromosome> GenerationReplacer<C> get() {
+            return (generation, nextGeneration, f) -> {
+                final List<Individual<C>> exchanged = newArrayList(concat(generation.fitness(), nextGeneration.fitness()));
                 Collections.sort(exchanged);
                 final int exchangedSize = exchanged.size();
-                return PopulationBuilder.of(f).size(o.size())
-                        .initialChromosomes(exchanged.subList(exchangedSize - o.size(), exchangedSize))
+                final int nextGenerationSize = nextGeneration.size();
+                return PopulationBuilder.of(f).size(nextGenerationSize)
+                        .initialChromosomes(exchanged.subList(exchangedSize - nextGenerationSize, exchangedSize))
                         .build();
             };
         }
     },
     STEADY_STATE_NO_DUPLICATES {
         @Override
-        public <C extends Chromosome> PopulationExchanger<C> get() {
-            return (p, o, factory) -> {
-                final List<Individual<C>> parents = p.fitness();
+        public <C extends Chromosome> GenerationReplacer<C> get() {
+            return (generation, nextGeneration, factory) -> {
+                final List<Individual<C>> parents = generation.fitness();
                 final int parentSize = parents.size();
                 final List<Individual<C>> exchanged = new ArrayList<>(parentSize);
-                final Iterator<Individual<C>> iterator = newTreeSet(concat(parents, o.fitness())).descendingIterator();
+                final Iterator<Individual<C>> iterator = newTreeSet(concat(parents, nextGeneration.fitness())).descendingIterator();
                 for (int counter = 0; counter < parentSize && iterator.hasNext(); counter++) {
                     exchanged.add(iterator.next());
                 }
@@ -50,5 +51,5 @@ public enum StandardPopulationExchanger {
         }
     };
 
-    public abstract <C extends Chromosome> PopulationExchanger<C> get();
+    public abstract <C extends Chromosome> GenerationReplacer<C> get();
 }
