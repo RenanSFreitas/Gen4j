@@ -54,4 +54,8 @@ public final class TournamentSelector<C extends Chromosome> extends AbstractSele
         return selected;
     }
 
+    @Override
+    public String toString() {
+        return "Tournament selector with arity of " + arity;
+    }
 }

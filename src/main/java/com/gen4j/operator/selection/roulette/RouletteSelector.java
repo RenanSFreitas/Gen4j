@@ -21,4 +21,9 @@ public final class RouletteSelector<G extends Chromosome> extends AbstractSelect
     public List<Individual<G>> select(final int count) {
         return roulette.sortChromosomes(count);
     }
+
+    @Override
+    public String toString() {
+        return "Roulette wheel selector";
+    }
 }
