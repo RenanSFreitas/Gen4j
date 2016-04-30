@@ -3,7 +3,6 @@ package com.gen4j.population;
 import com.gen4j.chromosome.Chromosome;
 import com.google.common.math.DoubleMath;
 
-@FunctionalInterface
 public interface Criteria<G extends Chromosome> {
 
     static <C extends Chromosome> Criteria<C> fitnessEquals(final double target, final double tolerance) {
@@ -65,4 +64,6 @@ public interface Criteria<G extends Chromosome> {
     }
 
     boolean apply(Population<G> population, int generation);
+
+    boolean getPopulationConverged();
 }
