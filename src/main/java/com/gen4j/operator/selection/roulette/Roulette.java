@@ -22,7 +22,7 @@ final class Roulette<C extends Chromosome> {
         final double maximum = fitness.get(fitness.size() - 1).fitness();
         final double minimum = fitness.get(0).fitness();
 
-        double maxMinusMin = maximum - minimum;
+        final double maxMinusMin = maximum - minimum;
         final double sumFitness = fitness.stream()
                 .mapToDouble(i -> (i.fitness() - minimum) / maxMinusMin)
                 .sum();
@@ -43,6 +43,7 @@ final class Roulette<C extends Chromosome> {
         this.roulette = roulette;
     }
 
+    @SuppressWarnings("null")
     private Individual<C> sortChromosome(final double relativeFitness) {
 
         Pair<Individual<C>, Double> previous = null;
