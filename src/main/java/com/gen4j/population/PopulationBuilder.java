@@ -54,11 +54,7 @@ public final class PopulationBuilder<C extends Chromosome>
         chromosomeLength = factory.coder().chromosomeLength();
         for (int i = population.size(); i < size; i++)
         {
-            final boolean added = population.add(factory.individual(newGenotype()));
-
-            if (!added) {
-                i--;
-            }
+            population.add(factory.individual(newGenotype()));
         }
         return ImmutablePopulation.of(population);
     }
