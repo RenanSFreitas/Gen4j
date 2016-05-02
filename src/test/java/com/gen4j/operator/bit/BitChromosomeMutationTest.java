@@ -87,7 +87,7 @@ public class BitChromosomeMutationTest {
 
         replayAll();
 
-        final Individual<BitChromosome> mutant = getOnlyElement(subject.apply(singleton(individual), factory, generationCount));
+        final Individual<BitChromosome> mutant = getOnlyElement(subject.apply(singleton(individual), factory, 0));
 
         assertEquals(MUTANT_BIT_VALUE, mutant.chromosome().value().get(MUTANT_BIT));
     }

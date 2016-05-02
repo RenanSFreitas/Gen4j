@@ -92,7 +92,8 @@ public class BitChromosomeCrossOverTest {
         expect(factory.coder()).andReturn(coder).times(2);
         replayAll();
 
-        final Iterator<Individual<BitChromosome>> actual = subject.apply(asList(firstParent, secondParent), factory, generationCount)
+        final Iterator<Individual<BitChromosome>> actual = subject.apply(
+                asList(firstParent, secondParent), factory, 0)
                 .iterator();
 
         assertEquals(firstOffspring, actual.next().chromosome().value());
