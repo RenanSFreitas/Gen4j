@@ -26,7 +26,7 @@ public final class FloatingPointSinglePointCrossOver extends AbstractGeneticOper
     @Override
     public List<Individual<FloatingPointChromosome>> apply(
             final Collection<Individual<FloatingPointChromosome>> individuals,
-            final GeneticAlgorithmFactory<FloatingPointChromosome> factory, int generationCount) {
+            final GeneticAlgorithmFactory<FloatingPointChromosome> factory, final int generationCount) {
         Preconditions.checkArgument(individuals.size() == 2);
         final Iterator<Individual<FloatingPointChromosome>> iterator = individuals.iterator();
         return apply(iterator.next().chromosome(), iterator.next().chromosome(), factory);
@@ -65,6 +65,6 @@ public final class FloatingPointSinglePointCrossOver extends AbstractGeneticOper
 
     @Override
     public String toString() {
-        return "Single poit floating-point-chromosome cross over";
+        return "Single point floating-point-chromosome cross over";
     }
 }
