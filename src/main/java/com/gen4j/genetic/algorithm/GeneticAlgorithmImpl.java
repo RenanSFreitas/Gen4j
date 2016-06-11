@@ -13,18 +13,20 @@ import com.gen4j.chromosome.Chromosome;
 import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.generation.replacement.GenerationReplacer;
 import com.gen4j.generation.replacement.StandardGenerationReplacer;
-import com.gen4j.operator.GeneticOperator;
+import com.gen4j.operator.CrossOver;
+import com.gen4j.operator.Mutation;
 import com.gen4j.operator.selection.Selector;
 import com.gen4j.population.Individual;
 import com.gen4j.population.Population;
 import com.gen4j.population.PopulationBuilder;
 import com.gen4j.runner.listener.GeneticAlgorithmListener;
+import com.gen4j.utils.Pair;
 
 final class GeneticAlgorithmImpl<C extends Chromosome> implements GeneticAlgorithm<C> {
 
     private final Selector<C> selector;
-    private final GeneticOperator<C> crossOver;
-    private final GeneticOperator<C> mutation;
+    private final CrossOver<C> crossOver;
+    private final Mutation<C> mutation;
 
     private final Random random = new Random(System.nanoTime());
 
@@ -38,8 +40,8 @@ final class GeneticAlgorithmImpl<C extends Chromosome> implements GeneticAlgorit
 
     private final GeneticAlgorithmSolution.Builder<C> solutionBuilder = GeneticAlgorithmSolution.builder();
 
-    GeneticAlgorithmImpl(final Selector<C> selector, final GeneticOperator<C> crossOver,
-            final GeneticOperator<C> mutation) {
+    GeneticAlgorithmImpl(final Selector<C> selector, final CrossOver<C> crossOver, final Mutation<C> mutation) {
+
         checkArgument(crossOver.chromosomeCodeType() == mutation.chromosomeCodeType(),
                 "Multiple code types. Should be either BIT or FLOATING_POINT.");
 
@@ -92,11 +94,6 @@ final class GeneticAlgorithmImpl<C extends Chromosome> implements GeneticAlgorit
         for (final GeneticAlgorithmListener<C> listener : listeners) {
             listener.evolutionInterruped(cause);
         }
-    }
-
-    @Override
-    public Individual<C> fittest() {
-        return fittest;
     }
 
     @Override
@@ -160,20 +157,20 @@ final class GeneticAlgorithmImpl<C extends Chromosome> implements GeneticAlgorit
             final GeneticAlgorithmFactory<C> factory, final int generationCount) {
 
         selector.population(generation);
+
         final List<Individual<C>> nextGenerationList = new ArrayList<>(generation.size());
 
         nextGenerationList.addAll(getFittestIndividuals(generation));
 
         while (nextGenerationList.size() < generation.size()) {
 
-            List<Individual<C>> individuals = selector.select(2);
+            Pair<Individual<C>, Individual<C>> individuals = selector.selectPair();
             if (random.nextDouble() < crossOver.probability()) {
                 individuals = crossOver.apply(individuals, factory, generationCount);
             }
 
-            individuals = mutation.apply(individuals, factory, generationCount);
-
-            nextGenerationList.addAll(individuals);
+            nextGenerationList.add(mutation.apply(individuals.first(), factory, generationCount));
+            nextGenerationList.add(mutation.apply(individuals.second(), factory, generationCount));
         }
 
         final Population<C> nextGeneration = PopulationBuilder.of(factory)

@@ -1,19 +1,16 @@
 package com.gen4j.operator.fp;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-
 import com.gen4j.chromosome.code.ChromosomeCodeType;
 import com.gen4j.chromosome.fp.FloatingPointChromosome;
 import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.operator.AbstractGeneticOperator;
+import com.gen4j.operator.CrossOver;
 import com.gen4j.population.Individual;
-import com.google.common.base.Preconditions;
+import com.gen4j.utils.Pair;
 import com.google.common.math.DoubleMath;
 
 public final class FloatingPointCrossOverHuang1997 extends AbstractGeneticOperator<FloatingPointChromosome>
+        implements CrossOver<FloatingPointChromosome>
  {
 
     public FloatingPointCrossOverHuang1997() {
@@ -21,16 +18,15 @@ public final class FloatingPointCrossOverHuang1997 extends AbstractGeneticOperat
     }
 
     @Override
-    public List<Individual<FloatingPointChromosome>> apply(
-            final Collection<Individual<FloatingPointChromosome>> individuals,
-            final GeneticAlgorithmFactory<FloatingPointChromosome> factory, int generationCount) {
+    public Pair<Individual<FloatingPointChromosome>, Individual<FloatingPointChromosome>> apply(
+            final Pair<Individual<FloatingPointChromosome>, Individual<FloatingPointChromosome>> parents,
+            final GeneticAlgorithmFactory<FloatingPointChromosome> factory, final int generationCount) {
 
-        Preconditions.checkArgument(individuals.size() == 2);
-        final Iterator<Individual<FloatingPointChromosome>> iterator = individuals.iterator();
-        return apply(iterator.next().chromosome(), iterator.next().chromosome(), factory);
+        return apply(parents.first().chromosome(), parents.second().chromosome(), factory);
     }
 
-    private List<Individual<FloatingPointChromosome>> apply(final FloatingPointChromosome parent1,
+    private Pair<Individual<FloatingPointChromosome>, Individual<FloatingPointChromosome>> apply(
+            final FloatingPointChromosome parent1,
             final FloatingPointChromosome parent2, final GeneticAlgorithmFactory<FloatingPointChromosome> factory) {
 
         final double[] parent1Value = parent1.value();
@@ -64,7 +60,7 @@ public final class FloatingPointCrossOverHuang1997 extends AbstractGeneticOperat
             offspringValue2[crossOverPoint] = parent2Value[crossOverPoint];
         }
 
-        return Arrays.asList(
+        return Pair.of(
                 factory.individual(new FloatingPointChromosome(offspringValue1)),
                 factory.individual(new FloatingPointChromosome(offspringValue2)));
     }

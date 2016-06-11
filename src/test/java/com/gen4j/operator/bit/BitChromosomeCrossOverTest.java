@@ -1,6 +1,5 @@
 package com.gen4j.operator.bit;
 
-import static java.util.Arrays.asList;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
@@ -8,7 +7,6 @@ import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.resetAll;
 
 import java.util.BitSet;
-import java.util.Iterator;
 import java.util.Random;
 
 import org.easymock.TestSubject;
@@ -26,6 +24,7 @@ import com.gen4j.factory.AbstractGeneticAlgorithmFactory;
 import com.gen4j.fitness.FitnessFunction;
 import com.gen4j.population.Individual;
 import com.gen4j.utils.BitSets;
+import com.gen4j.utils.Pair;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ BitChromosomeSinglePointCrossOver.class, BitChromosome.class })
@@ -92,11 +91,10 @@ public class BitChromosomeCrossOverTest {
         expect(factory.coder()).andReturn(coder).times(2);
         replayAll();
 
-        final Iterator<Individual<BitChromosome>> actual = subject.apply(
-                asList(firstParent, secondParent), factory, 0)
-                .iterator();
+        final Pair<Individual<BitChromosome>, Individual<BitChromosome>> actual = subject
+                .apply(Pair.of(firstParent, secondParent), factory, 0);
 
-        assertEquals(firstOffspring, actual.next().chromosome().value());
-        assertEquals(secondOffspring, actual.next().chromosome().value());
+        assertEquals(firstOffspring, actual.first().chromosome().value());
+        assertEquals(secondOffspring, actual.second().chromosome().value());
     }
 }

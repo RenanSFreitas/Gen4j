@@ -1,34 +1,32 @@
 package com.gen4j.operator.bit;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-
 import java.util.BitSet;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 
 import com.gen4j.chromosome.bit.BitChromosome;
 import com.gen4j.chromosome.code.ChromosomeCodeType;
 import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.operator.AbstractGeneticOperator;
+import com.gen4j.operator.CrossOver;
 import com.gen4j.population.Individual;
+import com.gen4j.utils.Pair;
 
-public final class BitChromosomeUniformCrossOver extends AbstractGeneticOperator<BitChromosome> {
+public final class BitChromosomeUniformCrossOver extends AbstractGeneticOperator<BitChromosome>
+        implements CrossOver<BitChromosome> {
 
     public BitChromosomeUniformCrossOver() {
         super(0.25, 2, ChromosomeCodeType.BIT);
     }
 
     @Override
-    public List<Individual<BitChromosome>> apply(final Collection<Individual<BitChromosome>> individuals,
-            final GeneticAlgorithmFactory<BitChromosome> factory, int generationCount) {
+    public Pair<Individual<BitChromosome>, Individual<BitChromosome>> apply(
+            final Pair<Individual<BitChromosome>, Individual<BitChromosome>> parents,
+            final GeneticAlgorithmFactory<BitChromosome> factory, final int generationCount) {
 
-        final Iterator<Individual<BitChromosome>> iterator = individuals.iterator();
-        return apply(iterator.next().chromosome(), iterator.next().chromosome(), factory);
+        return apply(parents.first().chromosome(), parents.second().chromosome(), factory);
     }
 
-    private List<Individual<BitChromosome>> apply(final BitChromosome parent1, final BitChromosome parent2,
+    private Pair<Individual<BitChromosome>, Individual<BitChromosome>> apply(final BitChromosome parent1,
+            final BitChromosome parent2,
             final GeneticAlgorithmFactory<BitChromosome> factory) {
 
         final BitSet parent1Value = parent1.value();
@@ -48,9 +46,9 @@ public final class BitChromosomeUniformCrossOver extends AbstractGeneticOperator
             }
         }
 
-        return unmodifiableList(asList(
+        return Pair.of(
                 factory.individual(new BitChromosome(offspring1Value, length)),
-                factory.individual(new BitChromosome(offspring2Value, length))));
+                factory.individual(new BitChromosome(offspring2Value, length)));
     }
 
     @Override

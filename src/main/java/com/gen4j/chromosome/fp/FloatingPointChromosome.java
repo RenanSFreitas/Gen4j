@@ -5,6 +5,9 @@ import static java.util.Objects.requireNonNull;
 
 import com.gen4j.chromosome.Chromosome;
 
+/**
+ * Chromosome of real valued genes.
+ */
 public class FloatingPointChromosome implements Chromosome {
 
     private final double[] value;

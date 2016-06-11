@@ -16,6 +16,9 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.math.DoubleMath;
 import com.google.common.math.IntMath;
 
+/**
+ * {@link ChromosomeCoder} for {@link BitChromosome}s.
+ */
 public class BitChromosomeCoder implements ChromosomeCoder<BitChromosome> {
 
     private final double precisionValue;
@@ -30,19 +33,19 @@ public class BitChromosomeCoder implements ChromosomeCoder<BitChromosome> {
     private final Range range;
 
     public BitChromosomeCoder(
-            final List<String> identifiers,
+            final List<String> variables,
             final Range range,
             final int precision) {
 
-        checkArgument(identifiers != null);
-        checkArgument(ImmutableSet.copyOf(identifiers).size() == identifiers.size());
+        checkArgument(variables != null);
+        checkArgument(ImmutableSet.copyOf(variables).size() == variables.size());
 
         precisionValue = (int) Math.pow(10, precision);
         this.range = requireNonNull(range);
         nbits = DoubleMath.log2(range.length() * precisionValue, RoundingMode.CEILING);
         twoPowNBits = Math.pow(2, nbits);
-        this.identifiers = ImmutableList.copyOf(identifiers);
-        chromosomeLength = nbits * identifiers.size();
+        identifiers = ImmutableList.copyOf(variables);
+        chromosomeLength = nbits * variables.size();
     }
 
     @Override

@@ -10,6 +10,9 @@ import com.gen4j.population.Criteria;
 import com.gen4j.population.generator.ChromosomeGenerator;
 import com.gen4j.population.generator.RandomBitChromosomeGenerator;
 
+/**
+ * Factory of chromosomes of bit valued genes.
+ */
 public class BitChromosomeFactory extends CustomGeneticAlgorithmFactory<BitChromosome> {
 
     public BitChromosomeFactory(

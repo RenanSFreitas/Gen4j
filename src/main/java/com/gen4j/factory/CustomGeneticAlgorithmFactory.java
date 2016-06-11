@@ -10,7 +10,14 @@ import com.gen4j.chromosome.ChromosomeCoder;
 import com.gen4j.fitness.FitnessFunction;
 import com.gen4j.population.Criteria;
 
-public class CustomGeneticAlgorithmFactory<C extends Chromosome> extends GenericGeneticAlgorithmFactory<C> {
+/**
+ * A {@link GeneticAlgorithmFactory} that can have custom implementations
+ * defined by the user supplied when needed.
+ *
+ * @param <C>
+ *            the specialization of the {@link Chromosome}
+ */
+public class CustomGeneticAlgorithmFactory<C extends Chromosome> extends AbstractGeneticAlgorithmFactory<C> {
 
     private final ChromosomeCoder<C> coder;
     private final FitnessFunction fitnessFunction;

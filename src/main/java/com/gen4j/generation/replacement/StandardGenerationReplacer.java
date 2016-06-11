@@ -11,12 +11,19 @@ import com.gen4j.population.PopulationBuilder;
 import com.google.common.collect.Multiset.Entry;
 import com.google.common.collect.TreeMultiset;
 
+/**
+ * Standard strategies of generation replacement.
+ */
 public enum StandardGenerationReplacer {
 
+    /**
+     * Replacement strategy that entirely replaces the previous generation with
+     * the offsprings.
+     */
     GENERATIONAL {
         @Override
         public <C extends Chromosome> GenerationReplacer<C> get() {
-            return (generation, nextGeneration, factory) -> nextGeneration;
+            return (parentsGeneration, offspringGeneration, factory) -> offspringGeneration;
         }
     },
     STEADY_STATE {

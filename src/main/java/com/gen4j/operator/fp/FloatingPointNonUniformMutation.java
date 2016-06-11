@@ -1,17 +1,15 @@
 package com.gen4j.operator.fp;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import com.gen4j.chromosome.Range;
 import com.gen4j.chromosome.code.ChromosomeCodeType;
 import com.gen4j.chromosome.fp.FloatingPointChromosome;
 import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.operator.AbstractGeneticOperator;
+import com.gen4j.operator.Mutation;
 import com.gen4j.population.Individual;
 
-public class FloatingPointNonUniformMutation extends AbstractGeneticOperator<FloatingPointChromosome> {
+public class FloatingPointNonUniformMutation extends AbstractGeneticOperator<FloatingPointChromosome>
+        implements Mutation<FloatingPointChromosome> {
 
     private final int maxGenerations;
 
@@ -21,28 +19,22 @@ public class FloatingPointNonUniformMutation extends AbstractGeneticOperator<Flo
     }
 
     @Override
-    public List<Individual<FloatingPointChromosome>> apply(
-            final Collection<Individual<FloatingPointChromosome>> individuals,
+    public Individual<FloatingPointChromosome> apply(final Individual<FloatingPointChromosome> individual,
             final GeneticAlgorithmFactory<FloatingPointChromosome> factory, final int generationCount) {
 
-        final List<Individual<FloatingPointChromosome>> result = new ArrayList<>();
-
-        for (final Individual<FloatingPointChromosome> individual : individuals) {
-            final double[] originalValue = individual.chromosome().value();
-            final int length = originalValue.length;
-            final double[] chromosomeValue = new double[length];
-            for (int i = 0; i < chromosomeValue.length; i++) {
+        final double[] originalValue = individual.chromosome().value();
+        final int length = originalValue.length;
+        final double[] mutantValue = new double[length];
+        for (int i = 0; i < mutantValue.length; i++) {
                 if (random.nextDouble() >= probability()) {
                     // Just copies the original value
-                    chromosomeValue[i] = originalValue[i];
+                mutantValue[i] = originalValue[i];
                 } else {
-                    chromosomeValue[i] = mutate(originalValue[i], generationCount, factory.coder().range());
+                mutantValue[i] = mutate(originalValue[i], generationCount, factory.coder().range());
                 }
             }
-            result.add(factory.individual(new FloatingPointChromosome(chromosomeValue)));
-        }
 
-        return result;
+        return factory.individual(new FloatingPointChromosome(mutantValue));
     }
 
     private double mutate(final double originalValue, final int generationCount, final Range range) {

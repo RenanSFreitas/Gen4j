@@ -5,6 +5,9 @@ package com.gen4j.chromosome;
 
 import com.google.common.base.Preconditions;
 
+/**
+ * Represents an interval of real values.
+ */
 public final class Range {
 
     private final double lowerBound;

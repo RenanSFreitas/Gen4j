@@ -14,6 +14,10 @@ import com.gen4j.population.Criteria;
 import com.gen4j.population.generator.ChromosomeGenerator;
 import com.gen4j.population.generator.RandomFloatingPointChromosomeGenerator;
 
+/**
+ * Factory of chromosomes of real valued genes.
+ *
+ */
 public class FloatingPointChromosomeFactory extends CustomGeneticAlgorithmFactory<FloatingPointChromosome> {
 
     private final Optional<ChromosomeGenerator<FloatingPointChromosome>> generator;
@@ -29,7 +33,7 @@ public class FloatingPointChromosomeFactory extends CustomGeneticAlgorithmFactor
     }
 
     public FloatingPointChromosomeFactory(final ChromosomeCoder<FloatingPointChromosome> coder,
-            final FitnessFunction fitnessFunction, 
+            final FitnessFunction fitnessFunction,
             final Criteria<FloatingPointChromosome> criteria,
             final Range optimizationRange) {
         super(coder, fitnessFunction, criteria);

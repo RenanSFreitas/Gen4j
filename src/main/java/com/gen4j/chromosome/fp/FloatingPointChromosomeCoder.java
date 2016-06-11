@@ -10,6 +10,9 @@ import com.gen4j.phenotype.Phenotype;
 import com.gen4j.phenotype.StandardPhenotype;
 import com.google.common.base.Preconditions;
 
+/**
+ * A {@link ChromosomeCoder coder} for real valued chromosomes.
+ */
 public class FloatingPointChromosomeCoder implements ChromosomeCoder<FloatingPointChromosome> {
 
     private final List<String> identifiers;

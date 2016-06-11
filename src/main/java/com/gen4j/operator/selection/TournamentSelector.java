@@ -11,6 +11,7 @@ import java.util.TreeSet;
 import com.gen4j.chromosome.Chromosome;
 import com.gen4j.population.Individual;
 import com.gen4j.population.Population;
+import com.gen4j.utils.Pair;
 
 public final class TournamentSelector<C extends Chromosome> extends AbstractSelector<C> {
 
@@ -42,6 +43,12 @@ public final class TournamentSelector<C extends Chromosome> extends AbstractSele
         }
 
         return tree.last();
+    }
+
+    @Override
+    public Pair<Individual<C>, Individual<C>> selectPair() {
+        final List<Individual<C>> population = population().toList();
+        return Pair.of(select(population), select(population));
     }
 
     @Override

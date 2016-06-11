@@ -26,7 +26,8 @@ import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.fitness.FitnessFunction;
 import com.gen4j.genetic.algorithm.GeneticAlgorithm;
 import com.gen4j.genetic.algorithm.GeneticAlgorithmSolution;
-import com.gen4j.operator.GeneticOperator;
+import com.gen4j.operator.CrossOver;
+import com.gen4j.operator.Mutation;
 import com.gen4j.operator.selection.Selector;
 import com.gen4j.population.Criteria;
 import com.gen4j.population.Individual;
@@ -59,10 +60,10 @@ public class GeneticAlgorithmTest {
     private Selector<Chromosome> selector;
 
     @Mock
-    private GeneticOperator<Chromosome> crossOver;
+    private CrossOver<Chromosome> crossOver;
 
     @Mock
-    private GeneticOperator<Chromosome> mutation;
+    private Mutation<Chromosome> mutation;
 
     @Mock
     private GeneticAlgorithmFactory<Chromosome> factory;

@@ -1,7 +1,5 @@
 package com.gen4j.operator.bit;
 
-import static com.google.common.collect.Iterables.getOnlyElement;
-import static java.util.Collections.singleton;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
@@ -87,7 +85,7 @@ public class BitChromosomeMutationTest {
 
         replayAll();
 
-        final Individual<BitChromosome> mutant = getOnlyElement(subject.apply(singleton(individual), factory, 0));
+        final Individual<BitChromosome> mutant = subject.apply(individual, factory, 0);
 
         assertEquals(MUTANT_BIT_VALUE, mutant.chromosome().value().get(MUTANT_BIT));
     }

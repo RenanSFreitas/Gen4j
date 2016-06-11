@@ -13,6 +13,17 @@ import com.gen4j.population.Individual;
 import com.gen4j.population.Population;
 import com.gen4j.population.Populations;
 
+/**
+ * Final product of a {@link GeneticAlgorithm} evolution. Represents the best
+ * solution found by the algorithm.
+ *
+ * @param <C>
+ *            the specialization of the {@link Chromosome}
+ */
+/**
+ *
+ * @param <C>
+ */
 public final class GeneticAlgorithmSolution<C extends Chromosome> {
 
     private final Population<C> population;
@@ -21,6 +32,9 @@ public final class GeneticAlgorithmSolution<C extends Chromosome> {
     private final ChromosomeCodeType codeType;
     private final boolean converged;
 
+    /**
+     * Builder class for {@link GeneticAlgorithmSolution}s.
+     */
     public static class Builder<C extends Chromosome> {
         private Population<C> population;
         private int generationsCount = -1;
@@ -76,33 +90,37 @@ public final class GeneticAlgorithmSolution<C extends Chromosome> {
     }
 
     /**
-     * @return the generations count
+     * @return the generations count before the algorithm stopped
      */
     public int generationsCount() {
         return generationsCount;
     }
 
     /**
-     * @return the population
+     * @return the last generation before the algorithm stopped
      */
     public Population<C> population() {
         return population;
     }
 
     /**
-     * @return
+     * @return the fittest individual found
      */
     public Individual<C> fittest() {
         return fittest;
     }
 
     /**
-     * @return
+     * @return the chromsome code type used
      */
     public ChromosomeCodeType codeType() {
         return codeType;
     }
 
+    /**
+     * @return <code>true</code>, in case the algorithm converged before
+     *         stopping
+     */
     public boolean converged() {
         return converged;
     }

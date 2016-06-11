@@ -59,6 +59,10 @@ final class Roulette<C extends Chromosome> {
         return previous.first();
     }
 
+    Individual<C> sortChromosome() {
+        return sortChromosome(random.nextDouble());
+    }
+
     List<Individual<C>> sortChromosomes(final int count) {
         final List<Individual<C>> chromosomes = new ArrayList<>(count);
         for( int i = 0; i < count; i++ ) {

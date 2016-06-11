@@ -10,6 +10,9 @@ import com.gen4j.chromosome.Chromosome;
 import com.gen4j.utils.BitSets;
 import com.google.common.math.IntMath;
 
+/**
+ * Chromosome of bit genes.
+ */
 public final class BitChromosome implements Chromosome {
 
     private final BitSet bits;
