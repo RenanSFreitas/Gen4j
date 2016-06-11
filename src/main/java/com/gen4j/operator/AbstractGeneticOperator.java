@@ -20,7 +20,7 @@ public abstract class AbstractGeneticOperator<C extends Chromosome> implements G
     public AbstractGeneticOperator(final double probability, final int chromosomeCount,
             final ChromosomeCodeType codeType) {
 
-        checkArgument(probability > 0d && probability < 1d);
+        checkArgument(probability >= 0d && probability <= 1d);
         checkArgument(chromosomeCount > 0d);
 
         this.probability = probability;
@@ -40,7 +40,7 @@ public abstract class AbstractGeneticOperator<C extends Chromosome> implements G
 
     @Override
     public void probability(final double probability) {
-        checkArgument(probability > 0d && probability < 1d);
+        checkArgument(probability >= 0d && probability <= 1d);
         this.probability = probability;
     }
 

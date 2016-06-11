@@ -1,14 +1,14 @@
 package com.gen4j.chromosome.fp;
 
-import static java.util.Objects.requireNonNull;
-
 import java.util.List;
 
 import com.gen4j.chromosome.ChromosomeCoder;
 import com.gen4j.chromosome.Range;
 import com.gen4j.phenotype.Phenotype;
 import com.gen4j.phenotype.StandardPhenotype;
+import com.gen4j.utils.Lists;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 
 /**
  * A {@link ChromosomeCoder coder} for real valued chromosomes.
@@ -16,13 +16,18 @@ import com.google.common.base.Preconditions;
 public class FloatingPointChromosomeCoder implements ChromosomeCoder<FloatingPointChromosome> {
 
     private final List<String> identifiers;
-    private final Range range;
+    private final List<Range> ranges;
 
     public FloatingPointChromosomeCoder(final List<String> identifiers, final Range range) {
+        this(identifiers, Lists.repeat(range, identifiers.size()));
+    }
+
+    public FloatingPointChromosomeCoder(final List<String> identifiers, final List<Range> ranges) {
         Preconditions.checkArgument(identifiers != null && !identifiers.isEmpty());
         this.identifiers = identifiers;
-        this.range = requireNonNull(range);
+        this.ranges = ImmutableList.copyOf(ranges);
     }
+
     @Override
     public Phenotype decode(final FloatingPointChromosome chromosome) {
         final Phenotype phenotype = new StandardPhenotype();
@@ -49,7 +54,12 @@ public class FloatingPointChromosomeCoder implements ChromosomeCoder<FloatingPoi
     }
 
     @Override
-    public Range range() {
-        return range;
+    public Range range(final int geneIndex) {
+        return ranges.get(geneIndex);
+    }
+
+    @Override
+    public List<Range> ranges() {
+        return ranges;
     }
 }

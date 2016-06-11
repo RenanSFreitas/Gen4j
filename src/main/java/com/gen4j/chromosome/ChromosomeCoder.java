@@ -1,5 +1,7 @@
 package com.gen4j.chromosome;
 
+import java.util.List;
+
 import com.gen4j.phenotype.Phenotype;
 
 /**
@@ -38,7 +40,14 @@ public interface ChromosomeCoder<C extends Chromosome> {
     int chromosomeLength();
 
     /**
-     * Returns the range of the variables represented in the chromosome.
+     * Returns the range of the variable represented in the chromosome.
+     *
      */
-    Range range();
+    Range range(int geneIndex);
+
+    /**
+     * Returns the ranges of variables represented in the chromosome.
+     *
+     */
+    List<Range> ranges();
 }

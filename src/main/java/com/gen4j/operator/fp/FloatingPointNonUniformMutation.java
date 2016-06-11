@@ -26,13 +26,13 @@ public class FloatingPointNonUniformMutation extends AbstractGeneticOperator<Flo
         final int length = originalValue.length;
         final double[] mutantValue = new double[length];
         for (int i = 0; i < mutantValue.length; i++) {
-                if (random.nextDouble() >= probability()) {
-                    // Just copies the original value
+            if (random.nextDouble() >= probability()) {
+                // Just copies the original value
                 mutantValue[i] = originalValue[i];
-                } else {
-                mutantValue[i] = mutate(originalValue[i], generationCount, factory.coder().range());
-                }
+            } else {
+                mutantValue[i] = mutate(originalValue[i], generationCount, factory.coder().range(i));
             }
+        }
 
         return factory.individual(new FloatingPointChromosome(mutantValue));
     }

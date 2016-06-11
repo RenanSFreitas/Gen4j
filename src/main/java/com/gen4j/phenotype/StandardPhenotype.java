@@ -5,7 +5,10 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+
+import com.google.common.collect.ImmutableSet;
 
 public final class StandardPhenotype implements Phenotype {
 
@@ -16,13 +19,20 @@ public final class StandardPhenotype implements Phenotype {
     @Override
     public double variable(final String identifier) {
         checkArgument(!isNullOrEmpty(identifier));
-        return m.get(identifier).doubleValue();
+        final Double value = m.get(identifier);
+        checkArgument(value != null, "Invalid phenotype variable %s ", identifier);
+        return value.doubleValue();
     }
 
     @Override
     public void set(final String identifier, final double d) {
         checkArgument(!isNullOrEmpty(identifier));
         m.put(identifier, Double.valueOf(d));
+    }
+
+    @Override
+    public Set<String> variables() {
+        return ImmutableSet.copyOf(m.keySet());
     }
 
     @Override

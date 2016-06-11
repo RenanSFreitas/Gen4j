@@ -23,8 +23,8 @@ public final class FloatingPointMutation extends AbstractGeneticOperator<Floatin
         final double[] originalValue = individual.chromosome().value();
         final int length = originalValue.length;
         final double[] mutantValue = new double[length];
-        final Range range = factory.coder().range();
         for (int i = 0; i < mutantValue.length; i++) {
+            final Range range = factory.coder().range(i);
             if (random.nextDouble() < probability()) {
                 mutantValue[i] = random.nextDouble() * range.length() + range.lowerBound();
             } else {
