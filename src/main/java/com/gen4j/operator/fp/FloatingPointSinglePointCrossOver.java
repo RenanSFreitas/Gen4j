@@ -30,7 +30,11 @@ public final class FloatingPointSinglePointCrossOver extends AbstractGeneticOper
         final double[] parent1Value = parent1.value();
         final double[] parent2Value = parent2.value();
 
-        final int chromosomeValueLength = parent1Value.length;
+        int chromosomeValueLength = parent1Value.length;
+
+        if (parent1Value.length != parent2Value.length) {
+            chromosomeValueLength = Math.min(parent1Value.length, parent2Value.length);
+        }
         final int crossOverPoint = random.nextInt(chromosomeValueLength);
 
         final double[] offspringValue1 = new double[chromosomeValueLength];
@@ -45,7 +49,7 @@ public final class FloatingPointSinglePointCrossOver extends AbstractGeneticOper
         System.arraycopy(parent2Value, crossOverPoint, offspringValue1, crossOverPoint, length);
 
         return Pair.of(
-                factory.individual(new FloatingPointChromosome(offspringValue1)), 
+                factory.individual(new FloatingPointChromosome(offspringValue1)),
                 factory.individual(new FloatingPointChromosome(offspringValue1)));
     }
 

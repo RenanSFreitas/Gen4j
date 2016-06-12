@@ -28,7 +28,12 @@ public final class FloatingPointUniformCrossOver extends AbstractGeneticOperator
             final FloatingPointChromosome parent1, final FloatingPointChromosome parent2,
             final GeneticAlgorithmFactory<FloatingPointChromosome> factory) {
 
-        final int length = parent1.length();
+        int length = parent1.length();
+
+        if (parent1.length() != parent2.length()) {
+            length = Math.min(parent1.length(), parent2.length());
+        }
+
         final double[] offspringValue1 = new double[length];
         final double[] offspringValue2 = new double[length];
         final double[] parent1Value = parent1.value();
