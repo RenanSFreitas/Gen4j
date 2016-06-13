@@ -5,7 +5,7 @@ import com.gen4j.factory.GeneticAlgorithmFactory;
 import com.gen4j.generation.replacement.GenerationReplacer;
 import com.gen4j.operator.CrossOver;
 import com.gen4j.operator.Mutation;
-import com.gen4j.operator.post.PostGeneticOperatorsProcessor;
+import com.gen4j.operator.post.GeneticOperatorsPostProcessor;
 import com.gen4j.operator.selection.Selector;
 import com.gen4j.population.Criteria;
 import com.gen4j.population.Population;
@@ -57,11 +57,14 @@ public interface GeneticAlgorithm<C extends Chromosome> {
 
     void removeListener(GeneticAlgorithmListener<C> listener);
 
-//    void addPostGeneticOperatorsProcessor(PostGeneticOperatorsProcessor postProcessor);
+    void addGeneticOperatorsPostProcessor(GeneticOperatorsPostProcessor<C> postProcessor);
+
+    void removeGeneticOperatorsPostProcessor(GeneticOperatorsPostProcessor<C> postProcessor);
 
     void setElitismCount(int elitismCount);
 
     void setPopulationExchanger(GenerationReplacer<C> exchanger);
 
     void clearListeners();
+
 }

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Random;
 
 import com.gen4j.chromosome.Chromosome;
@@ -15,6 +16,7 @@ import com.gen4j.generation.replacement.GenerationReplacer;
 import com.gen4j.generation.replacement.StandardGenerationReplacer;
 import com.gen4j.operator.CrossOver;
 import com.gen4j.operator.Mutation;
+import com.gen4j.operator.post.GeneticOperatorsPostProcessor;
 import com.gen4j.operator.selection.Selector;
 import com.gen4j.population.Individual;
 import com.gen4j.population.Population;
@@ -31,6 +33,7 @@ final class GeneticAlgorithmImpl<C extends Chromosome> implements GeneticAlgorit
     private final Random random = new Random(System.nanoTime());
 
     private final List<GeneticAlgorithmListener<C>> listeners = new ArrayList<>();
+    private final List<GeneticOperatorsPostProcessor<C>> postProcessors = new ArrayList<>();
 
     private Individual<C> fittest;
 
@@ -66,6 +69,16 @@ final class GeneticAlgorithmImpl<C extends Chromosome> implements GeneticAlgorit
     @Override
     public void addListener(final GeneticAlgorithmListener<C> listener) {
         listeners.add(requireNonNull(listener));
+    }
+
+    @Override
+    public void addGeneticOperatorsPostProcessor(final GeneticOperatorsPostProcessor<C> postProcessor) {
+        postProcessors.add(requireNonNull(postProcessor));
+    }
+
+    @Override
+    public void removeGeneticOperatorsPostProcessor(final GeneticOperatorsPostProcessor<C> postProcessor) {
+        postProcessors.remove(requireNonNull(postProcessor));
     }
 
     @Override
@@ -169,8 +182,10 @@ final class GeneticAlgorithmImpl<C extends Chromosome> implements GeneticAlgorit
                 individuals = crossOver.apply(individuals, factory, generationCount);
             }
 
-            nextGenerationList.add(mutation.apply(individuals.first(), factory, generationCount));
-            nextGenerationList.add(mutation.apply(individuals.second(), factory, generationCount));
+            final Individual<C> individual1 = mutation.apply(individuals.first(), factory, generationCount);
+            final Individual<C> individual2 = mutation.apply(individuals.second(), factory, generationCount);
+
+            addToNextGeneration(nextGenerationList, individual1, individual2);
         }
 
         final Population<C> nextGeneration = PopulationBuilder.of(factory)
@@ -179,6 +194,30 @@ final class GeneticAlgorithmImpl<C extends Chromosome> implements GeneticAlgorit
                 .build();
 
         return replacer.replace(generation, nextGeneration, factory);
+    }
+
+    private void addToNextGeneration(final List<Individual<C>> nextGenerationList, final Individual<C> individual1,
+            final Individual<C> individual2) {
+
+        Optional<Individual<C>> postProcessedIndividual = postProcess(individual1);
+
+        if (postProcessedIndividual.isPresent()) {
+            nextGenerationList.add(postProcessedIndividual.get());
+        }
+
+        postProcessedIndividual = postProcess(individual2);
+
+        if (postProcessedIndividual.isPresent()) {
+            nextGenerationList.add(postProcessedIndividual.get());
+        }
+    }
+
+    private Optional<Individual<C>> postProcess(final Individual<C> reference) {
+        Optional<Individual<C>> individual = Optional.of(reference);
+        for (int i = 0; i < postProcessors.size(); i++) {
+            individual = postProcessors.get(i).postProcess(individual);
+        }
+        return individual;
     }
 
     private Collection<? extends Individual<C>> getFittestIndividuals(final Population<C> current) {
